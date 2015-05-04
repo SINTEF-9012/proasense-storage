@@ -1,2 +1,2 @@
-# vsepml
-Testing twitter4j, storm and kafka
+# sensapp-proasense
+SensApp sensing architecture extensions developed in the ProaSense project.
