@@ -51,7 +51,7 @@ public class EventWriterMongoSync implements Runnable {
     public void run() {
         // Connect to MongoDB database
         MongoClient mongoClient = new MongoClient(new MongoClientURI(mongoURL));
-        MongoDatabase database = mongoClient.getDatabase("proasense_db");
+        MongoDatabase database = mongoClient.getDatabase(EventProperties.STORAGE_DATABASE_NAME);
 
         // Create hash map of collections
         Map<String, MongoCollection<Document>> collectionMap = new HashMap<String, MongoCollection<Document>>();

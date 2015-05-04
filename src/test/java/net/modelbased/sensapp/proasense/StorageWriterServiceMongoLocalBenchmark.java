@@ -23,6 +23,7 @@ import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
 import eu.proasense.internal.SimpleEvent;
 import net.modelbased.sensapp.proasense.storage.EventDocument;
+import net.modelbased.sensapp.proasense.storage.EventWriterMongoAsync;
 import net.modelbased.sensapp.proasense.storage.EventWriterMongoSync;
 import net.modelbased.sensapp.proasense.storage.EventHeartbeat;
 
@@ -112,6 +113,7 @@ public class StorageWriterServiceMongoLocalBenchmark {
 
         // Create threads for Mongo storage event writers
         for (int i = 0; i < NO_MONGOSTORAGE_THREADS; i++) {
+//            workers.add(new EventWriterMongoAsync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
             workers.add(new EventWriterMongoSync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
         }
 

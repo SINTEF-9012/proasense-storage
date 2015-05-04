@@ -53,16 +53,18 @@ public class StorageWriterServiceMongoAsync {
 
 
     public static void main(String[] args) {
-//        String zooKeeper = args[0];
-//        String groupId = args[1];
-//        String topic = args[2];
-
+        // Kafka properties
 //        String zooKeeper = "89.216.116.44:2181";
         String zooKeeper = "192.168.11.20:2181";
-        String groupId = "EventListenerKafka";
-        String topic = "proasense.simpleevent.mhwirth.testdata";
+        String groupId = "StorageWriterServiceMongoSync";
+        String topic = "proasense.simpleevent.mhwirth.*";
 
-        String mongoURL = "mongodb://127.0.0.1:27017";
+        // Mongo properties
+//        String mongoURL = "mongodb://127.0.0.1:27017";
+//        String mongoULR = "mongodb://89.216.116.44:27017";
+        String mongoURL = "mongodb://192.168.11.25:27017";
+
+        //SensApp properties
         String sensappURL = "http://127.0.0.1:8090";
         String sensorName = "MHWirth.DDM.Hookload";
 
@@ -79,7 +81,7 @@ public class StorageWriterServiceMongoAsync {
         executor.execute(kafkaWorker1);
 
         // Create thread for Mongo event storage
-        Runnable mongoWorker = new EventWriterMongoAsync(queue, mongoURL);
+        Runnable mongoWorker = new EventWriterMongoAsync(queue, mongoURL, 10000, 1000);
         executor.execute(mongoWorker);
 
         // Shut down executor

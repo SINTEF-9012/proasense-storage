@@ -30,7 +30,7 @@ public class EventProperties {
     public static String ANOMALYEVENT_STORAGE_COLLECTION_NAME = "proasense.anomalyevent.system";
     public static String RECOMMENDATIONEVENT_STORAGE_COLLECTION_NAME = "proasense.recommendationevent.system";
 
+    public static String STORAGE_DATABASE_NAME = "proasense_db";
     public static String STORAGE_SERIALIZED_EVENT_KEY = "SERIALIZED_EVENT";
-
     public static String STORAGE_HEARTBEAT = "STORAGE_HEARTBEAT";
 }
