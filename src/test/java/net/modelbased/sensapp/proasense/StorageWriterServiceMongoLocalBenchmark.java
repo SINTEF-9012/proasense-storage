@@ -22,6 +22,7 @@ import eu.proasense.internal.DerivedEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
 import eu.proasense.internal.SimpleEvent;
+
 import net.modelbased.sensapp.proasense.storage.EventDocument;
 import net.modelbased.sensapp.proasense.storage.EventWriterMongoAsync;
 import net.modelbased.sensapp.proasense.storage.EventWriterMongoSync;
@@ -48,71 +49,75 @@ public class StorageWriterServiceMongoLocalBenchmark {
         String groupId = "SimpleEventLocalMongoBenchmark";
 
         // Mongo properties
-//        String mongoURL = "mongodb://127.0.0.1:27017";
+        String mongoURL = "mongodb://127.0.0.1:27017";
 //        String mongoULR = "mongodb://89.216.116.44:27017";
-        String mongoURL = "mongodb://192.168.11.25:27017";
+//        String mongoURL = "mongodb://192.168.11.25:27017";
 
-        int NO_SIMPLEEVENTS_THREADS = 10;
-        int NO_SIMPLEEVENTS_RATE = 20;
-        int NO_SIMPLEEVENTS_MESSAGES = 1000;
+        // Benchmark properties
+        int NO_SIMPLEEVENT_GENERATORS = 100;
+        int NO_SIMPLEEVENT_RATE = 20;
+        int NO_SIMPLEEVENT_MESSAGES = 10000;
 
-        int NO_DERIVEDEVENTS_THREADS = 1;
-        int NO_DERIVEDEVENTS_RATE = 100;
-        int NO_DERIVEDEVENTS_MESSAGES = 1000;
+        int NO_DERIVEDEVENT_GENERATORS = 1;
+        int NO_DERIVEDEVENT_RATE = 100;
+        int NO_DERIVEDEVENT_MESSAGES = 1000;
 
-        int NO_PREDICTEDEVENTS_THREADS = 1;
-        int NO_PREDICTEDEVENTS_RATE = 1000;
-        int NO_PREDICTEDEVENTS_MESSAGES = 100;
+        int NO_PREDICTEDEVENT_GENERATORS = 1;
+        int NO_PREDICTEDEVENT_RATE = 1000;
+        int NO_PREDICTEDEVENT_MESSAGES = 100;
 
-        int NO_ANOMALYEVENTS_THREADS = 1;
-        int NO_ANOMALYEVENTS_RATE = 1000;
-        int NO_ANOMALYEVENTS_MESSAGES = 100;
+        int NO_ANOMALYEVENT_GENERATORS = 1;
+        int NO_ANOMALYEVENT_RATE = 1000;
+        int NO_ANOMALYEVENT_MESSAGES = 100;
 
-        int NO_RECOMMENDATIONEVENTS_THREADS = 1;
-        int NO_RECOMMENDATIONEVENTS_RATE = 1000;
-        int NO_RECOMMENDATIONEVENTS_MESSAGES = 100;
+        int NO_RECOMMENDATIONEVENT_GENERATORS = 1;
+        int NO_RECOMMENDATIONEVENT_RATE = 1000;
+        int NO_RECOMMENDATIONEVENT_MESSAGES = 100;
 
-        int NO_MONGOSTORAGE_THREADS = 1;
-        int NO_MONGOSTORAGE_BULKSIZE = 1000;
+        int NO_MONGOSTORAGE_WRITERS = 2;
+        int NO_MONGOSTORAGE_BULKSIZE = 10000;
         int NO_MONGOSTORAGE_MAXWAIT = 1000;
         int NO_MONGOSTORAGE_HEARTBEAT = NO_MONGOSTORAGE_MAXWAIT*2;
 
-        int NO_TOTAL_THREADS = NO_SIMPLEEVENTS_THREADS + NO_DERIVEDEVENTS_THREADS + NO_PREDICTEDEVENTS_THREADS + NO_ANOMALYEVENTS_THREADS + NO_RECOMMENDATIONEVENTS_THREADS + NO_MONGOSTORAGE_THREADS;
+        int NO_BLOCKINGQUEUE_SIZE = 1000000;
+
+        int NO_TOTAL_THREADS = NO_SIMPLEEVENT_GENERATORS + NO_DERIVEDEVENT_GENERATORS + NO_PREDICTEDEVENT_GENERATORS + NO_ANOMALYEVENT_GENERATORS + NO_RECOMMENDATIONEVENT_GENERATORS
+                + NO_MONGOSTORAGE_WRITERS + 1;
 
         // Define blocking queue
-        BlockingQueue<EventDocument> queue = new ArrayBlockingQueue<EventDocument>(1000000);
+        BlockingQueue<EventDocument> queue = new ArrayBlockingQueue<EventDocument>(NO_BLOCKINGQUEUE_SIZE);
 
         // Create executor environment for threads
         ArrayList<Runnable> workers = new ArrayList<Runnable>(NO_TOTAL_THREADS);
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
         // Create threads for random simple event generators
-        for (int i = 0; i < NO_SIMPLEEVENTS_THREADS; i++) {
-            workers.add(new RandomEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i, "proasense.simpleevent.mhwirth." + i, NO_SIMPLEEVENTS_RATE, NO_SIMPLEEVENTS_MESSAGES));
+        for (int i = 0; i < NO_SIMPLEEVENT_GENERATORS; i++) {
+            workers.add(new RandomEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i, "proasense.simpleevent.mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
         }
 
         // Create threads for random derived event generators
-        for (int i = 0; i < NO_DERIVEDEVENTS_THREADS; i++) {
-            workers.add(new RandomEventLocalGenerator<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "proasense.derivedevent.mhwirth." + i, "proasense.derivedevent.mhwirth." + i, NO_DERIVEDEVENTS_RATE, NO_DERIVEDEVENTS_MESSAGES));
+        for (int i = 0; i < NO_DERIVEDEVENT_GENERATORS; i++) {
+            workers.add(new RandomEventLocalGenerator<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "proasense.derivedevent.mhwirth." + i, "proasense.derivedevent.mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
         }
 
         // Create threads for random predicted event generators
-        for (int i = 0; i < NO_PREDICTEDEVENTS_THREADS; i++) {
-            workers.add(new RandomEventLocalGenerator<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, "proasense.predictedevent.mhwirth." + i, "proasense.predictedevent.mhwirth." + i, NO_PREDICTEDEVENTS_RATE, NO_PREDICTEDEVENTS_MESSAGES));
+        for (int i = 0; i < NO_PREDICTEDEVENT_GENERATORS; i++) {
+            workers.add(new RandomEventLocalGenerator<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, "proasense.predictedevent.mhwirth." + i, "proasense.predictedevent.mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
         }
 
         // Create threads for random anomaly event generators
-        for (int i = 0; i < NO_ANOMALYEVENTS_THREADS; i++) {
-            workers.add(new RandomEventLocalGenerator<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, "proasense.anomalyevent.mhwirth." + i, "proasense.anomalyevent.mhwirth." + i, NO_ANOMALYEVENTS_RATE, NO_ANOMALYEVENTS_MESSAGES));
+        for (int i = 0; i < NO_ANOMALYEVENT_GENERATORS; i++) {
+            workers.add(new RandomEventLocalGenerator<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, "proasense.anomalyevent.mhwirth." + i, "proasense.anomalyevent.mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
         }
 
         // Create threads for random recommendation event generators
-        for (int i = 0; i < NO_RECOMMENDATIONEVENTS_THREADS; i++) {
-            workers.add(new RandomEventLocalGenerator<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, "proasense.recommendationevent.mhwirth." + i, "proasense.recommendationevent.mhwirth." + i, NO_RECOMMENDATIONEVENTS_RATE, NO_RECOMMENDATIONEVENTS_MESSAGES));
+        for (int i = 0; i < NO_RECOMMENDATIONEVENT_GENERATORS; i++) {
+            workers.add(new RandomEventLocalGenerator<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, "proasense.recommendationevent.mhwirth." + i, "proasense.recommendationevent.mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
         }
 
         // Create threads for Mongo storage event writers
-        for (int i = 0; i < NO_MONGOSTORAGE_THREADS; i++) {
+        for (int i = 0; i < NO_MONGOSTORAGE_WRITERS; i++) {
 //            workers.add(new EventWriterMongoAsync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
             workers.add(new EventWriterMongoSync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
         }
@@ -121,7 +126,7 @@ public class StorageWriterServiceMongoLocalBenchmark {
         workers.add(new EventHeartbeat(queue, NO_MONGOSTORAGE_HEARTBEAT));
 
         // Execute all threads
-        for (int i = 0; i < NO_TOTAL_THREADS + 1; i++) {
+        for (int i = 0; i < NO_TOTAL_THREADS; i++) {
             executor.execute(workers.get(i));
         }
 
