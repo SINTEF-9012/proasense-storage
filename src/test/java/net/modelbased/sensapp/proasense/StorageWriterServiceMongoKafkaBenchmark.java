@@ -27,10 +27,11 @@ import net.modelbased.sensapp.proasense.storage.EventDocument;
 import net.modelbased.sensapp.proasense.storage.EventHeartbeat;
 import net.modelbased.sensapp.proasense.storage.EventListenerKafkaFilter;
 import net.modelbased.sensapp.proasense.storage.EventListenerKafkaTopic;
-import net.modelbased.sensapp.proasense.storage.EventWriterMongoAsync;
 import net.modelbased.sensapp.proasense.storage.EventWriterMongoSync;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -56,10 +57,10 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 //        String mongoURL = "mongodb://192.168.11.25:27017";
 
         // Benchmark properties
-        int NO_SIMPLEEVENT_LISTENERS = 5;
-        int NO_SIMPLEEVENT_GENERATORS = 5;
+        int NO_SIMPLEEVENT_LISTENERS = 1;
+        int NO_SIMPLEEVENT_GENERATORS = 10;
         int NO_SIMPLEEVENT_RATE = 20;
-        int NO_SIMPLEEVENT_MESSAGES = 1000;
+        int NO_SIMPLEEVENT_MESSAGES = 10000;
 
         int NO_DERIVEDEVENT_LISTENERS = 1;
         int NO_DERIVEDEVENT_GENERATORS = 1;
@@ -100,14 +101,20 @@ public class StorageWriterServiceMongoKafkaBenchmark {
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
         // Create threads for random simple event generators
+        Map<String, Integer> topicMap = new HashMap<String, Integer>();
         for (int i = 0; i < NO_SIMPLEEVENT_GENERATORS; i++) {
             workers.add(new RandomEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i, "proasense.simpleevent.mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
+            topicMap.put("proasense.simpleevent.mhwirth." + i, 1);
         }
 
-        // Create threads for simple event listeners
-        for (int i = 0; i < NO_SIMPLEEVENT_LISTENERS; i++) {
-            workers.add(new EventListenerKafkaTopic<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i));
-        }
+        // Create thread for simple event listeners (filter)
+        String topicFilter = "proasense.simpleevent.mhwirth.[" + 0 + "-" + (NO_SIMPLEEVENT_GENERATORS - 1) + "]";
+        workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, topicFilter));
+
+        // Create threads for simple event listeners (topic)
+//        for (int i = 0; i < NO_SIMPLEEVENT_LISTENERS; i++) {
+//            workers.add(new EventListenerKafkaTopic<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i));
+//        }
 
         // Create threads for random derived event generators
         for (int i = 0; i < NO_DERIVEDEVENT_GENERATORS; i++) {

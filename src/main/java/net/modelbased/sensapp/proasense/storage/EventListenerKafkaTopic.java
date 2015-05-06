@@ -76,9 +76,8 @@ public class EventListenerKafkaTopic<T> implements Runnable {
 
         // Consume message
         Map<String, List<KafkaStream<byte[], byte[]>>> streams = kafkaConsumer.createMessageStreams(topicCountMap);
-        KafkaStream<byte[], byte[]> stream = streams.get(topic).get(0);
-
-        ConsumerIterator<byte[], byte[]> it = stream.iterator();
+        KafkaStream<byte[], byte[]> messageAndMetadatas = streams.get(topic).get(0);
+        ConsumerIterator<byte[], byte[]> it = messageAndMetadatas.iterator();
 
         int cnt = 0;
         try {
