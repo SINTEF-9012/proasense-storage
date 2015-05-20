@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/proasense.iml" filepath="$PROJECT_DIR$/proasense.iml" />
+      <module fileurl="file://$PROJECT_DIR$/proasense-storage.iml" filepath="$PROJECT_DIR$/proasense-storage.iml" />
     </modules>
   </component>
 </project>

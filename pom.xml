@@ -18,16 +18,7 @@
             <name>Maven2</name>
             <url>http://repo.maven.apache.org/maven2</url>
         </repository>
-        <repository>
-            <id>openSCADA-repository</id>
-            <name>openSCADA</name>
-            <url>http://repo.openscada.org/maven/releases</url>
-        </repository>
     </repositories>
-
-    <properties>
-        <twitter4j.version>3.0.3</twitter4j.version>
-    </properties>
 
  	<dependencies>
         <dependency>
@@ -65,16 +56,6 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-core</artifactId>
-            <version>${twitter4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-stream</artifactId>
-            <version>${twitter4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.storm</groupId>
@@ -115,26 +96,6 @@
             <groupId>org.jinterop</groupId>
             <artifactId>j-interop</artifactId>
             <version>2.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openscada.utgard</groupId>
-            <artifactId>org.openscada.opc.lib</artifactId>
-            <version>1.1.0.v20130529</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openscada.utgard</groupId>
-            <artifactId>org.openscada.opc.dcom</artifactId>
-            <version>1.1.0.v20130529</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openscada.jinterop</groupId>
-            <artifactId>org.openscada.jinterop.core</artifactId>
-            <version>1.1.0.v20130529</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openscada.jinterop</groupId>
-            <artifactId>org.openscada.jinterop.deps</artifactId>
-            <version>1.1.0.v20130529</version>
         </dependency>
     </dependencies>
 
