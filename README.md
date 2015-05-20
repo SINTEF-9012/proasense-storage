@@ -5,7 +5,7 @@ The storage component for the Sensing Architecture developed in the ProaSense pr
 * MongoDB
 
 ## Setup
-<TBD>
+* TBD
 
 ## User guide
-<TBD>
+* TBD
