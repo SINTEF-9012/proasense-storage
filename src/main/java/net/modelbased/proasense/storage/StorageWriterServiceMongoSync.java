@@ -68,8 +68,8 @@ public class StorageWriterServiceMongoSync {
         String topic = "proasense.simpleevent.mhwirth.*";
 
         // Mongo properties
-        String mongoURL = "mongodb://127.0.0.1:27017";
-//        String mongoULR = "mongodb://89.216.116.44:27017";
+//        String mongoURL = "mongodb://127.0.0.1:27017";
+        String mongoURL = "mongodb://89.216.116.44:27017";
 //        String mongoURL = "mongodb://192.168.11.25:27017";
 
         //SensApp properties
