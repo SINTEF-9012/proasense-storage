@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
- *
- *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
+ * Copyright 2015 Brian Elvesæter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +82,8 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
 
                 // Generate derived event with random values
                 if (eventTypeName.matches(EventProperties.DERIVEDEVENT_CLASS_NAME)) {
-                    T event = (T) eventGenerator.generateDerivedEvent(EventProperties.DERIVEDEVENT_STORAGE_COLLECTION_NAME);
+//                    T event = (T) eventGenerator.generateDerivedEvent(EventProperties.DERIVEDEVENT_STORAGE_COLLECTION_NAME);
+                    T event = (T) eventGenerator.generateDerivedEvent(this.sensorId);
 
                     // Serialize message
                     TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
@@ -159,8 +158,8 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
     private static KafkaProducer<String, byte[]> createProducer(String a_zookeeper) {
         // Specify producer properties
         Properties props = new Properties();
-//        props.put("bootstrap.servers", "89.216.116.44:9092");
-        props.put("bootstrap.servers", "192.168.11.20:9092");
+        props.put("bootstrap.servers", "89.216.116.44:9092");
+//        props.put("bootstrap.servers", "192.168.11.20:9092");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
 

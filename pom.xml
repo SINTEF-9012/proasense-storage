@@ -48,6 +48,11 @@
 			<version>0.9.2</version>
 		</dependency>
         <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.13</version>
@@ -70,12 +75,12 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>0.8.2.0</version>
+            <version>0.8.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.10</artifactId>
-            <version>0.8.2.0</version>
+            <version>0.8.2.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.zookeeper</groupId>
@@ -97,6 +102,11 @@
             <artifactId>j-interop</artifactId>
             <version>2.0.4</version>
         </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
     </dependencies>
 
 	<build>  
@@ -113,8 +123,8 @@
                     <failIfMissing>true</failIfMissing>
                     <aggregate>true</aggregate>
                     <properties>
-                        <projectname>VSEP</projectname>
-                        <owner>Nicolas Ferry</owner>
+                        <projectname>proasense-storage</projectname>
+                        <owner>Brian Elvesæter</owner>
                         <year>${project.inceptionYear}</year>
                         <artid>${project.artifactId}</artid>
                     </properties>
@@ -147,50 +157,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Assembly -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.5.3</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/assembly/standalone-jar.xml</descriptor>
-                    </descriptors>
-                    <appendAssemblyId>true</appendAssemblyId>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Execution -->
-    		<plugin>
-     			<groupId>org.codehaus.mojo</groupId>  
-     			<artifactId>exec-maven-plugin</artifactId>  
-     			<version>1.1.1</version>  
-     			<executions>  
-      				<execution>  
-       					<phase>test</phase>  
-       					<goals>  
-        					<goal>java</goal>  
-       					</goals>  
-       					<configuration>  
-        					<mainClass>net.modelbased.proasense.adapter.DataInfrastructureAdapterConsumer</mainClass>
-        					<arguments>  
-         						<argument>nissatech.no-ip.org:2181</argument>
-         						<argument>MHWirthGroup1</argument>
-         						<argument>MHWirth.DDM.GearLubeOilTemp</argument>
-         						<argument>4</argument>
-        					</arguments>  
-       					</configuration>  
-      				</execution>  
-     			</executions>  
-    		</plugin>  
-   		</plugins>  
+   		</plugins>
   	</build>  
 
 </project>

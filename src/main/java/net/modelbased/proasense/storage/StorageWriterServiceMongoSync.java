@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
- *
- *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
+ * Copyright 2015 Brian Elvesæter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +14,13 @@
  * limitations under the License.
  */
 package net.modelbased.proasense.storage;
+
+import eu.proasense.internal.AnomalyEvent;
+import eu.proasense.internal.DerivedEvent;
+import eu.proasense.internal.PredictedEvent;
+import eu.proasense.internal.RecommendationEvent;
+import eu.proasense.internal.RecommendationStatus;
+import eu.proasense.internal.SimpleEvent;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -55,65 +60,70 @@ public class StorageWriterServiceMongoSync {
     }
 
 
-    private Map<String, Integer> createTopicCountMap() {
-        Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
-
-        topicCountMap.put("proasense.simpleevent.mhwirth.1000693", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1000700", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1002311", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1000695", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1000692", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1000696", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1002123", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1033619", 1);
-
-        topicCountMap.put("proasense.simpleevent.mhwirth.1002113", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1002115", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1002114", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1002116", 1);
-//        topicCountMap.put("proasense.simpleevent.mhwirth.1002311", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1002127", 1);
-        topicCountMap.put("proasense.simpleevent.mhwirth.1002128", 1);
-
-        return topicCountMap;
-    }
-
-
     public static void main(String[] args) {
         // Kafka properties
-//        String zooKeeper = "89.216.116.44:2181";
-        String zooKeeper = "192.168.11.20:2181";
+        String zooKeeper = "89.216.116.44:2181";
+//        String zooKeeper = "192.168.11.20:2181";
         String groupId = "StorageWriterServiceMongoSync";
         String topic = "proasense.simpleevent.mhwirth.*";
 
         // Mongo properties
-//        String mongoURL = "mongodb://127.0.0.1:27017";
+        String mongoURL = "mongodb://127.0.0.1:27017";
 //        String mongoULR = "mongodb://89.216.116.44:27017";
-        String mongoURL = "mongodb://192.168.11.25:27017";
+//        String mongoURL = "mongodb://192.168.11.25:27017";
 
         //SensApp properties
         String sensappURL = "http://127.0.0.1:8090";
         String sensorName = "MHWirth.DDM.Hookload";
 
+        // Storage writer properties
+        int NO_SIMPLEEVENT_LISTENERS = 1;
+        int NO_DERIVEDEVENT_LISTENERS = 2;
+        int NO_PREDICTEDEVENT_LISTENERS = 1;
+        int NO_ANOMALYEVENT_LISTENERS = 1;
+        int NO_RECOMMENDATIONEVENT_LISTENERS = 1;
+        int NO_RECOMMENDATIONSTATUS_LISTENERS = 1;
+
+        int NO_MONGOSTORAGE_WRITERS = 1;
+        int NO_MONGOSTORAGE_BULKSIZE = 10000;
+        int NO_MONGOSTORAGE_MAXWAIT = 1000;
+        int NO_MONGOSTORAGE_HEARTBEAT = NO_MONGOSTORAGE_MAXWAIT*2;
+
+        int NO_BLOCKINGQUEUE_SIZE = 1000000;
+
+        int NO_TOTAL_THREADS = NO_SIMPLEEVENT_LISTENERS + NO_DERIVEDEVENT_LISTENERS
+                + NO_PREDICTEDEVENT_LISTENERS + NO_ANOMALYEVENT_LISTENERS
+                + NO_RECOMMENDATIONEVENT_LISTENERS + NO_RECOMMENDATIONSTATUS_LISTENERS
+                + NO_MONGOSTORAGE_WRITERS + 1;
+
         // Define blocking queue
-        BlockingQueue<EventDocument> queue = new ArrayBlockingQueue<EventDocument>(1000000);
+        BlockingQueue<EventDocument> queue = new ArrayBlockingQueue<EventDocument>(NO_BLOCKINGQUEUE_SIZE);
 
         // Create executor environment for threads
-        ArrayList<Runnable> workers = new ArrayList<Runnable>(2);
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        ArrayList<Runnable> workers = new ArrayList<Runnable>(NO_TOTAL_THREADS);
+        ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
-        // Create thread for Kafka event listener
-        for (int i = 0; i < 2; i++) {
-//            workers.add(new EventListenerKafkaTopic<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i));
-            workers.add(new SimpleEventListenerKafkaTopic(queue, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i));
+        // Create thread for Kafka event listeners
+        workers.add(new EventListenerKafkaTopic<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sensing.mhwirth.simple"));
+        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.enricher.mhwirth.derived"));
+        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sp.mhwirth.derived"));
+        workers.add(new EventListenerKafkaTopic<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.oa.mhwirth.predicted"));
+        workers.add(new EventListenerKafkaTopic<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.oa.mhwirth.anomaly"));
+        workers.add(new EventListenerKafkaTopic<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.pandda.mhwirth.recommendation"));
+        workers.add(new EventListenerKafkaTopic<RecommendationStatus>(RecommendationStatus.class, queue, zooKeeper, groupId, "eu.proasense.internal.bia.mhwirth.feedback"));
+
+        // Create threads for Mongo storage event writers
+        for (int i = 0; i < NO_MONGOSTORAGE_WRITERS; i++) {
+            workers.add(new EventWriterMongoSync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
+        }
+
+        // Create thread for Mongo storage heartbeat
+        workers.add(new EventHeartbeat(queue, NO_MONGOSTORAGE_HEARTBEAT));
+
+        // Execute all threads
+        for (int i = 0; i < NO_TOTAL_THREADS; i++) {
             executor.execute(workers.get(i));
         }
-//        Runnable kafkaWorker = new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, topic);
-//        executor.execute(kafkaWorker);
-
-        // Create thread for Mongo event storage
-        Runnable mongoWorker = new EventWriterMongoSync(queue, mongoURL, 10000, 1000);
-        executor.execute(mongoWorker);
 
         // Shut down executor
         executor.shutdown();

@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
- *
- *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
+ * Copyright 2015 Brian Elvesæter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +18,8 @@ package net.modelbased.proasense.storage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -49,6 +49,30 @@ public class StorageWriterServiceMongoAsync {
         }
 
         return kafkaProperties;
+    }
+
+
+    private Map<String, Integer> createTopicCountMap() {
+        Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
+
+        topicCountMap.put("proasense.simpleevent.mhwirth.1000693", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1000700", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1002311", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1000695", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1000692", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1000696", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1002123", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1033619", 1);
+
+        topicCountMap.put("proasense.simpleevent.mhwirth.1002113", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1002115", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1002114", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1002116", 1);
+//        topicCountMap.put("proasense.simpleevent.mhwirth.1002311", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1002127", 1);
+        topicCountMap.put("proasense.simpleevent.mhwirth.1002128", 1);
+
+        return topicCountMap;
     }
 
 

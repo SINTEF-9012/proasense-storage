@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
- *
- *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
+ * Copyright 2015 Brian Elvesæter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,8 +46,8 @@ public class StorageWriterServiceMongoLocalBenchmark {
         String groupId = "SimpleEventLocalMongoBenchmark";
 
         // Mongo properties
-        String mongoURL = "mongodb://127.0.0.1:27017";
-//        String mongoULR = "mongodb://89.216.116.44:27017";
+//        String mongoURL = "mongodb://127.0.0.1:27017";
+        String mongoURL = "mongodb://89.216.116.44:27017";
 //        String mongoURL = "mongodb://192.168.11.25:27017";
 
         // Benchmark properties

@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
- *
- *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
+ * Copyright 2015 Brian Elvesæter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +21,15 @@ public class EventProperties {
     public static String PREDICTEDEVENT_CLASS_NAME = "eu.proasense.internal.PredictedEvent";
     public static String ANOMALYEVENT_CLASS_NAME = "eu.proasense.internal.AnomalyEvent";
     public static String RECOMMENDATIONEVENT_CLASS_NAME = "eu.proasense.internal.RecommendationEvent";
+    public static String RECOMMENDATIONSTATUS_CLASS_NAME = "eu.proasense.internal.RecommendationStatus";
 
     public static String SIMPLEEVENT_STORAGE_COLLECTION_PREFIX = "proasense.simpleevent.";
+    public static String DERIVEDEVENT_STORAGE_COLLECTION_PREFIX = "proasense.derivedevent.";
     public static String DERIVEDEVENT_STORAGE_COLLECTION_NAME = "proasense.derivedevent.system";
     public static String PREDICTEDEVENT_STORAGE_COLLECTION_NAME = "proasense.predictedevent.system";
     public static String ANOMALYEVENT_STORAGE_COLLECTION_NAME = "proasense.anomalyevent.system";
     public static String RECOMMENDATIONEVENT_STORAGE_COLLECTION_NAME = "proasense.recommendationevent.system";
+    public static String RECOMMENDATIONSTATUS_STORAGE_COLLECTION_NAME = "proasense.recommendationstatus.system";
 
     public static String STORAGE_DATABASE_NAME = "proasense_db";
     public static String STORAGE_SERIALIZED_EVENT_KEY = "SERIALIZED_EVENT";

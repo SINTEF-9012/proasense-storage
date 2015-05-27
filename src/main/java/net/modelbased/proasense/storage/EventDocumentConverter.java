@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
- *
- *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
+ * Copyright 2015 Brian Elvesæter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +22,7 @@ import eu.proasense.internal.ComplexValue;
 import eu.proasense.internal.DerivedEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
+import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
 
 import eu.proasense.internal.VariableType;
@@ -59,6 +58,10 @@ public class EventDocumentConverter {
         this.eventDocument = convertRecommendationEventToDocument(event);
     }
 
+    public EventDocumentConverter(RecommendationStatus event) {
+        this.eventDocument = convertRecommendationStatusToDocument(event);
+    }
+
     public EventDocument getEventDocument() {
         return this.eventDocument;
     }
@@ -70,6 +73,7 @@ public class EventDocumentConverter {
     public Document getDocument() {
         return this.eventDocument.getDocument();
     }
+
 
     private EventDocument convertSimpleEventToDocument(SimpleEvent event) {
         Document document = new Document("_id", event.getTimestamp());
@@ -106,6 +110,7 @@ public class EventDocumentConverter {
         return new EventDocument(event.getSensorId(), document);
     }
 
+
     private EventDocument convertDerivedEventToDocument(DerivedEvent event) {
         Document document = new Document("_id", event.getTimestamp());
         document.append("timestamp", event.getTimestamp());
@@ -123,8 +128,10 @@ public class EventDocumentConverter {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        return new EventDocument(EventProperties.DERIVEDEVENT_STORAGE_COLLECTION_NAME, document);
+        return new EventDocument(event.getComponentId(), document);
+//        return new EventDocument(EventProperties.DERIVEDEVENT_STORAGE_COLLECTION_NAME, document);
     }
+
 
     private EventDocument convertPredictedEventToDocument(PredictedEvent event) {
         Document document = new Document("_id", event.getTimestamp());
@@ -148,6 +155,7 @@ public class EventDocumentConverter {
         return new EventDocument(EventProperties.PREDICTEDEVENT_STORAGE_COLLECTION_NAME, document);
     }
 
+
     private EventDocument convertAnomalyEventToDocument(AnomalyEvent event) {
         Document document = new Document("_id", event.getTimestamp());
         document.append("timestamp", event.getTimestamp());
@@ -166,6 +174,7 @@ public class EventDocumentConverter {
 
         return new EventDocument(EventProperties.ANOMALYEVENT_STORAGE_COLLECTION_NAME, document);
     }
+
 
     private EventDocument convertRecommendationEventToDocument(RecommendationEvent event) {
         Document document = new Document("_id", event.getTimestamp());
@@ -187,5 +196,27 @@ public class EventDocumentConverter {
         }
 
         return new EventDocument(EventProperties.RECOMMENDATIONEVENT_STORAGE_COLLECTION_NAME, document);
+    }
+
+
+    private EventDocument convertRecommendationStatusToDocument(RecommendationStatus event) {
+        Document document = new Document("_id", event.getTimestamp());
+        document.append("actor", event.getActor());
+        document.append("timestamp", event.getTimestamp());
+        document.append("status", event.getStatus().toString());
+        document.append("comments", event.getComments());
+        document.append("recommendationId", event.getRecommendationId());
+
+        // Serialize message
+        TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
+        try {
+            byte[] bytes = serializer.serialize((RecommendationStatus) event);
+            document.append(EventProperties.STORAGE_SERIALIZED_EVENT_KEY, bytes);
+        }
+        catch (TException e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return new EventDocument(EventProperties.RECOMMENDATIONSTATUS_STORAGE_COLLECTION_NAME, document);
     }
 }

@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
- *
- *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
+ * Copyright 2015 Brian Elvesæter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,13 +45,13 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
     public static void main(String[] args) {
         // Kafka properties
-//        String zooKeeper = "89.216.116.44:2181";
-        String zooKeeper = "192.168.11.20:2181";
-        String groupId = "SimpleEventLocalMongoBenchmark";
+        String zooKeeper = "89.216.116.44:2181";
+//        String zooKeeper = "192.168.11.20:2181";
+        String groupId = "StorageWriterServiceMongoKafkaBenchmark";
 
         // Mongo properties
-        String mongoURL = "mongodb://127.0.0.1:27017";
-//        String mongoULR = "mongodb://89.216.116.44:27017";
+//        String mongoURL = "mongodb://127.0.0.1:27017";
+        String mongoURL = "mongodb://89.216.116.44:27017";
 //        String mongoURL = "mongodb://192.168.11.25:27017";
 
         // Benchmark properties
@@ -63,9 +61,9 @@ public class StorageWriterServiceMongoKafkaBenchmark {
         int NO_SIMPLEEVENT_MESSAGES = 10000;
 
         int NO_DERIVEDEVENT_LISTENERS = 1;
-        int NO_DERIVEDEVENT_GENERATORS = 1;
-        int NO_DERIVEDEVENT_RATE = 100;
-        int NO_DERIVEDEVENT_MESSAGES = 1000;
+        int NO_DERIVEDEVENT_GENERATORS = 2;
+        int NO_DERIVEDEVENT_RATE = 20;
+        int NO_DERIVEDEVENT_MESSAGES = 10000;
 
         int NO_PREDICTEDEVENT_LISTENERS = 1;
         int NO_PREDICTEDEVENT_GENERATORS = 1;
@@ -107,7 +105,7 @@ public class StorageWriterServiceMongoKafkaBenchmark {
             topicMap.put("proasense.simpleevent.mhwirth." + i, 1);
         }
 
-        // Create thread for simple event listeners (filter)
+        // Create thread for simple event listener (filter)
         String topicFilter = "proasense.simpleevent.mhwirth.[" + 0 + "-" + (NO_SIMPLEEVENT_GENERATORS - 1) + "]";
         workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, topicFilter));
 
@@ -121,10 +119,14 @@ public class StorageWriterServiceMongoKafkaBenchmark {
             workers.add(new RandomEventKafkaGenerator<DerivedEvent>(DerivedEvent.class, zooKeeper, groupId, "proasense.derivedevent.mhwirth." + i, "proasense.derivedevent.mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
         }
 
+        // Create thread for derived event listener (filter)
+        topicFilter = "proasense.derivedevent.mhwirth.[" + 0 + "-" + (NO_DERIVEDEVENT_GENERATORS - 1) + "]";
+        workers.add(new EventListenerKafkaFilter<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, topicFilter));
+
         // Create threads for derived event listeners
-        for (int i = 0; i < NO_DERIVEDEVENT_LISTENERS; i++) {
-            workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "proasense.derivedevent.mhwirth." + i));
-        }
+//        for (int i = 0; i < NO_DERIVEDEVENT_LISTENERS; i++) {
+//            workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "proasense.derivedevent.mhwirth." + i))
+//        }
 
         // Create threads for random predicted event generators
         for (int i = 0; i < NO_PREDICTEDEVENT_GENERATORS; i++) {

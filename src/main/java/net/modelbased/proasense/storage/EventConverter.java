@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
- *
- *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
+ * Copyright 2015 Brian Elvesæter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +19,7 @@ import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
+import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
@@ -50,6 +49,9 @@ public class EventConverter<T> {
 
         if (eventTypeName.matches("eu.proasense.internal.RecommendationEvent"))
             this.event = (T)convertDocumentToRecommendationEvent(document);
+
+        if (eventTypeName.matches("eu.proasense.internal.RecommendationStatus"))
+            this.event = (T)convertDocumentToRecommendationStatus(document);
     }
 
 
@@ -76,6 +78,7 @@ public class EventConverter<T> {
         return event;
     }
 
+
     private DerivedEvent convertDocumentToDerivedEvent(Document document) {
         Binary serializedEvent = (Binary)document.get(EventProperties.STORAGE_SERIALIZED_EVENT_KEY);
         byte[] bytes = serializedEvent.getData();
@@ -93,6 +96,7 @@ public class EventConverter<T> {
 
         return event;
     }
+
 
     private PredictedEvent convertDocumentToPredictedEvent(Document document) {
         Binary serializedEvent = (Binary)document.get(EventProperties.STORAGE_SERIALIZED_EVENT_KEY);
@@ -112,6 +116,7 @@ public class EventConverter<T> {
         return event;
     }
 
+
     private AnomalyEvent convertDocumentToAnomalyEvent(Document document) {
         Binary serializedEvent = (Binary)document.get(EventProperties.STORAGE_SERIALIZED_EVENT_KEY);
         byte[] bytes = serializedEvent.getData();
@@ -130,6 +135,7 @@ public class EventConverter<T> {
         return event;
     }
 
+
     private RecommendationEvent convertDocumentToRecommendationEvent(Document document) {
         Binary serializedEvent = (Binary)document.get(EventProperties.STORAGE_SERIALIZED_EVENT_KEY);
         byte[] bytes = serializedEvent.getData();
@@ -147,4 +153,24 @@ public class EventConverter<T> {
 
         return event;
     }
+
+
+    private RecommendationStatus convertDocumentToRecommendationStatus(Document document) {
+        Binary serializedEvent = (Binary)document.get(EventProperties.STORAGE_SERIALIZED_EVENT_KEY);
+        byte[] bytes = serializedEvent.getData();
+
+        // Deserialize event message
+        TDeserializer deserializer = new TDeserializer(new TBinaryProtocol.Factory());
+        RecommendationStatus event = new RecommendationStatus();
+
+        try {
+            deserializer.deserialize(event, bytes);
+        }
+        catch (TException e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return event;
+    }
+
 }

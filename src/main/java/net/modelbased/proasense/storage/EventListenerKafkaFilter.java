@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
- *
- *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
+ * Copyright 2015 Brian Elvesæter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +19,7 @@ import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
+import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
 import kafka.consumer.Consumer;
 import kafka.consumer.ConsumerConfig;
@@ -109,6 +108,12 @@ public class EventListenerKafkaFilter<T> implements Runnable {
                 }
                 if (eventTypeName.matches(EventProperties.RECOMMENDATIONEVENT_CLASS_NAME)) {
                     EventDocumentConverter converter = new EventDocumentConverter((RecommendationEvent) event);
+                    EventDocument eventDocument = new EventDocument(converter.getCollectionId(), converter.getDocument());
+
+                    queue.put(eventDocument);
+                }
+                if (eventTypeName.matches(EventProperties.RECOMMENDATIONSTATUS_CLASS_NAME)) {
+                    EventDocumentConverter converter = new EventDocumentConverter((RecommendationStatus) event);
                     EventDocument eventDocument = new EventDocument(converter.getCollectionId(), converter.getDocument());
 
                     queue.put(eventDocument);
