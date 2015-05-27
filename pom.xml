@@ -18,9 +18,19 @@
             <name>Maven2</name>
             <url>http://repo.maven.apache.org/maven2</url>
         </repository>
+        <repository>
+            <id>archiva.public</id>
+            <name>Nissatech Public Repository</name>
+            <url>http://maven.nissatech.com/repository/public/</url>
+        </repository>
     </repositories>
 
  	<dependencies>
+        <dependency>
+            <groupId>eu.proasense.internal</groupId>
+            <artifactId>thrift-messages</artifactId>
+            <version>0.3</version>
+        </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
