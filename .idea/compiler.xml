@@ -25,13 +25,19 @@
         <processorPath useClasspath="true" />
         <module name="proasense" />
         <module name="proasense-sensing-storage" />
+      </profile>
+      <profile default="false" name="Annotation profile for proasense-storage" enabled="true">
+        <sourceOutputDir name="target\generated-sources\annotations" />
+        <sourceTestOutputDir name="target\generated-test-sources\test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
         <module name="proasense-storage" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.7">
       <module name="proasense" target="1.5" />
       <module name="proasense-sensing-storage" target="1.5" />
-      <module name="proasense-storage" target="1.5" />
+      <module name="proasense-storage" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
