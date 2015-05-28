@@ -94,6 +94,15 @@ public class EventDocumentConverter {
             if (valueType.equals(VariableType.LONG)) {
                 propertiesObj.put(key.replace(".", "_"), new Long(valueKey));
             }
+            if (valueType.equals(VariableType.STRING)) {
+                propertiesObj.put(key.replace(".", "_"), new String(valueKey));
+            }
+            if (valueType.equals(VariableType.DOUBLE)) {
+                propertiesObj.put(key.replace(".", "_"), new Double(valueKey));
+            }
+            if (valueType.equals(VariableType.BLOB)) {
+                propertiesObj.put(key.replace(".", "_"), new String(valueKey.toString()));
+            }
         }
         document.append("eventProperties", propertiesObj);
 
