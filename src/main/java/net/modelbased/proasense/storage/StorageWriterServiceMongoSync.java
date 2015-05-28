@@ -106,7 +106,9 @@ public class StorageWriterServiceMongoSync {
         // Create thread for Kafka event listeners
         workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sensing.mhwirth.simple.*"));
         workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.enricher.mhwirth.derived"));
-        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sp.mhwirth.derived"));
+//        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sp.mhwirth.derived"));
+        // Temporarily topic for StreamPipes component used during the Nis workshop
+        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sp.internal.incoming"));
         workers.add(new EventListenerKafkaTopic<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.oa.mhwirth.predicted"));
         workers.add(new EventListenerKafkaTopic<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.oa.mhwirth.anomaly"));
         workers.add(new EventListenerKafkaTopic<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.pandda.mhwirth.recommendation"));

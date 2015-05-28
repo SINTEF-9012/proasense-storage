@@ -1,106 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="DataInfrastructure - EventPlayer/api/playback" resourceRoot="" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://nissatech.no-ip.org:8084" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>http://nissatech.no-ip.org:8084</con:endpoint></con:endpoints><con:resource name="Playback" path="/EventPlayer/api/playback"><con:settings/><con:parameters/><con:method name="Playback" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element>Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request/><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="MHWirth - Gear box and swivel monitoring" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html</con:mediaType><con:status>400</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="DDM.DrillingRPM" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request>{
+<con:soapui-project activeEnvironment="Default" name="DataInfrastructure - EventPlayer/api/playback" resourceRoot="" soapui-version="5.0.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://nissatech.no-ip.org:8084" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>http://nissatech.no-ip.org:8084</con:endpoint></con:endpoints><con:resource name="Playback" path="/EventPlayer/api/playback"><con:settings/><con:parameters/><con:method name="Playback" method="GET"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element>Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request/><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="MHWirth - Gear box and swivel monitoring" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html</con:mediaType><con:status>400</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="DDM.DrillingRPM" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request>{
 	"startTime": "2014-02-14T08:00:00+0100",
 		"endTime": "2014-02-14T09:00:00+0100",
 		"variables": ["1000693"],
-		"topic": "MHWirth.DDM.DrillingRPM",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1000693",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="DDM.DrillingTorque" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1000700"],
-		"topic": "MHWirth.DDM.DrillingTorque",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1000700",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="DDM.HookLoad" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request>{
 	"startTime": "2014-02-14T08:00:00+0100",
 		"endTime": "2014-02-14T09:00:00+0100",
 		"variables": ["1002311"],
-		"topic": "MHWirth.DDM.HookLoad",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1002311",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="DDM.GearLubeOilTemp" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1000695"],
-		"topic": "MHWirth.DDM.GearLubeOilTemp",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1000695",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="DDM.GearBoxPressure" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1000692"],
-		"topic": "MHWirth.DDM.GearBoxPressure",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1000692",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="DDM.SwivelOilTemp" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1000696"],
-		"topic": "MHWirth.DDM.SwivelOilTemp",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1000696",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="DrillBit.WeightOnBit" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1002123"],
-		"topic": "MHWirth.DrillBit.WeightOnBit",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1002123",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Env.OutdoorTemp" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://89.216.116.44:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1033619"],
-		"topic": "MHWirth.Env.OutdoorTemp",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1033619",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="MHWirth - Set point deviation detection" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Ram.PositionSetPoint" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://nissatech.no-ip.org:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1002113"],
-		"topic": "MHWirth.Ram.PositionSetPoint",
-		"partner": "aker"
-}
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1002113",
+		"partner": "aker",
+		"binary": true
+
 </con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Ram.PositionMeasuredValue" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://nissatech.no-ip.org:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1002115"],
-		"topic": "MHWirth.Ram.PositionMeasuredValue",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.10021115",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Ram.VelocitySetPoint" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://nissatech.no-ip.org:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1002114"],
-		"topic": "MHWirth.Ram.VelocitySetPoint",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1002114",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Ram.VelocityMeasuredValue" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://nissatech.no-ip.org:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1002116"],
-		"topic": "MHWirth.Ram.VelocityMeasuredValue",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1002116",
+		"partner": "aker",
+		"binary": true
 }
 </con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="DDM.HookLoad" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://nissatech.no-ip.org:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1002311"],
-		"topic": "MHWirth.DDM.HookLoad",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1002311",
+		"partner": "aker",
+		"binary": true
 }</con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Rig.MRUPosition" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://nissatech.no-ip.org:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1002127"],
-		"topic": "MHWirth.Rig.MRUPosition",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1002127",
+		"partner": "aker",
+		"binary": true
 }</con:request><con:originalUri>http://nissatech.no-ip.org/EventPlayer/api/playback</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="Rig.MRUVelocity" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://nissatech.no-ip.org:8084</con:endpoint><con:request>{
 	"startTime": "2013-11-19T13:00:00+0100",
 		"endTime": "2013-11-19T14:15:00+0100",
 		"variables": ["1002128"],
-		"topic": "MHWirth.Rig.MRUVelocity",
-		"partner": "aker"
+		"topic": "eu.proasense.internal.sensing.mhwirth.simple.1002128",
+		"partner": "aker",
+		"binary": true
 }</con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="HELLA - Scrap rate" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Events" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://nissatech.no-ip.org:8084</con:endpoint><con:request>{
 	"startTime": "2014-02-05T12:00:00.000Z",
 		"endTime": "2014-02-05T13:15:00.000Z",

@@ -44,8 +44,8 @@ public class StorageReaderServiceMongoLocalBenchmark {
         String groupId = "SimpleEventLocalMongoBenchmark";
 
         // Mongo properties
-//        String mongoURL = "mongodb://127.0.0.1:27017";
-        String mongoURL = "mongodb://89.216.116.44:27017";
+        String mongoURL = "mongodb://127.0.0.1:27017";
+//        String mongoURL = "mongodb://89.216.116.44:27017";
 //        String mongoURL = "mongodb://192.168.11.25:27017";
 
         int NO_SIMPLEEVENTS_THREADS = 1;
@@ -62,14 +62,14 @@ public class StorageReaderServiceMongoLocalBenchmark {
 
         long NO_QUERY_SIMPLE_STARTTIME = 1432798130753L;
         long NO_QUERY_SIMPLE_ENDTIME = 1432798131956L;
-        long NO_QUERY_DERIVED_STARTTIME = 1429801515663L;
-        long NO_QUERY_DERIVED_ENDTIME = 1429801516579L;
-        long NO_QUERY_PREDICTED_STARTTIME = 1429801516571L;
-        long NO_QUERY_PREDICTED_ENDTIME = 1429801525589L;
-        long NO_QUERY_ANOMALY_STARTTIME = 1432798131606L;
+        long NO_QUERY_DERIVED_STARTTIME = 1432807975740L;
+        long NO_QUERY_DERIVED_ENDTIME = 1432807977094L;
+        long NO_QUERY_PREDICTED_STARTTIME = 1432807976707L;
+        long NO_QUERY_PREDICTED_ENDTIME = 1432808027877L;
+        long NO_QUERY_ANOMALY_STARTTIME = 1432807976603L;
         long NO_QUERY_ANOMALY_ENDTIME = 1432798131956L;
-        long NO_QUERY_RECOMMENDATION_STARTTIME = 1429801516576L;
-        long NO_QUERY_RECOMMENDATION_ENDTIME = 1432798131956L;
+        long NO_QUERY_RECOMMENDATION_STARTTIME = 1432807976678L;
+        long NO_QUERY_RECOMMENDATION_ENDTIME = 1432808028864L;
 
         // Default query for simple events
         Callable<List<Document>> query01 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.DEFAULT);

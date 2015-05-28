@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <con:soapui-workspace name="ProaSense" soapui-version="5.0.0" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
-  <con:project status="CLOSED" name="DataInfrastructure - EventPlayer/api/playback">W:/GitHub/proasense-storage/soapui/DataInfrastructure---EventPlayer-api-playback-soapui-project.xml</con:project>
-  <con:project status="CLOSED" name="SensApp">W:/GitHub/proasense-storage/soapui/SensApp-soapui-project.xml</con:project>
+  <con:project name="DataInfrastructure - EventPlayer/api/playback">W:/GitHub/proasense-storage/soapui/DataInfrastructure---EventPlayer-api-playback-soapui-project.xml</con:project>
+  <con:project name="SensApp">W:/GitHub/proasense-storage/soapui/SensApp-soapui-project.xml</con:project>
 </con:soapui-workspace>
