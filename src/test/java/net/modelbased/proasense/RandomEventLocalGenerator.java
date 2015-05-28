@@ -19,6 +19,7 @@ import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
+import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
 import net.modelbased.proasense.storage.EventDocument;
 import net.modelbased.proasense.storage.EventDocumentConverter;
@@ -152,6 +153,23 @@ public class RandomEventLocalGenerator<T> implements Runnable {
 
 //                    if (cnt % 1000 == 0)
 //                        System.out.println("RecommendationEvent(" + cnt + "): " + event.toString());
+                }
+
+                // Generate feedback event with random values
+                if (eventTypeName.matches(EventProperties.FEEDBACKEVENT_CLASS_NAME)) {
+                    T event = (T)eventGenerator.generateFeedbackEvent(EventProperties.FEEDBACKEVENT_STORAGE_COLLECTION_NAME);
+
+                    // Serialize message
+                    TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
+                    byte[] bytes = serializer.serialize((RecommendationStatus)event);
+
+                    EventDocumentConverter converter = new EventDocumentConverter((RecommendationStatus)event);
+                    EventDocument eventDocument = new EventDocument(converter.getCollectionId(), converter.getDocument());
+
+                    queue.put(eventDocument);
+
+//                    if (cnt % 1000 == 0)
+//                        System.out.println("RecommendationStatus(" + cnt + "): " + event.toString());
                 }
             }
         } catch (InterruptedException e) {

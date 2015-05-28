@@ -21,5 +21,6 @@ public enum EventQueryType {
     DERIVED,
     PREDICTED,
     ANOMALY,
-    RECOMMENDATION
+    RECOMMENDATION,
+    FEEDBACK
 }

@@ -72,6 +72,10 @@ public class StorageWriterServiceMongoLocalBenchmark {
         int NO_RECOMMENDATIONEVENT_RATE = 1000;
         int NO_RECOMMENDATIONEVENT_MESSAGES = 100;
 
+        int NO_FEEDBACKEVENT_GENERATORS = 0;
+        int NO_FEEDBACKEVENT_RATE = 1000;
+        int NO_FEEDBACKEVENT_MESSAGES = 100;
+
         int NO_MONGOSTORAGE_WRITERS = 2;
         int NO_MONGOSTORAGE_BULKSIZE = 10000;
         int NO_MONGOSTORAGE_MAXWAIT = 1000;

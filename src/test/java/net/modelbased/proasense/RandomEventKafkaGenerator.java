@@ -19,6 +19,7 @@ import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
+import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
 import net.modelbased.proasense.storage.EventProperties;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -144,6 +145,23 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
 //                    if (cnt % 1000 == 0)
 //                        System.out.println("RecommendationEvent(" + cnt + "): " + event.toString());
                 }
+
+                // Generate feedback event with random values
+                if (eventTypeName.matches(EventProperties.FEEDBACKEVENT_CLASS_NAME)) {
+                    T event = (T)eventGenerator.generateFeedbackEvent(EventProperties.FEEDBACKEVENT_STORAGE_COLLECTION_NAME);
+
+                    // Serialize message
+                    TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
+                    byte[] bytes = serializer.serialize((RecommendationStatus)event);
+
+                    // Publish message
+                    ProducerRecord<String, byte[]> message = new ProducerRecord<String, byte[]>(this.topic, bytes);
+                    producer.send(message);
+
+//                    if (cnt % 1000 == 0)
+//                        System.out.println("RecommendationEvent(" + cnt + "): " + event.toString());
+                }
+
             }
         } catch (InterruptedException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());

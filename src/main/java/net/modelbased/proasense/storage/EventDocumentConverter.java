@@ -30,6 +30,7 @@ import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -121,7 +122,8 @@ public class EventDocumentConverter {
 
 
     private EventDocument convertDerivedEventToDocument(DerivedEvent event) {
-        Document document = new Document("_id", event.getTimestamp());
+//        Document document = new Document("_id", event.getTimestamp());
+        Document document = new Document("_id", new ObjectId());
         document.append("timestamp", event.getTimestamp());
         document.append("componentId", event.getComponentId());
         document.append("eventName", event.getEventName());
@@ -226,6 +228,6 @@ public class EventDocumentConverter {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        return new EventDocument(EventProperties.RECOMMENDATIONSTATUS_STORAGE_COLLECTION_NAME, document);
+        return new EventDocument(EventProperties.FEEDBACKEVENT_STORAGE_COLLECTION_NAME, document);
     }
 }

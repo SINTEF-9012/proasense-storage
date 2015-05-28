@@ -15,14 +15,7 @@
  */
 package net.modelbased.proasense;
 
-import eu.proasense.internal.AnomalyEvent;
-import eu.proasense.internal.ComplexValue;
-import eu.proasense.internal.DerivedEvent;
-import eu.proasense.internal.PDFType;
-import eu.proasense.internal.PredictedEvent;
-import eu.proasense.internal.RecommendationEvent;
-import eu.proasense.internal.SimpleEvent;
-import eu.proasense.internal.VariableType;
+import eu.proasense.internal.*;
 
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomDataGenerator;
@@ -154,4 +147,25 @@ public class EventGenerator {
         return event;
     }
 
+
+    public RecommendationStatus generateFeedbackEvent(String collectionId) {
+        // Define complex value
+        ComplexValue value = new ComplexValue();
+        value.setValue(Objects.toString(randomNumber.nextLong()));
+        value.setType(VariableType.LONG);
+
+        // Define properties
+        Map<String, ComplexValue> properties = new HashMap<String, ComplexValue>();
+        properties.put("recommendation.value", value);
+
+        // Define feedback event
+        RecommendationStatus event = new RecommendationStatus();
+        event.setActor(randomData.nextHexString(10));
+        event.setTimestamp(System.currentTimeMillis());
+        event.setStatus(Status.SUGGESTED);
+        event.setComments(randomData.nextHexString(100));
+        event.setRecommendationId(Objects.toString(System.currentTimeMillis()));
+
+        return event;
+    }
 }

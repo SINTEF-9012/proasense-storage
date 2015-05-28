@@ -21,7 +21,7 @@ public class EventProperties {
     public static String PREDICTEDEVENT_CLASS_NAME = "eu.proasense.internal.PredictedEvent";
     public static String ANOMALYEVENT_CLASS_NAME = "eu.proasense.internal.AnomalyEvent";
     public static String RECOMMENDATIONEVENT_CLASS_NAME = "eu.proasense.internal.RecommendationEvent";
-    public static String RECOMMENDATIONSTATUS_CLASS_NAME = "eu.proasense.internal.RecommendationStatus";
+    public static String FEEDBACKEVENT_CLASS_NAME = "eu.proasense.internal.RecommendationStatus";
 
     public static String SIMPLEEVENT_STORAGE_COLLECTION_PREFIX = "simpleevent.";
     public static String DERIVEDEVENT_STORAGE_COLLECTION_PREFIX = "derivedevent.";
@@ -31,7 +31,7 @@ public class EventProperties {
     public static String PREDICTEDEVENT_STORAGE_COLLECTION_NAME = "predictedevent.system";
     public static String ANOMALYEVENT_STORAGE_COLLECTION_NAME = "anomalyevent.system";
     public static String RECOMMENDATIONEVENT_STORAGE_COLLECTION_NAME = "recommendationevent.system";
-    public static String RECOMMENDATIONSTATUS_STORAGE_COLLECTION_NAME = "recommendationstatus.system";
+    public static String FEEDBACKEVENT_STORAGE_COLLECTION_NAME = "feedbackevent.system";
 
     public static String STORAGE_DATABASE_NAME = "proasense_db";
     public static String STORAGE_SERIALIZED_EVENT_KEY = "SERIALIZED_EVENT";

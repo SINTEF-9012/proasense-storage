@@ -117,7 +117,7 @@ public class EventListenerKafkaTopic<T> implements Runnable {
 
                     queue.put(eventDocument);
                 }
-                if (eventTypeName.matches(EventProperties.RECOMMENDATIONSTATUS_CLASS_NAME)) {
+                if (eventTypeName.matches(EventProperties.FEEDBACKEVENT_CLASS_NAME)) {
                     EventDocumentConverter converter = new EventDocumentConverter((RecommendationStatus) event);
                     EventDocument eventDocument = new EventDocument(converter.getCollectionId(), converter.getDocument());
 

@@ -88,7 +88,7 @@ public class StorageWriterServiceMongoAsync {
 //        String mongoULR = "mongodb://89.216.116.44:27017";
         String mongoURL = "mongodb://192.168.11.25:27017";
 
-        //SensApp properties
+        // SensApp properties
         String sensappURL = "http://127.0.0.1:8090";
         String sensorName = "MHWirth.DDM.Hookload";
 

@@ -72,17 +72,17 @@ public class StorageWriterServiceMongoSync {
 //        String mongoURL = "mongodb://89.216.116.44:27017";
 //        String mongoURL = "mongodb://192.168.11.25:27017";
 
-        //SensApp properties
+        // SensApp properties
         String sensappURL = "http://127.0.0.1:8090";
         String sensorName = "MHWirth.DDM.Hookload";
 
         // Storage writer properties
         int NO_SIMPLEEVENT_LISTENERS = 1;
-        int NO_DERIVEDEVENT_LISTENERS = 2;
+        int NO_DERIVEDEVENT_LISTENERS = 1;
         int NO_PREDICTEDEVENT_LISTENERS = 1;
         int NO_ANOMALYEVENT_LISTENERS = 1;
         int NO_RECOMMENDATIONEVENT_LISTENERS = 1;
-        int NO_RECOMMENDATIONSTATUS_LISTENERS = 1;
+        int NO_RECOMMENDATIONSTATUS_LISTENERS = 0;
 
         int NO_MONGOSTORAGE_WRITERS = 1;
         int NO_MONGOSTORAGE_BULKSIZE = 10000;
@@ -104,15 +104,16 @@ public class StorageWriterServiceMongoSync {
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
         // Create thread for Kafka event listeners
-        workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sensing.mhwirth.simple.*"));
-        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.enricher.mhwirth.derived"));
+        workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "sintef.eu.proasense.internal.sensing.mhwirth.simple.*"));
+        workers.add(new EventListenerKafkaFilter<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.(enricher.mhwirth.derived|sp.internal.incoming)"));
+//        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.enricher.mhwirth.derived"));
 //        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sp.mhwirth.derived"));
         // Temporarily topic for StreamPipes component used during the Nis workshop
-        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sp.internal.incoming"));
+//        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sp.internal.incoming"));
         workers.add(new EventListenerKafkaTopic<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.oa.mhwirth.predicted"));
         workers.add(new EventListenerKafkaTopic<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.oa.mhwirth.anomaly"));
         workers.add(new EventListenerKafkaTopic<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.pandda.mhwirth.recommendation"));
-        workers.add(new EventListenerKafkaTopic<RecommendationStatus>(RecommendationStatus.class, queue, zooKeeper, groupId, "eu.proasense.internal.bia.mhwirth.feedback"));
+//        workers.add(new EventListenerKafkaTopic<RecommendationStatus>(RecommendationStatus.class, queue, zooKeeper, groupId, "eu.proasense.internal.bia.mhwirth.feedback"));
 
         // Create threads for Mongo storage event writers
         for (int i = 0; i < NO_MONGOSTORAGE_WRITERS; i++) {

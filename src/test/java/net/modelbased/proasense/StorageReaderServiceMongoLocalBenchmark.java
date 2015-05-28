@@ -53,6 +53,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         int NO_PREDICTEDEVENTS_THREADS = 0;
         int NO_ANOMALYEVENTS_THREADS = 0;
         int NO_RECOMMENDATIONEVENTS_THREADS = 0;
+        int NO_FEEDBACKEVENTS_THREADS = 0;
 
         int NO_TOTAL_THREADS = NO_SIMPLEEVENTS_THREADS + NO_DERIVEDEVENTS_THREADS + NO_PREDICTEDEVENTS_THREADS + NO_ANOMALYEVENTS_THREADS + NO_RECOMMENDATIONEVENTS_THREADS;
 
@@ -70,6 +71,8 @@ public class StorageReaderServiceMongoLocalBenchmark {
         long NO_QUERY_ANOMALY_ENDTIME = 1432798131956L;
         long NO_QUERY_RECOMMENDATION_STARTTIME = 1432807976678L;
         long NO_QUERY_RECOMMENDATION_ENDTIME = 1432808028864L;
+        long NO_QUERY_FEEDBACK_STARTTIME = 1432807976678L;
+        long NO_QUERY_FEEDBACK_ENDTIME = 1432808028864L;
 
         // Default query for simple events
         Callable<List<Document>> query01 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.DEFAULT);
@@ -177,6 +180,22 @@ public class StorageReaderServiceMongoLocalBenchmark {
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
+
+/**
+        // Default query for feedback events
+        Callable<List<Document>> query09 = new EventReaderMongoSync(mongoURL, EventQueryType.FEEDBACK, EventProperties.FEEDBACKEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_FEEDBACK_STARTTIME, NO_QUERY_FEEDBACK_ENDTIME, EventQueryOperation.DEFAULT);
+        executor.submit(query09);
+        try {
+            List<Document> queryResult = query09.call();
+            int i = 0;
+            for (Document doc : queryResult) {
+                i++;
+                System.out.println("DEBUG(FEEDBACK.DEFAULT(" + i + ")): " + doc.toString());
+            }
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+**/
 
         // Shut down executor
         executor.shutdown();
