@@ -129,52 +129,6 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
-            <!-- Licence headers -->
-            <plugin>
-                <inherited>false</inherited>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.9.0</version>
-                <configuration>
-                    <strictCheck>true</strictCheck>
-                    <header>${project.basedir}/HEADER</header>
-                    <failIfMissing>true</failIfMissing>
-                    <aggregate>true</aggregate>
-                    <properties>
-                        <projectname>proasense-storage</projectname>
-                        <owner>Brian Elvesæter</owner>
-                        <year>${project.inceptionYear}</year>
-                        <artid>${project.artifactId}</artid>
-                    </properties>
-                    <mapping>
-                        <scala>JAVADOC_STYLE</scala>
-                        <conf>SCRIPT_STYLE</conf>
-                    </mapping>
-                    <excludes>
-                        <exclude>.gitignore</exclude>
-                        <exclude>.cache</exclude>
-                        <exclude>**/site.xml</exclude>
-                        <exclude>*.log</exclude>
-                        <exclude>*.srt</exclude>
-                        <exclude>*.csv</exclude>
-                        <exclude>*.txt</exclude>
-                        <exclude>*.json</exclude>
-                        <exclude>.idea/**</exclude>
-                        <exclude>**/src/main/resources/lgpl_header.txt</exclude>
-                        <exclude>**/src/test/resources/**</exclude>
-                        <exclude>**/src/test/data/**</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>check-headers</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
    		</plugins>
   	</build>  
 
