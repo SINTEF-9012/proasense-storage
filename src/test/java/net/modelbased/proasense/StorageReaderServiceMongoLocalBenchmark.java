@@ -60,19 +60,19 @@ public class StorageReaderServiceMongoLocalBenchmark {
         ArrayList<Callable> workers = new ArrayList<Callable>(NO_TOTAL_THREADS);
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
-        long NO_QUERY_SIMPLE_STARTTIME = 1430310743479L;
-        long NO_QUERY_SIMPLE_ENDTIME = 1430310743570L;
+        long NO_QUERY_SIMPLE_STARTTIME = 1432798130753L;
+        long NO_QUERY_SIMPLE_ENDTIME = 1432798131956L;
         long NO_QUERY_DERIVED_STARTTIME = 1429801515663L;
         long NO_QUERY_DERIVED_ENDTIME = 1429801516579L;
         long NO_QUERY_PREDICTED_STARTTIME = 1429801516571L;
         long NO_QUERY_PREDICTED_ENDTIME = 1429801525589L;
-        long NO_QUERY_ANOMALY_STARTTIME = 1429801516576L;
-        long NO_QUERY_ANOMALY_ENDTIME = 1429801525593L;
+        long NO_QUERY_ANOMALY_STARTTIME = 1432798131606L;
+        long NO_QUERY_ANOMALY_ENDTIME = 1432798131956L;
         long NO_QUERY_RECOMMENDATION_STARTTIME = 1429801516576L;
-        long NO_QUERY_RECOMMENDATION_ENDTIME = 1429801525587L;
+        long NO_QUERY_RECOMMENDATION_ENDTIME = 1432798131956L;
 
         // Default query for simple events
-        Callable<List<Document>> query01 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "proasense.simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.DEFAULT);
+        Callable<List<Document>> query01 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.DEFAULT);
         executor.submit(query01);
         try {
             List<Document> queryResult = query01.call();
@@ -87,7 +87,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Average query for simple events
-        Callable<List<Document>> query02 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "proasense.simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.AVERAGE);
+        Callable<List<Document>> query02 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.AVERAGE);
         executor.submit(query02);
         try {
             List<Document> queryResult = query02.call();
@@ -99,7 +99,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Maximum query for simple events
-        Callable<List<Document>> query03 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "proasense.simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.MAXIMUM);
+        Callable<List<Document>> query03 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.MAXIMUM);
         executor.submit(query03);
         try {
             List<Document> queryResult = query03.call();
@@ -111,7 +111,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Minimum query for simple events
-        Callable<List<Document>> query04 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "proasense.simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.MINUMUM);
+        Callable<List<Document>> query04 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.MINUMUM);
         executor.submit(query04);
         try {
             List<Document> queryResult = query04.call();
@@ -123,7 +123,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Default query for derived events
-        Callable<List<Document>> query05 = new EventReaderMongoSync(mongoURL, EventQueryType.DERIVED, EventProperties.DERIVEDEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_DERIVED_STARTTIME, NO_QUERY_DERIVED_ENDTIME, EventQueryOperation.DEFAULT);
+        Callable<List<Document>> query05 = new EventReaderMongoSync(mongoURL, EventQueryType.DERIVED, "derivedevent.mhwirth.0", NO_QUERY_DERIVED_STARTTIME, NO_QUERY_DERIVED_ENDTIME, EventQueryOperation.DEFAULT);
         executor.submit(query05);
         try {
             List<Document> queryResult = query05.call();

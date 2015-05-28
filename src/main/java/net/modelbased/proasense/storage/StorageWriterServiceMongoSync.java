@@ -62,14 +62,14 @@ public class StorageWriterServiceMongoSync {
 
     public static void main(String[] args) {
         // Kafka properties
-//        String zooKeeper = "89.216.116.44:2181";
-        String zooKeeper = "192.168.11.20:2181";
+        String zooKeeper = "89.216.116.44:2181";
+//        String zooKeeper = "192.168.11.20:2181";
         String groupId = "StorageWriterServiceMongoSync";
         String topic = "proasense.simpleevent.mhwirth.*";
 
         // Mongo properties
-//        String mongoURL = "mongodb://127.0.0.1:27017";
-        String mongoURL = "mongodb://89.216.116.44:27017";
+        String mongoURL = "mongodb://127.0.0.1:27017";
+//        String mongoURL = "mongodb://89.216.116.44:27017";
 //        String mongoURL = "mongodb://192.168.11.25:27017";
 
         //SensApp properties
@@ -104,7 +104,7 @@ public class StorageWriterServiceMongoSync {
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
         // Create thread for Kafka event listeners
-        workers.add(new EventListenerKafkaTopic<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sensing.mhwirth.simple"));
+        workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sensing.mhwirth.simple.*"));
         workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.enricher.mhwirth.derived"));
         workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sp.mhwirth.derived"));
         workers.add(new EventListenerKafkaTopic<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.oa.mhwirth.predicted"));
