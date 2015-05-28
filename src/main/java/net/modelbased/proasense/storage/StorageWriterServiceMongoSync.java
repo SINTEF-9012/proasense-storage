@@ -62,8 +62,8 @@ public class StorageWriterServiceMongoSync {
 
     public static void main(String[] args) {
         // Kafka properties
-        String zooKeeper = "89.216.116.44:2181";
-//        String zooKeeper = "192.168.11.20:2181";
+//        String zooKeeper = "89.216.116.44:2181";
+        String zooKeeper = "192.168.11.20:2181";
         String groupId = "StorageWriterServiceMongoSync";
         String topic = "proasense.simpleevent.mhwirth.*";
 

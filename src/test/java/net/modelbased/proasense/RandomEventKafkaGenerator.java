@@ -35,18 +35,18 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
     private String zooKeeper;
     private String groupId;
     private String topic;
-    private String sensorId;
+    private String collectionId;
     private int sleep;
     private int max;
     private EventGenerator eventGenerator;
 
 
-    public RandomEventKafkaGenerator(Class<T> eventType, String zooKeeper, String groupId, String topic, String sensorId, int sleep, int max) {
+    public RandomEventKafkaGenerator(Class<T> eventType, String zooKeeper, String groupId, String topic, String collectionId, int sleep, int max) {
         this.eventType = eventType;
         this.zooKeeper = zooKeeper;
         this.groupId = groupId;
         this.topic = topic;
-        this.sensorId = sensorId;
+        this.collectionId = collectionId;
         this.sleep = sleep;
         this.max = max;
         this.eventGenerator = new EventGenerator();
@@ -66,7 +66,7 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
 
                 // Generate simple event with random values
                 if (eventTypeName.matches(EventProperties.SIMPLEEVENT_CLASS_NAME)) {
-                    T event = (T) eventGenerator.generateSimpleEvent(this.sensorId);
+                    T event = (T) eventGenerator.generateSimpleEvent(this.collectionId);
 
                     // Serialize message
                     TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
@@ -83,7 +83,7 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
                 // Generate derived event with random values
                 if (eventTypeName.matches(EventProperties.DERIVEDEVENT_CLASS_NAME)) {
 //                    T event = (T) eventGenerator.generateDerivedEvent(EventProperties.DERIVEDEVENT_STORAGE_COLLECTION_NAME);
-                    T event = (T) eventGenerator.generateDerivedEvent(this.sensorId);
+                    T event = (T) eventGenerator.generateDerivedEvent(this.collectionId);
 
                     // Serialize message
                     TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
@@ -158,8 +158,8 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
     private static KafkaProducer<String, byte[]> createProducer(String a_zookeeper) {
         // Specify producer properties
         Properties props = new Properties();
-        props.put("bootstrap.servers", "89.216.116.44:9092");
-//        props.put("bootstrap.servers", "192.168.11.20:9092");
+//        props.put("bootstrap.servers", "89.216.116.44:9092");
+        props.put("bootstrap.servers", "192.168.11.20:9092");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
 

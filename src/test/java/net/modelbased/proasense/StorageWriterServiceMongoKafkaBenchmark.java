@@ -45,13 +45,13 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
     public static void main(String[] args) {
         // Kafka properties
-        String zooKeeper = "89.216.116.44:2181";
-//        String zooKeeper = "192.168.11.20:2181";
+//        String zooKeeper = "89.216.116.44:2181";
+        String zooKeeper = "192.168.11.20:2181";
         String groupId = "StorageWriterServiceMongoKafkaBenchmark";
 
         // Mongo properties
-//        String mongoURL = "mongodb://127.0.0.1:27017";
-        String mongoURL = "mongodb://89.216.116.44:27017";
+        String mongoURL = "mongodb://127.0.0.1:27017";
+//        String mongoURL = "mongodb://89.216.116.44:27017";
 //        String mongoURL = "mongodb://192.168.11.25:27017";
 
         // Benchmark properties
@@ -101,7 +101,7 @@ public class StorageWriterServiceMongoKafkaBenchmark {
         // Create threads for random simple event generators
         Map<String, Integer> topicMap = new HashMap<String, Integer>();
         for (int i = 0; i < NO_SIMPLEEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i, "proasense.simpleevent.mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
+            workers.add(new RandomEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i, "simpleevent.mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
             topicMap.put("proasense.simpleevent.mhwirth." + i, 1);
         }
 
@@ -116,7 +116,7 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
         // Create threads for random derived event generators
         for (int i = 0; i < NO_DERIVEDEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<DerivedEvent>(DerivedEvent.class, zooKeeper, groupId, "proasense.derivedevent.mhwirth." + i, "proasense.derivedevent.mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
+            workers.add(new RandomEventKafkaGenerator<DerivedEvent>(DerivedEvent.class, zooKeeper, groupId, "proasense.derivedevent.mhwirth." + i, "derivedevent.mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
         }
 
         // Create thread for derived event listener (filter)
@@ -130,7 +130,7 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
         // Create threads for random predicted event generators
         for (int i = 0; i < NO_PREDICTEDEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<PredictedEvent>(PredictedEvent.class, zooKeeper, groupId, "proasense.predictedevent.mhwirth." + i, "proasense.predictedevent.mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
+            workers.add(new RandomEventKafkaGenerator<PredictedEvent>(PredictedEvent.class, zooKeeper, groupId, "proasense.predictedevent.mhwirth." + i, "predictedevent.mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
         }
 
         // Create threads for predicted event listeners
@@ -140,7 +140,7 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
         // Create threads for random anomaly event generators
         for (int i = 0; i < NO_ANOMALYEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<AnomalyEvent>(AnomalyEvent.class, zooKeeper, groupId, "proasense.anomalyevent.mhwirth." + i, "proasense.anomalyevent.mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
+            workers.add(new RandomEventKafkaGenerator<AnomalyEvent>(AnomalyEvent.class, zooKeeper, groupId, "proasense.anomalyevent.mhwirth." + i, "anomalyevent.mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
         }
 
         // Create threads for anomaly event listeners
@@ -150,7 +150,7 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
         // Create threads for random recommendation event generators
         for (int i = 0; i < NO_RECOMMENDATIONEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<RecommendationEvent>(RecommendationEvent.class, zooKeeper, groupId, "proasense.recommendationevent.mhwirth." + i, "proasense.recommendationevent.mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
+            workers.add(new RandomEventKafkaGenerator<RecommendationEvent>(RecommendationEvent.class, zooKeeper, groupId, "proasense.recommendationevent.mhwirth." + i, "recommendationevent.mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
         }
 
         // Create threads for recommendation event listeners
@@ -160,6 +160,7 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
         // Create threads for Mongo storage event writers
         for (int i = 0; i < NO_MONGOSTORAGE_WRITERS; i++) {
+//            workers.add(new EventWriterMongoAsync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
             workers.add(new EventWriterMongoSync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
         }
 

@@ -31,7 +31,7 @@ struct SensorConfigureParameter
 {
 	1: required long timestamp;
 	2: string componentId;
-	3: string sensorId;
+	3: string collectionId;
 	4: SensorParameter parameter;
 	5: double value;
 }
@@ -40,7 +40,7 @@ struct SensorConfigureParameter
 struct SimpleEvent {
 
 	1:	required long timestamp;
-	2:	required string sensorId;
+	2:	required string collectionId;
 	3:	required map<string,ComplexValue> eventProperties;
 
 }
