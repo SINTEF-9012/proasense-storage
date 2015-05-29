@@ -70,7 +70,7 @@ public class StorageReaderServiceMongoSync {
         // Create executor environment for threads
         ArrayList<Callable> workers = new ArrayList<Callable>(1);
         ExecutorService executor = Executors.newFixedThreadPool(1);
-        Callable<List<Document>> query = new EventReaderMongoSync(mongoURL, queryType, collectionId, startTime, endTime, queryOperation);
+        Callable<List<Document>> query = new EventReaderMongoSync(mongoURL, queryType, collectionId, startTime, endTime, queryOperation, null);
         executor.submit(query);
 
         List<Document> queryResult = new ArrayList<Document>();

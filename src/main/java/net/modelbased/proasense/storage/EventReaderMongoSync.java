@@ -42,15 +42,17 @@ public class EventReaderMongoSync implements Callable {
     private long startTime;
     private long endTime;
     private EventQueryOperation queryOperation;
+    private String mapKey;
 
 
-    public EventReaderMongoSync(String mongoURL, EventQueryType queryType, String collectionId, long startTime, long endTime, EventQueryOperation queryOperation) {
+    public EventReaderMongoSync(String mongoURL, EventQueryType queryType, String collectionId, long startTime, long endTime, EventQueryOperation queryOperation, String mapKey) {
         this.mongoURL = mongoURL;
         this.queryType = queryType;
         this.collectionId = collectionId;
         this.startTime = startTime;
         this.endTime = endTime;
         this.queryOperation = queryOperation;
+        this.mapKey = mapKey;
     }
 
 
