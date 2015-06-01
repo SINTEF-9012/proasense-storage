@@ -19,6 +19,7 @@ import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
+import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
 
 import net.modelbased.proasense.storage.EventDocument;
@@ -54,11 +55,11 @@ public class StorageWriterServiceMongoLocalBenchmark {
         // Benchmark properties
         int NO_SIMPLEEVENT_GENERATORS = 100;
         int NO_SIMPLEEVENT_RATE = 2;
-        int NO_SIMPLEEVENT_MESSAGES = 10000;
+        int NO_SIMPLEEVENT_MESSAGES = 100000;
 
         int NO_DERIVEDEVENT_GENERATORS = 2;
-        int NO_DERIVEDEVENT_RATE = 20;
-        int NO_DERIVEDEVENT_MESSAGES = 10000;
+        int NO_DERIVEDEVENT_RATE = 2;
+        int NO_DERIVEDEVENT_MESSAGES = 100000;
 
         int NO_PREDICTEDEVENT_GENERATORS = 1;
         int NO_PREDICTEDEVENT_RATE = 1000;
@@ -72,18 +73,20 @@ public class StorageWriterServiceMongoLocalBenchmark {
         int NO_RECOMMENDATIONEVENT_RATE = 1000;
         int NO_RECOMMENDATIONEVENT_MESSAGES = 100;
 
-        int NO_FEEDBACKEVENT_GENERATORS = 0;
+        int NO_FEEDBACKEVENT_GENERATORS = 1;
         int NO_FEEDBACKEVENT_RATE = 1000;
         int NO_FEEDBACKEVENT_MESSAGES = 100;
 
-        int NO_MONGOSTORAGE_WRITERS = 2;
+        boolean IS_MONGOSTORAGE_SYNC = true;
+        int NO_MONGOSTORAGE_WRITERS = 1;
         int NO_MONGOSTORAGE_BULKSIZE = 10000;
         int NO_MONGOSTORAGE_MAXWAIT = 1000;
         int NO_MONGOSTORAGE_HEARTBEAT = NO_MONGOSTORAGE_MAXWAIT*2;
 
         int NO_BLOCKINGQUEUE_SIZE = 1000000;
 
-        int NO_TOTAL_THREADS = NO_SIMPLEEVENT_GENERATORS + NO_DERIVEDEVENT_GENERATORS + NO_PREDICTEDEVENT_GENERATORS + NO_ANOMALYEVENT_GENERATORS + NO_RECOMMENDATIONEVENT_GENERATORS
+        int NO_TOTAL_THREADS = NO_SIMPLEEVENT_GENERATORS + NO_DERIVEDEVENT_GENERATORS
+                + NO_PREDICTEDEVENT_GENERATORS + NO_ANOMALYEVENT_GENERATORS + NO_RECOMMENDATIONEVENT_GENERATORS + NO_FEEDBACKEVENT_GENERATORS
                 + NO_MONGOSTORAGE_WRITERS + 1;
 
         // Define blocking queue
@@ -118,10 +121,17 @@ public class StorageWriterServiceMongoLocalBenchmark {
             workers.add(new RandomEventLocalGenerator<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, "proasense.recommendationevent.mhwirth." + i, "recommendationevent.mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
         }
 
+        // Create threads for random feedback event generators
+        for (int i = 0; i < NO_FEEDBACKEVENT_GENERATORS; i++) {
+            workers.add(new RandomEventLocalGenerator<RecommendationStatus>(RecommendationStatus.class, queue, zooKeeper, groupId, "proasense.feedbackevent.mhwirth." + i, "feedbackevent.mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
+        }
+
         // Create threads for Mongo storage event writers
         for (int i = 0; i < NO_MONGOSTORAGE_WRITERS; i++) {
-//            workers.add(new EventWriterMongoAsync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
-            workers.add(new EventWriterMongoSync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
+            if (IS_MONGOSTORAGE_SYNC)
+                workers.add(new EventWriterMongoSync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
+            else
+                workers.add(new EventWriterMongoAsync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
         }
 
         // Create thread for Mongo storage heartbeat

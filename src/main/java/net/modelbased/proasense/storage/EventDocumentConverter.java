@@ -77,35 +77,11 @@ public class EventDocumentConverter {
 
 
     private EventDocument convertSimpleEventToDocument(SimpleEvent event) {
-        Document document = new Document("_id", event.getTimestamp());
+//        Document document = new Document("_id", event.getTimestamp());
+        Document document = new Document("_id", new ObjectId());
         document.append("timestamp", event.getTimestamp());
         document.append("sensorId", event.getSensorId());
-
-        Map<String, ComplexValue> properties = event.getEventProperties();
-        Iterator it = properties.entrySet().iterator();
-        DBObject propertiesObj = new BasicDBObject();
-        while (it.hasNext()) {
-            Map.Entry entryProperty = (Map.Entry)it.next();
-            String key = (String)entryProperty.getKey();
-            ComplexValue value = (ComplexValue)entryProperty.getValue();
-
-            String valueKey = value.getValue();
-            VariableType valueType = value.getType();
-
-            if (valueType.equals(VariableType.LONG)) {
-                propertiesObj.put(key.replace(".", "_"), new Long(valueKey));
-            }
-            if (valueType.equals(VariableType.STRING)) {
-                propertiesObj.put(key.replace(".", "_"), new String(valueKey));
-            }
-            if (valueType.equals(VariableType.DOUBLE)) {
-                propertiesObj.put(key.replace(".", "_"), new Double(valueKey));
-            }
-            if (valueType.equals(VariableType.BLOB)) {
-                propertiesObj.put(key.replace(".", "_"), new String(valueKey.toString()));
-            }
-        }
-        document.append("eventProperties", propertiesObj);
+        document.append("eventProperties", convertEventPropertiesToDBObject(event.getEventProperties()));
 
         // Serialize event message
         TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
@@ -127,7 +103,7 @@ public class EventDocumentConverter {
         document.append("timestamp", event.getTimestamp());
         document.append("componentId", event.getComponentId());
         document.append("eventName", event.getEventName());
-        document.append("eventProperties", event.getEventProperties().toString());
+        document.append("eventProperties", convertEventPropertiesToDBObject(event.getEventProperties()));
 
         // Serialize message
         TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
@@ -145,10 +121,11 @@ public class EventDocumentConverter {
 
 
     private EventDocument convertPredictedEventToDocument(PredictedEvent event) {
-        Document document = new Document("_id", event.getTimestamp());
+//        Document document = new Document("_id", event.getTimestamp());
+        Document document = new Document("_id", new ObjectId());
         document.append("timestamp", event.getTimestamp());
         document.append("pdfType", event.getPdfType().toString());
-        document.append("eventProperties", event.getEventProperties().toString());
+        document.append("eventProperties", convertEventPropertiesToDBObject(event.getEventProperties()));
         document.append("params", event.getParams().toString());
         document.append("timestamps", event.getTimestamps().toString());
         document.append("eventName", event.getEventName());
@@ -168,7 +145,8 @@ public class EventDocumentConverter {
 
 
     private EventDocument convertAnomalyEventToDocument(AnomalyEvent event) {
-        Document document = new Document("_id", event.getTimestamp());
+//        Document document = new Document("_id", event.getTimestamp());
+        Document document = new Document("_id", new ObjectId());
         document.append("timestamp", event.getTimestamp());
         document.append("anomalyType", event.getAnomalyType());
         document.append("blob", event.getBlob());
@@ -188,12 +166,13 @@ public class EventDocumentConverter {
 
 
     private EventDocument convertRecommendationEventToDocument(RecommendationEvent event) {
-        Document document = new Document("_id", event.getTimestamp());
+//        Document document = new Document("_id", event.getTimestamp());
+        Document document = new Document("_id", new ObjectId());
         document.append("recommendationId", event.getRecommendationId());
         document.append("action", event.getAction());
         document.append("timestamp", event.getTimestamp());
         document.append("actor", event.getActor());
-        document.append("eventProperties", event.getEventProperties().toString());
+        document.append("eventProperties", convertEventPropertiesToDBObject(event.getEventProperties()));
         document.append("eventName", event.getEventName());
 
         // Serialize message
@@ -211,7 +190,8 @@ public class EventDocumentConverter {
 
 
     private EventDocument convertRecommendationStatusToDocument(RecommendationStatus event) {
-        Document document = new Document("_id", event.getTimestamp());
+//        Document document = new Document("_id", event.getTimestamp());
+        Document document = new Document("_id", new ObjectId());
         document.append("actor", event.getActor());
         document.append("timestamp", event.getTimestamp());
         document.append("status", event.getStatus().toString());
@@ -230,4 +210,35 @@ public class EventDocumentConverter {
 
         return new EventDocument(EventProperties.FEEDBACKEVENT_STORAGE_COLLECTION_NAME, document);
     }
+
+
+    private DBObject convertEventPropertiesToDBObject(Map<String, ComplexValue> properties) {
+        DBObject propertiesObj = new BasicDBObject();
+
+        Iterator it = properties.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry entryProperty = (Map.Entry) it.next();
+            String key = (String) entryProperty.getKey();
+            ComplexValue value = (ComplexValue) entryProperty.getValue();
+
+            String valueKey = value.getValue();
+            VariableType valueType = value.getType();
+
+            if (valueType.equals(VariableType.LONG)) {
+                propertiesObj.put(key.replace(".", "_"), new Long(valueKey));
+            }
+            if (valueType.equals(VariableType.STRING)) {
+                propertiesObj.put(key.replace(".", "_"), new String(valueKey));
+            }
+            if (valueType.equals(VariableType.DOUBLE)) {
+                propertiesObj.put(key.replace(".", "_"), new Double(valueKey));
+            }
+            if (valueType.equals(VariableType.BLOB)) {
+                propertiesObj.put(key.replace(".", "_"), new String(valueKey.toString()));
+            }
+        }
+
+        return propertiesObj;
+    }
+
 }
