@@ -17,9 +17,9 @@ package net.modelbased.proasense;
 
 import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
+import eu.proasense.internal.FeedbackEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
-import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
 
 import net.modelbased.proasense.storage.EventHeartbeat;
@@ -170,12 +170,12 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
         // Create threads for random feedback event generators
         for (int i = 0; i < NO_FEEDBACKEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<RecommendationStatus>(RecommendationStatus.class, zooKeeper, groupId, "proasense.feedbackevent.mhwirth." + i, "feedbackevent.mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
+            workers.add(new RandomEventKafkaGenerator<FeedbackEvent>(FeedbackEvent.class, zooKeeper, groupId, "proasense.feedbackevent.mhwirth." + i, "feedbackevent.mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
         }
 
         // Create threads for feedback event listeners
         for (int i = 0; i < NO_FEEDBACKEVENT_LISTENERS; i++) {
-            workers.add(new EventListenerKafkaTopic<RecommendationStatus>(RecommendationStatus.class, queue, zooKeeper, groupId, "proasense.feedbackevent.mhwirth." + i));
+            workers.add(new EventListenerKafkaTopic<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, "proasense.feedbackevent.mhwirth." + i));
         }
 
         // Create threads for Mongo storage event writers

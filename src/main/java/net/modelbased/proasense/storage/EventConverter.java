@@ -17,13 +17,15 @@ package net.modelbased.proasense.storage;
 
 import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
+import eu.proasense.internal.FeedbackEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
-import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
+
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
+
 import org.bson.Document;
 import org.bson.types.Binary;
 
@@ -50,8 +52,8 @@ public class EventConverter<T> {
         if (eventTypeName.matches("eu.proasense.internal.RecommendationEvent"))
             this.event = (T)convertDocumentToRecommendationEvent(document);
 
-        if (eventTypeName.matches("eu.proasense.internal.RecommendationStatus"))
-            this.event = (T)convertDocumentToRecommendationStatus(document);
+        if (eventTypeName.matches("eu.proasense.internal.FeedbackEvent"))
+            this.event = (T)convertDocumentToFeedbackEvent(document);
     }
 
 
@@ -155,13 +157,13 @@ public class EventConverter<T> {
     }
 
 
-    private RecommendationStatus convertDocumentToRecommendationStatus(Document document) {
+    private FeedbackEvent convertDocumentToFeedbackEvent(Document document) {
         Binary serializedEvent = (Binary)document.get(EventProperties.STORAGE_SERIALIZED_EVENT_KEY);
         byte[] bytes = serializedEvent.getData();
 
         // Deserialize event message
         TDeserializer deserializer = new TDeserializer(new TBinaryProtocol.Factory());
-        RecommendationStatus event = new RecommendationStatus();
+        FeedbackEvent event = new FeedbackEvent();
 
         try {
             deserializer.deserialize(event, bytes);

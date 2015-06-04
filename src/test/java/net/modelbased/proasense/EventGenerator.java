@@ -19,7 +19,6 @@ import eu.proasense.internal.*;
 
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomDataGenerator;
-
 import org.apache.commons.math3.random.RandomGenerator;
 
 import java.util.ArrayList;
@@ -148,7 +147,7 @@ public class EventGenerator {
     }
 
 
-    public RecommendationStatus generateFeedbackEvent(String collectionId) {
+    public FeedbackEvent generateFeedbackEvent(String collectionId) {
         // Define complex value
         ComplexValue value = new ComplexValue();
         value.setValue(Objects.toString(randomNumber.nextLong()));
@@ -159,7 +158,7 @@ public class EventGenerator {
         properties.put("recommendation.value", value);
 
         // Define feedback event
-        RecommendationStatus event = new RecommendationStatus();
+        FeedbackEvent event = new FeedbackEvent();
         event.setActor(randomData.nextHexString(10));
         event.setTimestamp(System.currentTimeMillis());
         event.setStatus(Status.SUGGESTED);

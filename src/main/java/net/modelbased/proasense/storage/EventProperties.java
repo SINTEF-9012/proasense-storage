@@ -21,7 +21,7 @@ public class EventProperties {
     public static String PREDICTEDEVENT_CLASS_NAME = "eu.proasense.internal.PredictedEvent";
     public static String ANOMALYEVENT_CLASS_NAME = "eu.proasense.internal.AnomalyEvent";
     public static String RECOMMENDATIONEVENT_CLASS_NAME = "eu.proasense.internal.RecommendationEvent";
-    public static String FEEDBACKEVENT_CLASS_NAME = "eu.proasense.internal.RecommendationStatus";
+    public static String FEEDBACKEVENT_CLASS_NAME = "eu.proasense.internal.FeedbackEvent";
 
     public static String SIMPLEEVENT_STORAGE_COLLECTION_PREFIX = "simpleevent.";
     public static String DERIVEDEVENT_STORAGE_COLLECTION_PREFIX = "derivedevent.";

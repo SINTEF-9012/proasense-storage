@@ -17,18 +17,20 @@ package net.modelbased.proasense.storage;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
 import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.ComplexValue;
 import eu.proasense.internal.DerivedEvent;
+import eu.proasense.internal.FeedbackEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
-import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
-
 import eu.proasense.internal.VariableType;
+
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
+
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -59,8 +61,8 @@ public class EventDocumentConverter {
         this.eventDocument = convertRecommendationEventToDocument(event);
     }
 
-    public EventDocumentConverter(RecommendationStatus event) {
-        this.eventDocument = convertRecommendationStatusToDocument(event);
+    public EventDocumentConverter(FeedbackEvent event) {
+        this.eventDocument = convertFeedbackEventToDocument(event);
     }
 
     public EventDocument getEventDocument() {
@@ -189,7 +191,7 @@ public class EventDocumentConverter {
     }
 
 
-    private EventDocument convertRecommendationStatusToDocument(RecommendationStatus event) {
+    private EventDocument convertFeedbackEventToDocument(FeedbackEvent event) {
 //        Document document = new Document("_id", event.getTimestamp());
         Document document = new Document("_id", new ObjectId());
         document.append("actor", event.getActor());
@@ -201,7 +203,7 @@ public class EventDocumentConverter {
         // Serialize message
         TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
         try {
-            byte[] bytes = serializer.serialize((RecommendationStatus) event);
+            byte[] bytes = serializer.serialize((FeedbackEvent) event);
             document.append(EventProperties.STORAGE_SERIALIZED_EVENT_KEY, bytes);
         }
         catch (TException e) {

@@ -17,17 +17,16 @@ package net.modelbased.proasense.storage;
 
 import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
+import eu.proasense.internal.FeedbackEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
-import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -82,7 +81,7 @@ public class StorageWriterServiceMongoSync {
         int NO_PREDICTEDEVENT_LISTENERS = 1;
         int NO_ANOMALYEVENT_LISTENERS = 1;
         int NO_RECOMMENDATIONEVENT_LISTENERS = 1;
-        int NO_RECOMMENDATIONSTATUS_LISTENERS = 0;
+        int NO_FEEDBACKEVENT_LISTENERS = 1;
 
         int NO_MONGOSTORAGE_WRITERS = 1;
         int NO_MONGOSTORAGE_BULKSIZE = 1000;
@@ -93,7 +92,7 @@ public class StorageWriterServiceMongoSync {
 
         int NO_TOTAL_THREADS = NO_SIMPLEEVENT_LISTENERS + NO_DERIVEDEVENT_LISTENERS
                 + NO_PREDICTEDEVENT_LISTENERS + NO_ANOMALYEVENT_LISTENERS
-                + NO_RECOMMENDATIONEVENT_LISTENERS + NO_RECOMMENDATIONSTATUS_LISTENERS
+                + NO_RECOMMENDATIONEVENT_LISTENERS + NO_FEEDBACKEVENT_LISTENERS
                 + NO_MONGOSTORAGE_WRITERS + 1;
 
         // Define blocking queue
@@ -112,7 +111,7 @@ public class StorageWriterServiceMongoSync {
         workers.add(new EventListenerKafkaTopic<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.oa.mhwirth.predicted"));
         workers.add(new EventListenerKafkaTopic<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.oa.mhwirth.anomaly"));
         workers.add(new EventListenerKafkaTopic<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.pandda.mhwirth.recommendation"));
-//        workers.add(new EventListenerKafkaTopic<RecommendationStatus>(RecommendationStatus.class, queue, zooKeeper, groupId, "eu.proasense.internal.bia.mhwirth.feedback"));
+        workers.add(new EventListenerKafkaTopic<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.bia.mhwirth.feedback"));
 
         // Create threads for Mongo storage event writers
         for (int i = 0; i < NO_MONGOSTORAGE_WRITERS; i++) {

@@ -17,9 +17,9 @@ package net.modelbased.proasense;
 
 import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
+import eu.proasense.internal.FeedbackEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
-import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
 
 import net.modelbased.proasense.storage.EventDocument;
@@ -123,7 +123,7 @@ public class StorageWriterServiceMongoLocalBenchmark {
 
         // Create threads for random feedback event generators
         for (int i = 0; i < NO_FEEDBACKEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<RecommendationStatus>(RecommendationStatus.class, queue, zooKeeper, groupId, "proasense.feedbackevent.mhwirth." + i, "feedbackevent.mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, "proasense.feedbackevent.mhwirth." + i, "feedbackevent.mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
         }
 
         // Create threads for Mongo storage event writers

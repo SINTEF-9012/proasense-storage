@@ -17,10 +17,11 @@ package net.modelbased.proasense.storage;
 
 import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
+import eu.proasense.internal.FeedbackEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
-import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
+
 import kafka.consumer.Consumer;
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.ConsumerIterator;
@@ -28,6 +29,7 @@ import kafka.consumer.ConsumerTimeoutException;
 import kafka.consumer.KafkaStream;
 import kafka.consumer.Whitelist;
 import kafka.javaapi.consumer.ConsumerConnector;
+
 import org.apache.thrift.TBase;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
@@ -36,6 +38,7 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
@@ -113,7 +116,7 @@ public class EventListenerKafkaFilter<T> implements Runnable {
                     queue.put(eventDocument);
                 }
                 if (eventTypeName.matches(EventProperties.FEEDBACKEVENT_CLASS_NAME)) {
-                    EventDocumentConverter converter = new EventDocumentConverter((RecommendationStatus) event);
+                    EventDocumentConverter converter = new EventDocumentConverter((FeedbackEvent) event);
                     EventDocument eventDocument = new EventDocument(converter.getCollectionId(), converter.getDocument());
 
                     queue.put(eventDocument);

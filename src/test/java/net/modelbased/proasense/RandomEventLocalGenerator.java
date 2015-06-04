@@ -17,13 +17,15 @@ package net.modelbased.proasense;
 
 import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
+import eu.proasense.internal.FeedbackEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
-import eu.proasense.internal.RecommendationStatus;
 import eu.proasense.internal.SimpleEvent;
+
 import net.modelbased.proasense.storage.EventDocument;
 import net.modelbased.proasense.storage.EventDocumentConverter;
 import net.modelbased.proasense.storage.EventProperties;
+
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
@@ -161,15 +163,15 @@ public class RandomEventLocalGenerator<T> implements Runnable {
 
                     // Serialize message
                     TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
-                    byte[] bytes = serializer.serialize((RecommendationStatus)event);
+                    byte[] bytes = serializer.serialize((FeedbackEvent)event);
 
-                    EventDocumentConverter converter = new EventDocumentConverter((RecommendationStatus)event);
+                    EventDocumentConverter converter = new EventDocumentConverter((FeedbackEvent)event);
                     EventDocument eventDocument = new EventDocument(converter.getCollectionId(), converter.getDocument());
 
                     queue.put(eventDocument);
 
 //                    if (cnt % 1000 == 0)
-//                        System.out.println("RecommendationStatus(" + cnt + "): " + event.toString());
+//                        System.out.println("FeedbackEvent(" + cnt + "): " + event.toString());
                 }
             }
         } catch (InterruptedException e) {
