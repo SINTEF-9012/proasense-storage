@@ -78,15 +78,16 @@ public class StorageWriterServiceMongoAsync {
 
     public static void main(String[] args) {
         // Kafka properties
+        String zooKeeper = "192.168.1.111:2181";
 //        String zooKeeper = "89.216.116.44:2181";
-        String zooKeeper = "192.168.11.20:2181";
+//        String zooKeeper = "192.168.11.20:2181";
         String groupId = "StorageWriterServiceMongoSync";
         String topic = "proasense.simpleevent.mhwirth.*";
 
         // Mongo properties
-//        String mongoURL = "mongodb://127.0.0.1:27017";
+        String mongoURL = "mongodb://127.0.0.1:27017";
 //        String mongoULR = "mongodb://89.216.116.44:27017";
-        String mongoURL = "mongodb://192.168.11.25:27017";
+//        String mongoURL = "mongodb://192.168.11.25:27017";
 
         // SensApp properties
         String sensappURL = "http://127.0.0.1:8090";

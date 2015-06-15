@@ -21,26 +21,26 @@ struct ComplexValue {
 	3: required VariableType type;
 }
 
-enum SensorParameter
-{
-	FREQUENCY
-}
+//enum SensorParameter
+//{
+//	FREQUENCY
+//}
 
 //### Sensing layer
-struct SensorConfigureParameter 
-{
-	1: required long timestamp;
-	2: string componentId;
-	3: string collectionId;
-	4: SensorParameter parameter;
-	5: double value;
-}
+//struct SensorConfigureParameter 
+//{
+//	1: required long timestamp;
+//	2: string componentId;
+//	3: string sensorId;
+//	4: SensorParameter parameter;
+//	5: double value;
+//}
 
 //### input enricher and sensing layer
 struct SimpleEvent {
 
 	1:	required long timestamp;
-	2:	required string collectionId;
+	2:	required string sensorId;
 	3:	required map<string,ComplexValue> eventProperties;
 
 }
@@ -85,7 +85,7 @@ struct PredictedEvent {
 		3:	required map<string,ComplexValue> eventProperties; //metadata, context, prediction subject...
 		4:	required list<double> params;    //define the parameters of the pdf 
 		5:	optional list<long> timestamps; //define the parameters of the pdf 
-		6:  	required string eventName;	//predicted storage name
+		6:  	required string eventName;	//predicted event name
 }
 
 struct AnomalyEvent {
@@ -105,7 +105,7 @@ enum Status {
 	UNSUCCESSFUL
 }
 
-struct RecommendationStatus { 
+struct FeedbackEvent { 
 	1: required string actor;
 	2: required long timestamp;
 	3: required Status status;

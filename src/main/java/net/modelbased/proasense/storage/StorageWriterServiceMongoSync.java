@@ -35,19 +35,19 @@ import java.util.concurrent.Executors;
 
 
 public class StorageWriterServiceMongoSync {
-    private Properties kafkaProperties;
+    private Properties serverProperties;
 
     public StorageWriterServiceMongoSync() {
     }
 
     private Properties getDefaultProperties() {
-        kafkaProperties = new Properties();
+        serverProperties = new Properties();
         String propFilename = "/resources/kafka.properties";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
 
         try {
             if (inputStream != null) {
-                kafkaProperties.load(inputStream);
+                serverProperties.load(inputStream);
             } else
                 throw new FileNotFoundException("Property file: '" + propFilename + "' not found in classpath.");
         }
@@ -55,13 +55,14 @@ public class StorageWriterServiceMongoSync {
             System.out.println("Exception:" + e.getMessage());
         }
 
-        return kafkaProperties;
+        return serverProperties;
     }
 
 
     public static void main(String[] args) {
         // Kafka properties
-        String zooKeeper = "89.216.116.44:2181";
+        String zooKeeper = "192.168.1.111:2181";
+//        String zooKeeper = "89.216.116.44:2181";
 //        String zooKeeper = "192.168.11.20:2181";
         String groupId = "StorageWriterServiceMongoSync";
         String topic = "proasense.simpleevent.mhwirth.*";
