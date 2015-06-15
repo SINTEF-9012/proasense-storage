@@ -104,7 +104,7 @@ public class StorageWriterServiceMongoSync {
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
         // Create thread for Kafka event listeners
-        workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "sintef.eu.proasense.internal.sensing.mhwirth.simple.*"));
+        workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.sensing.mhwirth.simple.*"));
         // Temporarily topic for StreamPipes component used during the Nis workshop
         workers.add(new EventListenerKafkaFilter<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.(enricher.mhwirth.derived|sp.internal.incoming)"));
 //        workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "eu.proasense.internal.enricher.mhwirth.derived"));
