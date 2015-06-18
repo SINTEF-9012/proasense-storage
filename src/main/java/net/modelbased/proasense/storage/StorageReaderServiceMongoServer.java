@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright 2015 Brian Elvesæter <brian.elvesater@sintef.no>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import java.util.concurrent.Executors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -38,27 +37,25 @@ import javax.ws.rs.core.Response;
 
 @Path("/StorageReaderServiceMongoSync")
 public class StorageReaderServiceMongoServer {
-    private Properties kafkaProperties;
+    private Properties serverProperties;
 
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response StorageReaderServiceMongoSync(String text) {
-        // Kafka properties
-//        String zooKeeper = "89.216.116.44:2181";
-        String zooKeeper = "192.168.11.20:2181";
-        String groupId = "StorageWriterServiceMongoSync";
-        String topic = "proasense.simpleevent.mhwirth.*";
+        // Get server properties
+        serverProperties = loadServerProperties();
 
-        // Mongo properties
-//        String mongoURL = "mongodb://127.0.0.1:27017";
-//        String mongoULR = "mongodb://89.216.116.44:27017";
-        String mongoURL = "mongodb://192.168.11.25:27017";
+        // Kafka broker configuration properties
+        String zooKeeper = serverProperties.getProperty("zookeeper.connect");
+        String groupId = "StorageReaderServiceMongoServer";
 
-        //SensApp properties
-        String sensappURL = "http://127.0.0.1:8090";
-        String sensorName = "MHWirth.DDM.Hookload";
+        // SensApp registry configuration properties
+        String sensappURL = serverProperties.getProperty("proasense.storage.sensapp.url");
+
+        // MongoDB event writers configuration properties
+        String MONGODB_URL = serverProperties.getProperty("proasense.storage.mongodb.url");
 
         // Process GET request
         String collectionId = "proasense.simpleevent.mhwirth.0";
@@ -70,7 +67,7 @@ public class StorageReaderServiceMongoServer {
         // Create executor environment for threads
         ArrayList<Callable> workers = new ArrayList<Callable>(1);
         ExecutorService executor = Executors.newFixedThreadPool(1);
-        Callable<List<Document>> query = new EventReaderMongoSync(mongoURL, queryType, collectionId, startTime, endTime, queryOperation, null);
+        Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, queryType, collectionId, startTime, endTime, queryOperation, null);
         executor.submit(query);
 
         List<Document> queryResult = new ArrayList<Document>();
@@ -87,22 +84,22 @@ public class StorageReaderServiceMongoServer {
     }
 
 
-    private Properties getDefaultProperties() {
-        kafkaProperties = new Properties();
-        String propFilename = "/resources/kafka.properties";
+    private Properties loadServerProperties() {
+        serverProperties = new Properties();
+        String propFilename = "server.properties";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
 
         try {
             if (inputStream != null) {
-                kafkaProperties.load(inputStream);
+                serverProperties.load(inputStream);
             } else
                 throw new FileNotFoundException("Property file: '" + propFilename + "' not found in classpath.");
         }
         catch (IOException e) {
-            System.out.println("Exception:" + e.getMessage());
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        return kafkaProperties;
+        return serverProperties;
     }
 
 }

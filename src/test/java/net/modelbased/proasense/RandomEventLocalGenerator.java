@@ -90,7 +90,6 @@ public class RandomEventLocalGenerator<T> implements Runnable {
 
                 // Generate derived event with random values
                 if (eventTypeName.matches(EventProperties.DERIVEDEVENT_CLASS_NAME)) {
-//                    T event = (T)eventGenerator.generateDerivedEvent(EventProperties.DERIVEDEVENT_STORAGE_COLLECTION_NAME);
                     T event = (T) eventGenerator.generateDerivedEvent(this.collectionId);
 
                     // Serialize message

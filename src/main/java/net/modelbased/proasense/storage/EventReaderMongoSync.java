@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright 2015 Brian Elvesæter <brian.elvesater@sintef.no>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class EventReaderMongoSync implements Callable {
     public List<Document> call() {
         // Connect to MongoDB database
         MongoClient mongoClient = new MongoClient(new MongoClientURI(this.mongoURL));
-        MongoDatabase database = mongoClient.getDatabase("proasense_db");
+        MongoDatabase database = mongoClient.getDatabase(EventProperties.STORAGE_DATABASE_NAME);
 
         MongoCollection<Document> collection = database.getCollection(this.collectionId);
 
@@ -156,6 +156,15 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.RECOMMENDATION) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
+            FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
+            MongoCursor<Document> cursor = it.iterator();
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                foundDocuments.add(doc);
+            }
+        }
+
+        if (queryType.equals(EventQueryType.FEEDBACK) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
             FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {

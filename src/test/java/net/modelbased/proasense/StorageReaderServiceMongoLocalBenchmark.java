@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright 2015 Brian Elvesæter <brian.elvesater@sintef.no>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import java.util.concurrent.Executors;
 public class StorageReaderServiceMongoLocalBenchmark {
 
     public StorageReaderServiceMongoLocalBenchmark() {
-
     }
 
 
@@ -43,7 +42,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         String zooKeeper = "192.168.11.20:2181";
         String groupId = "SimpleEventLocalMongoBenchmark";
 
-        // Mongo properties
+        // MongoDB properties
         String mongoURL = "mongodb://127.0.0.1:27017";
 //        String mongoURL = "mongodb://89.216.116.44:27017";
 //        String mongoURL = "mongodb://192.168.11.25:27017";
@@ -181,7 +180,6 @@ public class StorageReaderServiceMongoLocalBenchmark {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-/**
         // Default query for feedback events
         Callable<List<Document>> query09 = new EventReaderMongoSync(mongoURL, EventQueryType.FEEDBACK, EventProperties.FEEDBACKEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_FEEDBACK_STARTTIME, NO_QUERY_FEEDBACK_ENDTIME, EventQueryOperation.DEFAULT, null);
         executor.submit(query09);
@@ -195,7 +193,6 @@ public class StorageReaderServiceMongoLocalBenchmark {
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-**/
 
         // Shut down executor
         executor.shutdown();

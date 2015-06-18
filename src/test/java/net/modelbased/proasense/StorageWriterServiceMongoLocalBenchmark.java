@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright 2015 Brian Elvesæter <brian.elvesater@sintef.no>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import java.util.concurrent.Executors;
 public class StorageWriterServiceMongoLocalBenchmark {
 
     public StorageWriterServiceMongoLocalBenchmark() {
-
     }
 
 
@@ -47,7 +46,7 @@ public class StorageWriterServiceMongoLocalBenchmark {
         String zooKeeper = "192.168.11.20:2181";
         String groupId = "StorageWriterServiceMongoLocalBenchmark";
 
-        // Mongo properties
+        // MongoDB properties
         String mongoURL = "mongodb://127.0.0.1:27017";
 //        String mongoURL = "mongodb://89.216.116.44:27017";
 //        String mongoURL = "mongodb://192.168.11.25:27017";

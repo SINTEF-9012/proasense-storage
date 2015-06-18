@@ -54,7 +54,7 @@ public class StorageWriterServiceMongoServer {
                 throw new FileNotFoundException("Property file: '" + propFilename + "' not found in classpath.");
         }
         catch (IOException e) {
-            System.out.println("Exception:" + e.getMessage());
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
         return serverProperties;

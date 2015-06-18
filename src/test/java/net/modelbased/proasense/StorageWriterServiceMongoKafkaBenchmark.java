@@ -74,11 +74,6 @@ public class StorageWriterServiceMongoKafkaBenchmark {
         StorageWriterServiceMongoKafkaBenchmark benchmark = new StorageWriterServiceMongoKafkaBenchmark();
         benchmark.loadClientProperties();
 
-        // Mongo properties
-//        String mongoURL = "mongodb://127.0.0.1:27017";
-//        String mongoURL = "mongodb://89.216.116.44:27017";
-//        String mongoURL = "mongodb://192.168.11.25:27017";
-
         // Kafka broker configuration properties
         String zooKeeper = benchmark.clientProperties.getProperty("zookeeper.connect");
         String groupId = "StorageWriterServiceMongoKafkaBenchmark";
