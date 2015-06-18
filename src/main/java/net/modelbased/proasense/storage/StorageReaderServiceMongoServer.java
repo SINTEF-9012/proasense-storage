@@ -37,7 +37,7 @@ import javax.ws.rs.core.Response;
 
 
 @Path("/StorageReaderServiceMongoSync")
-public class StorageReaderServiceMongoSync {
+public class StorageReaderServiceMongoServer {
     private Properties kafkaProperties;
 
 
