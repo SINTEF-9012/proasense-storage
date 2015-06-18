@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright 2015 Brian Elvesæter <brian.elvesater@sintef.no>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,13 @@ import net.modelbased.proasense.storage.EventListenerKafkaTopic;
 import net.modelbased.proasense.storage.EventWriterMongoAsync;
 import net.modelbased.proasense.storage.EventWriterMongoSync;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -39,70 +43,81 @@ import java.util.concurrent.Executors;
 
 
 public class StorageWriterServiceMongoKafkaBenchmark {
+    private Properties clientProperties;
+
 
     public StorageWriterServiceMongoKafkaBenchmark() {
+    }
 
+
+    private Properties loadClientProperties() {
+        clientProperties = new Properties();
+        String propFilename = "client.properties";
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
+
+        try {
+            if (inputStream != null) {
+                clientProperties.load(inputStream);
+            } else
+                throw new FileNotFoundException("Property file: '" + propFilename + "' not found in classpath.");
+        }
+        catch (IOException e) {
+            System.out.println("Exception:" + e.getMessage());
+        }
+
+        return clientProperties;
     }
 
 
     public static void main(String[] args) {
-        // Kafka properties
-//        String zooKeeper = "89.216.116.44:2181";
-        String zooKeeper = "192.168.11.20:2181";
-        String groupId = "StorageWriterServiceMongoKafkaBenchmark";
+        // Get benchmark properties
+        StorageWriterServiceMongoKafkaBenchmark benchmark = new StorageWriterServiceMongoKafkaBenchmark();
+        benchmark.loadClientProperties();
 
         // Mongo properties
-        String mongoURL = "mongodb://127.0.0.1:27017";
+//        String mongoURL = "mongodb://127.0.0.1:27017";
 //        String mongoURL = "mongodb://89.216.116.44:27017";
 //        String mongoURL = "mongodb://192.168.11.25:27017";
 
-        // Benchmark properties
-        int NO_SIMPLEEVENT_LISTENERS = 1;
-        int NO_SIMPLEEVENT_GENERATORS = 10;
-        int NO_SIMPLEEVENT_RATE = 20;
-        int NO_SIMPLEEVENT_MESSAGES = 10000;
+        // Kafka broker configuration properties
+        String zooKeeper = benchmark.clientProperties.getProperty("zookeeper.connect");
+        String groupId = "StorageWriterServiceMongoKafkaBenchmark";
 
-        int NO_DERIVEDEVENT_LISTENERS = 1;
-        int NO_DERIVEDEVENT_GENERATORS = 2;
-        int NO_DERIVEDEVENT_RATE = 20;
-        int NO_DERIVEDEVENT_MESSAGES = 10000;
+        // Kafka event generators configuration properties
+        String SIMPLEEVENT_TOPICFILTER = benchmark.clientProperties.getProperty("proasense.benchmark.event.simple.topicfilter");
+        String DERIVEDEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.event.derived.topic");
+        String PREDICTEDEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.event.predicted.topic");
+        String ANOMALYEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.event.anomaly.topic");
+        String RECOMMENDATIONEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.event.recommendation.topic");
+        String FEEDBACKEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.event.feedback.topic");
 
-        int NO_PREDICTEDEVENT_LISTENERS = 1;
-        int NO_PREDICTEDEVENT_GENERATORS = 1;
-        int NO_PREDICTEDEVENT_RATE = 1000;
-        int NO_PREDICTEDEVENT_MESSAGES = 100;
+        int NO_SIMPLEEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.simple.generators")).intValue();
+        int NO_SIMPLEEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.simple.rate")).intValue();
+        int NO_SIMPLEEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.simple.messages")).intValue();
 
-        int NO_ANOMALYEVENT_LISTENERS = 1;
-        int NO_ANOMALYEVENT_GENERATORS = 1;
-        int NO_ANOMALYEVENT_RATE = 1000;
-        int NO_ANOMALYEVENT_MESSAGES = 100;
+        int NO_DERIVEDEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.derived.generators")).intValue();
+        int NO_DERIVEDEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.derived.rate")).intValue();
+        int NO_DERIVEDEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.derived.messages")).intValue();
 
-        int NO_RECOMMENDATIONEVENT_LISTENERS = 1;
-        int NO_RECOMMENDATIONEVENT_GENERATORS = 1;
-        int NO_RECOMMENDATIONEVENT_RATE = 1000;
-        int NO_RECOMMENDATIONEVENT_MESSAGES = 100;
+        int NO_PREDICTEDEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.predicted.generators")).intValue();
+        int NO_PREDICTEDEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.predicted.rate")).intValue();
+        int NO_PREDICTEDEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.predicted.messages")).intValue();
 
-        int NO_FEEDBACKEVENT_LISTENERS = 1;
-        int NO_FEEDBACKEVENT_GENERATORS = 1;
-        int NO_FEEDBACKEVENT_RATE = 1000;
-        int NO_FEEDBACKEVENT_MESSAGES = 100;
+        int NO_ANOMALYEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.anomaly.generators")).intValue();
+        int NO_ANOMALYEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.anomaly.rate")).intValue();
+        int NO_ANOMALYEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.anomaly.messages")).intValue();
 
-        boolean IS_MONGOSTORAGE_SYNC = true;
-        int NO_MONGOSTORAGE_WRITERS = 1;
-        int NO_MONGOSTORAGE_BULKSIZE = 10000;
-        int NO_MONGOSTORAGE_MAXWAIT = 1000;
-        int NO_MONGOSTORAGE_HEARTBEAT = NO_MONGOSTORAGE_MAXWAIT*2;
+        int NO_RECOMMENDATIONEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.recommendation.generators")).intValue();
+        int NO_RECOMMENDATIONEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.recommendation.rate")).intValue();
+        int NO_RECOMMENDATIONEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.recommendation.messages")).intValue();
 
-        int NO_BLOCKINGQUEUE_SIZE = 1000000;
+        int NO_FEEDBACKEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.feedback.generators")).intValue();
+        int NO_FEEDBACKEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.feedback.rate")).intValue();
+        int NO_FEEDBACKEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.feedback.messages")).intValue();
 
+        // Total number of threads
         int NO_TOTAL_THREADS = NO_SIMPLEEVENT_GENERATORS + NO_DERIVEDEVENT_GENERATORS
-                + NO_PREDICTEDEVENT_GENERATORS + NO_ANOMALYEVENT_GENERATORS + NO_RECOMMENDATIONEVENT_GENERATORS + NO_FEEDBACKEVENT_GENERATORS
-                + NO_MONGOSTORAGE_WRITERS + 1
-                + NO_SIMPLEEVENT_LISTENERS + NO_DERIVEDEVENT_LISTENERS
-                + NO_PREDICTEDEVENT_LISTENERS + NO_ANOMALYEVENT_LISTENERS + NO_RECOMMENDATIONEVENT_LISTENERS + NO_FEEDBACKEVENT_LISTENERS;
-
-        // Define blocking queue
-        BlockingQueue<EventDocument> queue = new ArrayBlockingQueue<EventDocument>(NO_BLOCKINGQUEUE_SIZE);
+                + NO_PREDICTEDEVENT_GENERATORS + NO_ANOMALYEVENT_GENERATORS + NO_RECOMMENDATIONEVENT_GENERATORS + NO_FEEDBACKEVENT_GENERATORS;
 
         // Create executor environment for threads
         ArrayList<Runnable> workers = new ArrayList<Runnable>(NO_TOTAL_THREADS);
@@ -111,83 +126,33 @@ public class StorageWriterServiceMongoKafkaBenchmark {
         // Create threads for random simple event generators
         Map<String, Integer> topicMap = new HashMap<String, Integer>();
         for (int i = 0; i < NO_SIMPLEEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i, "simpleevent.mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
-//            topicMap.put("proasense.simpleevent.mhwirth." + i, 1);
+            workers.add(new RandomEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, zooKeeper, groupId, SIMPLEEVENT_TOPICFILTER + i, "mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
         }
 
-        // Create thread for simple event listener (filter)
-        String topicFilter = "proasense.simpleevent.mhwirth.[" + 0 + "-" + (NO_SIMPLEEVENT_GENERATORS - 1) + "]";
-        workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, topicFilter));
-/**
-        // Create threads for simple event listeners (topic)
-        for (int i = 0; i < NO_SIMPLEEVENT_LISTENERS; i++) {
-            workers.add(new EventListenerKafkaTopic<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i));
-        }
-**/
         // Create threads for random derived event generators
         for (int i = 0; i < NO_DERIVEDEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<DerivedEvent>(DerivedEvent.class, zooKeeper, groupId, "proasense.derivedevent.mhwirth." + i, "derivedevent.mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
+            workers.add(new RandomEventKafkaGenerator<DerivedEvent>(DerivedEvent.class, zooKeeper, groupId, DERIVEDEVENT_TOPIC, "mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
         }
 
-        // Create thread for derived event listener (filter)
-        topicFilter = "proasense.derivedevent.mhwirth.[" + 0 + "-" + (NO_DERIVEDEVENT_GENERATORS - 1) + "]";
-        workers.add(new EventListenerKafkaFilter<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, topicFilter));
-/**
-        // Create threads for derived event listeners
-        for (int i = 0; i < NO_DERIVEDEVENT_LISTENERS; i++) {
-            workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "proasense.derivedevent.mhwirth." + i))
-        }
-**/
         // Create threads for random predicted event generators
         for (int i = 0; i < NO_PREDICTEDEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<PredictedEvent>(PredictedEvent.class, zooKeeper, groupId, "proasense.predictedevent.mhwirth." + i, "predictedevent.mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
-        }
-
-        // Create threads for predicted event listeners
-        for (int i = 0; i < NO_PREDICTEDEVENT_LISTENERS; i++) {
-            workers.add(new EventListenerKafkaTopic<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, "proasense.predictedevent.mhwirth." + i));
+            workers.add(new RandomEventKafkaGenerator<PredictedEvent>(PredictedEvent.class, zooKeeper, groupId, PREDICTEDEVENT_TOPIC, "mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
         }
 
         // Create threads for random anomaly event generators
         for (int i = 0; i < NO_ANOMALYEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<AnomalyEvent>(AnomalyEvent.class, zooKeeper, groupId, "proasense.anomalyevent.mhwirth." + i, "anomalyevent.mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
-        }
-
-        // Create threads for anomaly event listeners
-        for (int i = 0; i < NO_ANOMALYEVENT_LISTENERS; i++) {
-            workers.add(new EventListenerKafkaTopic<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, "proasense.anomalyevent.mhwirth." + i));
+            workers.add(new RandomEventKafkaGenerator<AnomalyEvent>(AnomalyEvent.class, zooKeeper, groupId, ANOMALYEVENT_TOPIC, "mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
         }
 
         // Create threads for random recommendation event generators
         for (int i = 0; i < NO_RECOMMENDATIONEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<RecommendationEvent>(RecommendationEvent.class, zooKeeper, groupId, "proasense.recommendationevent.mhwirth." + i, "recommendationevent.mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
-        }
-
-        // Create threads for recommendation event listeners
-        for (int i = 0; i < NO_ANOMALYEVENT_LISTENERS; i++) {
-            workers.add(new EventListenerKafkaTopic<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, "proasense.recommendationevent.mhwirth." + i));
+            workers.add(new RandomEventKafkaGenerator<RecommendationEvent>(RecommendationEvent.class, zooKeeper, groupId, RECOMMENDATIONEVENT_TOPIC, "mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
         }
 
         // Create threads for random feedback event generators
         for (int i = 0; i < NO_FEEDBACKEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventKafkaGenerator<FeedbackEvent>(FeedbackEvent.class, zooKeeper, groupId, "proasense.feedbackevent.mhwirth." + i, "feedbackevent.mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
+            workers.add(new RandomEventKafkaGenerator<FeedbackEvent>(FeedbackEvent.class, zooKeeper, groupId, FEEDBACKEVENT_TOPIC, "mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
         }
-
-        // Create threads for feedback event listeners
-        for (int i = 0; i < NO_FEEDBACKEVENT_LISTENERS; i++) {
-            workers.add(new EventListenerKafkaTopic<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, "proasense.feedbackevent.mhwirth." + i));
-        }
-
-        // Create threads for Mongo storage event writers
-        for (int i = 0; i < NO_MONGOSTORAGE_WRITERS; i++) {
-            if (IS_MONGOSTORAGE_SYNC)
-                workers.add(new EventWriterMongoSync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
-            else
-                workers.add(new EventWriterMongoAsync(queue, mongoURL, NO_MONGOSTORAGE_BULKSIZE, NO_MONGOSTORAGE_MAXWAIT));
-        }
-
-        // Create thread for Mongo storage heartbeat
-        workers.add(new EventHeartbeat(queue, NO_MONGOSTORAGE_HEARTBEAT));
 
         // Execute all threads
         for (int i = 0; i < NO_TOTAL_THREADS; i++) {

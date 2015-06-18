@@ -98,32 +98,32 @@ public class StorageWriterServiceMongoLocalBenchmark {
 
         // Create threads for random simple event generators
         for (int i = 0; i < NO_SIMPLEEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "proasense.simpleevent.mhwirth." + i, "simpleevent.mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, "proasense.simple.mhwirth." + i, "simple.mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
         }
 
         // Create threads for random derived event generators
         for (int i = 0; i < NO_DERIVEDEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "proasense.derivedevent.mhwirth." + i, "derivedevent.mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, "proasense.derived.mhwirth." + i, "derived.mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
         }
 
         // Create threads for random predicted event generators
         for (int i = 0; i < NO_PREDICTEDEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, "proasense.predictedevent.mhwirth." + i, "predictedevent.mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, "proasense.predicted.mhwirth." + i, "predicted.mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
         }
 
         // Create threads for random anomaly event generators
         for (int i = 0; i < NO_ANOMALYEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, "proasense.anomalyevent.mhwirth." + i, "anomalyevent.mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, "proasense.anomaly.mhwirth." + i, "anomaly.mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
         }
 
         // Create threads for random recommendation event generators
         for (int i = 0; i < NO_RECOMMENDATIONEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, "proasense.recommendationevent.mhwirth." + i, "recommendationevent.mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, "proasense.recommendation.mhwirth." + i, "recommendation.mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
         }
 
         // Create threads for random feedback event generators
         for (int i = 0; i < NO_FEEDBACKEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, "proasense.feedbackevent.mhwirth." + i, "feedbackevent.mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, "proasense.feedback.mhwirth." + i, "feedback.mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
         }
 
         // Create threads for Mongo storage event writers

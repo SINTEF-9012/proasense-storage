@@ -95,12 +95,11 @@ public class EventDocumentConverter {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        return new EventDocument(event.getSensorId(), document);
+        return new EventDocument(EventProperties.SIMPLEEVENT_STORAGE_COLLECTION_PREFIX + event.getSensorId(), document);
     }
 
 
     private EventDocument convertDerivedEventToDocument(DerivedEvent event) {
-//        Document document = new Document("_id", event.getTimestamp());
         Document document = new Document("_id", new ObjectId());
         document.append("timestamp", event.getTimestamp());
         document.append("componentId", event.getComponentId());
@@ -117,13 +116,11 @@ public class EventDocumentConverter {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        return new EventDocument(event.getComponentId(), document);
-//        return new EventDocument(EventProperties.DERIVEDEVENT_STORAGE_COLLECTION_NAME, document);
+        return new EventDocument(EventProperties.DERIVEDEVENT_STORAGE_COLLECTION_PREFIX + event.getComponentId(), document);
     }
 
 
     private EventDocument convertPredictedEventToDocument(PredictedEvent event) {
-//        Document document = new Document("_id", event.getTimestamp());
         Document document = new Document("_id", new ObjectId());
         document.append("timestamp", event.getTimestamp());
         document.append("pdfType", event.getPdfType().toString());
@@ -147,7 +144,6 @@ public class EventDocumentConverter {
 
 
     private EventDocument convertAnomalyEventToDocument(AnomalyEvent event) {
-//        Document document = new Document("_id", event.getTimestamp());
         Document document = new Document("_id", new ObjectId());
         document.append("timestamp", event.getTimestamp());
         document.append("anomalyType", event.getAnomalyType());
@@ -168,7 +164,6 @@ public class EventDocumentConverter {
 
 
     private EventDocument convertRecommendationEventToDocument(RecommendationEvent event) {
-//        Document document = new Document("_id", event.getTimestamp());
         Document document = new Document("_id", new ObjectId());
         document.append("recommendationId", event.getRecommendationId());
         document.append("action", event.getAction());
@@ -192,7 +187,6 @@ public class EventDocumentConverter {
 
 
     private EventDocument convertFeedbackEventToDocument(FeedbackEvent event) {
-//        Document document = new Document("_id", event.getTimestamp());
         Document document = new Document("_id", new ObjectId());
         document.append("actor", event.getActor());
         document.append("timestamp", event.getTimestamp());
