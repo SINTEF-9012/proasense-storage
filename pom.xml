@@ -12,6 +12,10 @@
     <inceptionYear>2015</inceptionYear>
  	<url>http://www.proasense.eu</url>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <repositories>
         <repository>
             <id>Maven2-repository</id>
