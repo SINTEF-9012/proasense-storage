@@ -38,7 +38,7 @@ import java.util.concurrent.BlockingQueue;
 public class RandomEventLocalGenerator<T> implements Runnable {
     private Class<T> eventType;
     private BlockingQueue<EventDocument> queue;
-    private String zooKeeper;
+    private String bootstrapServers;
     private String groupId;
     private String topic;
     private String collectionId;
@@ -47,10 +47,10 @@ public class RandomEventLocalGenerator<T> implements Runnable {
     private EventGenerator eventGenerator;
 
 
-    public RandomEventLocalGenerator(Class<T> eventType, BlockingQueue<EventDocument> queue, String zooKeeper, String groupId, String topic, String collectionId, int sleep, int max) {
+    public RandomEventLocalGenerator(Class<T> eventType, BlockingQueue<EventDocument> queue, String bootstrapServers, String groupId, String topic, String collectionId, int sleep, int max) {
         this.eventType = eventType;
         this.queue = queue;
-        this.zooKeeper = zooKeeper;
+        this.bootstrapServers = bootstrapServers;
         this.groupId = groupId;
         this.topic = topic;
         this.collectionId = collectionId;
@@ -61,7 +61,7 @@ public class RandomEventLocalGenerator<T> implements Runnable {
 
 
     public void run() {
-        KafkaProducer<String, byte[]> producer = createProducer(zooKeeper);
+        KafkaProducer<String, byte[]> producer = createProducer(bootstrapServers);
 
         int cnt = 0;
         try {
@@ -183,11 +183,10 @@ public class RandomEventLocalGenerator<T> implements Runnable {
     }
 
 
-    private static KafkaProducer<String, byte[]> createProducer(String zooKeeper) {
+    private static KafkaProducer<String, byte[]> createProducer(String bootstrapServers) {
         // Specify producer properties
         Properties props = new Properties();
-//        props.put("bootstrap.servers", "89.216.116.44:9092");
-        props.put("bootstrap.servers", "192.168.11.20:9092");
+        props.put("bootstrap.servers", bootstrapServers);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
 

@@ -101,8 +101,10 @@ public class StorageReaderServiceMongoLocalBenchmark {
             int i = 0;
             for (Document doc : queryResult) {
                 i++;
-                System.out.println("DEBUG(SIMPLE.DEFAULT(" + i + ")): " + doc.toString());
-                System.out.println("DEBUG(SIMPLEEVENT(" + i + ")): " + new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent().toString());
+                if (i % 1000 == 0) {
+                    System.out.println("DEBUG(SIMPLE.DEFAULT(" + i + ")): " + doc.toString());
+                    System.out.println("DEBUG(SIMPLEEVENT(" + i + ")): " + new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent().toString());
+                }
             }
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
@@ -152,7 +154,8 @@ public class StorageReaderServiceMongoLocalBenchmark {
             int i = 0;
             for (Document doc : queryResult) {
                 i++;
-                System.out.println("DEBUG(DERIVED.DEFAULT(" + i + ")): " + doc.toString());
+                if (i % 1000 == 0)
+                    System.out.println("DEBUG(DERIVED.DEFAULT(" + i + ")): " + doc.toString());
             }
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());

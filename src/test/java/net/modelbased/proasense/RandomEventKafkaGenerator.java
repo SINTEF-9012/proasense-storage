@@ -35,7 +35,7 @@ import java.util.Properties;
 
 public class RandomEventKafkaGenerator<T> implements Runnable {
     private Class<T> eventType;
-    private String zooKeeper;
+    private String bootstrapServers;
     private String groupId;
     private String topic;
     private String collectionId;
@@ -44,9 +44,9 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
     private EventGenerator eventGenerator;
 
 
-    public RandomEventKafkaGenerator(Class<T> eventType, String zooKeeper, String groupId, String topic, String collectionId, int sleep, int max) {
+    public RandomEventKafkaGenerator(Class<T> eventType, String bootstrapServers, String groupId, String topic, String collectionId, int sleep, int max) {
         this.eventType = eventType;
-        this.zooKeeper = zooKeeper;
+        this.bootstrapServers = bootstrapServers;
         this.groupId = groupId;
         this.topic = topic;
         this.collectionId = collectionId;
@@ -57,7 +57,7 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
 
 
     public void run() {
-        KafkaProducer<String, byte[]> producer = createProducer(zooKeeper);
+        KafkaProducer<String, byte[]> producer = createProducer(bootstrapServers);
 
         int cnt = 0;
         try {
@@ -175,11 +175,10 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
     }
 
 
-    private static KafkaProducer<String, byte[]> createProducer(String a_zookeeper) {
+    private static KafkaProducer<String, byte[]> createProducer(String bootstrapServers) {
         // Specify producer properties
         Properties props = new Properties();
-//        props.put("bootstrap.servers", "89.216.116.44:9092");
-        props.put("bootstrap.servers", "192.168.11.20:9092");
+        props.put("bootstrap.servers", bootstrapServers);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
 
