@@ -23,58 +23,78 @@ import net.modelbased.proasense.storage.EventReaderMongoSync;
 import net.modelbased.proasense.storage.EventProperties;
 import org.bson.Document;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
 public class StorageReaderServiceMongoLocalBenchmark {
+    private Properties clientProperties;
+
 
     public StorageReaderServiceMongoLocalBenchmark() {
     }
 
 
+    private Properties loadClientProperties() {
+        clientProperties = new Properties();
+        String propFilename = "client.properties";
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
+
+        try {
+            if (inputStream != null) {
+                clientProperties.load(inputStream);
+            } else
+                throw new FileNotFoundException("Property file: '" + propFilename + "' not found in classpath.");
+        }
+        catch (IOException e) {
+            System.out.println("Exception:" + e.getMessage());
+        }
+
+        return clientProperties;
+    }
+
+
     public static void main(String[] args) {
-        // Kafka properties
-//        String zooKeeper = "89.216.116.44:2181";
-        String zooKeeper = "192.168.11.20:2181";
-        String groupId = "SimpleEventLocalMongoBenchmark";
+        // Get benchmark properties
+        StorageReaderServiceMongoLocalBenchmark benchmark = new StorageReaderServiceMongoLocalBenchmark();
+        benchmark.loadClientProperties();
 
-        // MongoDB properties
-        String mongoURL = "mongodb://127.0.0.1:27017";
-//        String mongoURL = "mongodb://89.216.116.44:27017";
-//        String mongoURL = "mongodb://192.168.11.25:27017";
+        // Kafka broker configuration properties
+        String zooKeeper = benchmark.clientProperties.getProperty("zookeeper.connect");
+        String groupId = "StorageReaderServiceMongoLocalBenchmark";
 
-        int NO_SIMPLEEVENTS_THREADS = 1;
-        int NO_DERIVEDEVENTS_THREADS = 0;
-        int NO_PREDICTEDEVENTS_THREADS = 0;
-        int NO_ANOMALYEVENTS_THREADS = 0;
-        int NO_RECOMMENDATIONEVENTS_THREADS = 0;
-        int NO_FEEDBACKEVENTS_THREADS = 0;
+        // MongoDB storage configuration properties
+        String MONGODB_URL = benchmark.clientProperties.getProperty("proasense.storage.mongodb.url");
 
-        int NO_TOTAL_THREADS = NO_SIMPLEEVENTS_THREADS + NO_DERIVEDEVENTS_THREADS + NO_PREDICTEDEVENTS_THREADS + NO_ANOMALYEVENTS_THREADS + NO_RECOMMENDATIONEVENTS_THREADS;
+        // Total number of threads
+        int NO_TOTAL_THREADS = 1;
 
         // Create executor environment for threads
         ArrayList<Callable> workers = new ArrayList<Callable>(NO_TOTAL_THREADS);
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
-        long NO_QUERY_SIMPLE_STARTTIME = 1432798130753L;
-        long NO_QUERY_SIMPLE_ENDTIME = 1432798131956L;
-        long NO_QUERY_DERIVED_STARTTIME = 1432807975740L;
-        long NO_QUERY_DERIVED_ENDTIME = 1432807977094L;
-        long NO_QUERY_PREDICTED_STARTTIME = 1432807976707L;
-        long NO_QUERY_PREDICTED_ENDTIME = 1432808027877L;
-        long NO_QUERY_ANOMALY_STARTTIME = 1432807976603L;
-        long NO_QUERY_ANOMALY_ENDTIME = 1432798131956L;
-        long NO_QUERY_RECOMMENDATION_STARTTIME = 1432807976678L;
-        long NO_QUERY_RECOMMENDATION_ENDTIME = 1432808028864L;
-        long NO_QUERY_FEEDBACK_STARTTIME = 1432807976678L;
-        long NO_QUERY_FEEDBACK_ENDTIME = 1432808028864L;
+        long NO_QUERY_SIMPLE_STARTTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.simple.starttime")).longValue();
+        long NO_QUERY_SIMPLE_ENDTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.simple.endtime")).longValue();
+        long NO_QUERY_DERIVED_STARTTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.derived.starttime")).longValue();
+        long NO_QUERY_DERIVED_ENDTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.derived.endtime")).longValue();
+        long NO_QUERY_PREDICTED_STARTTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.predicted.starttime")).longValue();
+        long NO_QUERY_PREDICTED_ENDTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.predicted.endtime")).longValue();
+        long NO_QUERY_ANOMALY_STARTTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.anomaly.starttime")).longValue();
+        long NO_QUERY_ANOMALY_ENDTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.anomaly.endtime")).longValue();
+        long NO_QUERY_RECOMMENDATION_STARTTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.recommendation.starttime")).longValue();
+        long NO_QUERY_RECOMMENDATION_ENDTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.recommendation.endtime")).longValue();
+        long NO_QUERY_FEEDBACK_STARTTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.feedback.starttime")).longValue();
+        long NO_QUERY_FEEDBACK_ENDTIME = new Long(benchmark.clientProperties.getProperty("proasense.benchmark.query.feedback.endtime")).longValue();
 
         // Default query for simple events
-        Callable<List<Document>> query01 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.DEFAULT, null);
+        Callable<List<Document>> query01 = new EventReaderMongoSync(MONGODB_URL, EventQueryType.SIMPLE, "simple.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.DEFAULT, null);
         executor.submit(query01);
         try {
             List<Document> queryResult = query01.call();
@@ -89,7 +109,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Average query for simple events
-        Callable<List<Document>> query02 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.AVERAGE, null);
+        Callable<List<Document>> query02 = new EventReaderMongoSync(MONGODB_URL, EventQueryType.SIMPLE, "simple.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.AVERAGE, null);
         executor.submit(query02);
         try {
             List<Document> queryResult = query02.call();
@@ -101,7 +121,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Maximum query for simple events
-        Callable<List<Document>> query03 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.MAXIMUM, null);
+        Callable<List<Document>> query03 = new EventReaderMongoSync(MONGODB_URL, EventQueryType.SIMPLE, "simple.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.MAXIMUM, null);
         executor.submit(query03);
         try {
             List<Document> queryResult = query03.call();
@@ -113,7 +133,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Minimum query for simple events
-        Callable<List<Document>> query04 = new EventReaderMongoSync(mongoURL, EventQueryType.SIMPLE, "simpleevent.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.MINUMUM, null);
+        Callable<List<Document>> query04 = new EventReaderMongoSync(MONGODB_URL, EventQueryType.SIMPLE, "simple.mhwirth.0", NO_QUERY_SIMPLE_STARTTIME, NO_QUERY_SIMPLE_ENDTIME, EventQueryOperation.MINUMUM, null);
         executor.submit(query04);
         try {
             List<Document> queryResult = query04.call();
@@ -125,7 +145,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Default query for derived events
-        Callable<List<Document>> query05 = new EventReaderMongoSync(mongoURL, EventQueryType.DERIVED, "derivedevent.mhwirth.0", NO_QUERY_DERIVED_STARTTIME, NO_QUERY_DERIVED_ENDTIME, EventQueryOperation.DEFAULT, null);
+        Callable<List<Document>> query05 = new EventReaderMongoSync(MONGODB_URL, EventQueryType.DERIVED, "derived.mhwirth.0", NO_QUERY_DERIVED_STARTTIME, NO_QUERY_DERIVED_ENDTIME, EventQueryOperation.DEFAULT, null);
         executor.submit(query05);
         try {
             List<Document> queryResult = query05.call();
@@ -139,7 +159,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Default query for predicted events
-        Callable<List<Document>> query06 = new EventReaderMongoSync(mongoURL, EventQueryType.PREDICTED, EventProperties.PREDICTEDEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_PREDICTED_STARTTIME, NO_QUERY_PREDICTED_ENDTIME, EventQueryOperation.DEFAULT, null);
+        Callable<List<Document>> query06 = new EventReaderMongoSync(MONGODB_URL, EventQueryType.PREDICTED, EventProperties.PREDICTEDEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_PREDICTED_STARTTIME, NO_QUERY_PREDICTED_ENDTIME, EventQueryOperation.DEFAULT, null);
         executor.submit(query06);
         try {
             List<Document> queryResult = query06.call();
@@ -153,7 +173,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Default query for anomaly events
-        Callable<List<Document>> query07 = new EventReaderMongoSync(mongoURL, EventQueryType.ANOMALY, EventProperties.ANOMALYEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_ANOMALY_STARTTIME, NO_QUERY_ANOMALY_ENDTIME, EventQueryOperation.DEFAULT, null);
+        Callable<List<Document>> query07 = new EventReaderMongoSync(MONGODB_URL, EventQueryType.ANOMALY, EventProperties.ANOMALYEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_ANOMALY_STARTTIME, NO_QUERY_ANOMALY_ENDTIME, EventQueryOperation.DEFAULT, null);
         executor.submit(query07);
         try {
             List<Document> queryResult = query07.call();
@@ -167,7 +187,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Default query for recommendation events
-        Callable<List<Document>> query08 = new EventReaderMongoSync(mongoURL, EventQueryType.RECOMMENDATION, EventProperties.RECOMMENDATIONEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_RECOMMENDATION_STARTTIME, NO_QUERY_RECOMMENDATION_ENDTIME, EventQueryOperation.DEFAULT, null);
+        Callable<List<Document>> query08 = new EventReaderMongoSync(MONGODB_URL, EventQueryType.RECOMMENDATION, EventProperties.RECOMMENDATIONEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_RECOMMENDATION_STARTTIME, NO_QUERY_RECOMMENDATION_ENDTIME, EventQueryOperation.DEFAULT, null);
         executor.submit(query08);
         try {
             List<Document> queryResult = query08.call();
@@ -181,7 +201,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
         }
 
         // Default query for feedback events
-        Callable<List<Document>> query09 = new EventReaderMongoSync(mongoURL, EventQueryType.FEEDBACK, EventProperties.FEEDBACKEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_FEEDBACK_STARTTIME, NO_QUERY_FEEDBACK_ENDTIME, EventQueryOperation.DEFAULT, null);
+        Callable<List<Document>> query09 = new EventReaderMongoSync(MONGODB_URL, EventQueryType.FEEDBACK, EventProperties.FEEDBACKEVENT_STORAGE_COLLECTION_NAME, NO_QUERY_FEEDBACK_STARTTIME, NO_QUERY_FEEDBACK_ENDTIME, EventQueryOperation.DEFAULT, null);
         executor.submit(query09);
         try {
             List<Document> queryResult = query09.call();

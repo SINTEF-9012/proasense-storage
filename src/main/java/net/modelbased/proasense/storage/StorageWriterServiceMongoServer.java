@@ -98,17 +98,15 @@ public class StorageWriterServiceMongoServer {
         int NO_MONGODB_MAXWAIT = new Integer(storage.serverProperties.getProperty("proasense.storage.mongodb.maxwait")).intValue();
         int NO_MONGODB_HEARTBEAT = NO_MONGODB_MAXWAIT*2;
 
-        // Blocking queue size for multi-threaded application
+        // Blocking queue for multi-threaded application
         int NO_BLOCKINGQUEUE_SIZE = 1000000;
+        BlockingQueue<EventDocument> queue = new ArrayBlockingQueue<EventDocument>(NO_BLOCKINGQUEUE_SIZE);
 
         // Total number of threads
         int NO_TOTAL_THREADS = NO_SIMPLEEVENT_LISTENERS + NO_DERIVEDEVENT_LISTENERS
                 + NO_PREDICTEDEVENT_LISTENERS + NO_ANOMALYEVENT_LISTENERS
                 + NO_RECOMMENDATIONEVENT_LISTENERS + NO_FEEDBACKEVENT_LISTENERS
                 + NO_MONGODB_WRITERS + 1;
-
-        // Define blocking queue
-        BlockingQueue<EventDocument> queue = new ArrayBlockingQueue<EventDocument>(NO_BLOCKINGQUEUE_SIZE);
 
         // Create executor environment for threads
         ArrayList<Runnable> workers = new ArrayList<Runnable>(NO_TOTAL_THREADS);

@@ -79,36 +79,36 @@ public class StorageWriterServiceMongoKafkaBenchmark {
         String groupId = "StorageWriterServiceMongoKafkaBenchmark";
 
         // Kafka event generators configuration properties
-        String SIMPLEEVENT_TOPICFILTER = benchmark.clientProperties.getProperty("proasense.benchmark.event.simple.topicfilter");
-        String DERIVEDEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.event.derived.topic");
-        String PREDICTEDEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.event.predicted.topic");
-        String ANOMALYEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.event.anomaly.topic");
-        String RECOMMENDATIONEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.event.recommendation.topic");
-        String FEEDBACKEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.event.feedback.topic");
+        String SIMPLEEVENT_TOPICFILTER = benchmark.clientProperties.getProperty("proasense.benchmark.kafka.simple.topicfilter");
+        String DERIVEDEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.kafka.derived.topic");
+        String PREDICTEDEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.kafka.predicted.topic");
+        String ANOMALYEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.kafka.anomaly.topic");
+        String RECOMMENDATIONEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.kafka.recommendation.topic");
+        String FEEDBACKEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.kafka.feedback.topic");
 
-        int NO_SIMPLEEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.simple.generators")).intValue();
-        int NO_SIMPLEEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.simple.rate")).intValue();
-        int NO_SIMPLEEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.simple.messages")).intValue();
+        int NO_SIMPLEEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.simple.generators")).intValue();
+        int NO_SIMPLEEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.simple.rate")).intValue();
+        int NO_SIMPLEEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.simple.messages")).intValue();
 
-        int NO_DERIVEDEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.derived.generators")).intValue();
-        int NO_DERIVEDEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.derived.rate")).intValue();
-        int NO_DERIVEDEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.derived.messages")).intValue();
+        int NO_DERIVEDEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.derived.generators")).intValue();
+        int NO_DERIVEDEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.derived.rate")).intValue();
+        int NO_DERIVEDEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.derived.messages")).intValue();
 
-        int NO_PREDICTEDEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.predicted.generators")).intValue();
-        int NO_PREDICTEDEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.predicted.rate")).intValue();
-        int NO_PREDICTEDEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.predicted.messages")).intValue();
+        int NO_PREDICTEDEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.predicted.generators")).intValue();
+        int NO_PREDICTEDEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.predicted.rate")).intValue();
+        int NO_PREDICTEDEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.predicted.messages")).intValue();
 
-        int NO_ANOMALYEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.anomaly.generators")).intValue();
-        int NO_ANOMALYEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.anomaly.rate")).intValue();
-        int NO_ANOMALYEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.anomaly.messages")).intValue();
+        int NO_ANOMALYEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.anomaly.generators")).intValue();
+        int NO_ANOMALYEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.anomaly.rate")).intValue();
+        int NO_ANOMALYEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.anomaly.messages")).intValue();
 
-        int NO_RECOMMENDATIONEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.recommendation.generators")).intValue();
-        int NO_RECOMMENDATIONEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.recommendation.rate")).intValue();
-        int NO_RECOMMENDATIONEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.recommendation.messages")).intValue();
+        int NO_RECOMMENDATIONEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.recommendation.generators")).intValue();
+        int NO_RECOMMENDATIONEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.recommendation.rate")).intValue();
+        int NO_RECOMMENDATIONEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.recommendation.messages")).intValue();
 
-        int NO_FEEDBACKEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.feedback.generators")).intValue();
-        int NO_FEEDBACKEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.feedback.rate")).intValue();
-        int NO_FEEDBACKEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.event.feedback.messages")).intValue();
+        int NO_FEEDBACKEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.feedback.generators")).intValue();
+        int NO_FEEDBACKEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.feedback.rate")).intValue();
+        int NO_FEEDBACKEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.kafka.feedback.messages")).intValue();
 
         // Total number of threads
         int NO_TOTAL_THREADS = NO_SIMPLEEVENT_GENERATORS + NO_DERIVEDEVENT_GENERATORS

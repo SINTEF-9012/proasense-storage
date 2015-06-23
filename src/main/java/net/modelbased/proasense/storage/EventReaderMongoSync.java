@@ -67,7 +67,7 @@ public class EventReaderMongoSync implements Callable {
         List<Document> foundDocuments = new ArrayList<Document>();
 
         if (queryType.equals(EventQueryType.SIMPLE) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
-            FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -79,7 +79,7 @@ public class EventReaderMongoSync implements Callable {
             long resultAverage = 0;
             long collectionSize = 0;
 
-            FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 collectionSize++;
@@ -97,7 +97,7 @@ public class EventReaderMongoSync implements Callable {
         if (queryType.equals(EventQueryType.SIMPLE) && queryOperation.equals(EventQueryOperation.MAXIMUM)) {
             long resultMaximum = 0;
 
-            FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -114,7 +114,7 @@ public class EventReaderMongoSync implements Callable {
         if (queryType.equals(EventQueryType.SIMPLE) && queryOperation.equals(EventQueryOperation.MINUMUM)) {
             long resultMinimum = 0;
 
-            FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -129,7 +129,7 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.DERIVED) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
-            FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -138,7 +138,7 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.PREDICTED) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
-            FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -147,7 +147,7 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.ANOMALY) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
-            FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -156,7 +156,7 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.RECOMMENDATION) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
-            FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -165,7 +165,7 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.FEEDBACK) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
-            FindIterable<Document> it = collection.find(and(gte("_id", this.startTime), lte("_id", this.endTime)));
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
