@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright 2015 Brian Elvesï¿½ter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,14 @@ import com.mongodb.async.client.MongoDatabase;
 
 import org.bson.Document;
 
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +46,9 @@ public class EventWriterMongoAsync implements Runnable {
     private String mongoURL;
     private int bulkSize;
     private int maxWait;
+    private boolean isBenchmarkLogfile;
+    private Writer logfileWriter;
+    private int threadNumber;
 
 
     public EventWriterMongoAsync(BlockingQueue<EventDocument> queue, String mongoURL, int bulkSize, int maxWait) {
@@ -46,6 +57,17 @@ public class EventWriterMongoAsync implements Runnable {
         this.bulkSize = bulkSize;
         this.maxWait = maxWait;
     }
+
+
+    public EventWriterMongoAsync(BlockingQueue<EventDocument> queue, String mongoURL, int bulkSize, int maxWait, boolean isBenchmarkLogfile, int threadNumber) {
+        this.queue = queue;
+        this.mongoURL = mongoURL;
+        this.bulkSize = bulkSize;
+        this.maxWait = maxWait;
+        this.isBenchmarkLogfile = isBenchmarkLogfile;
+        this.threadNumber = threadNumber;
+    }
+
 
     public void run() {
         // Connect to MongoDB database
@@ -61,6 +83,9 @@ public class EventWriterMongoAsync implements Runnable {
 
         Map<String, List<Document>> documentMap = new HashMap<String, List<Document>>();
         try {
+            if (isBenchmarkLogfile)
+                logfileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("EventWriterMongoAsync_benchmark_" + this.threadNumber + ".txt"), "ISO-8859-1"));
+
             while (true) {
                 cnt++;
                 long timeoutExpired = System.currentTimeMillis() + this.maxWait;
@@ -117,14 +142,29 @@ public class EventWriterMongoAsync implements Runnable {
                     System.out.println("  Total records written: " + cnt);
                     System.out.println("  Average records/s: " + average);
                     timer1 = timer2;
+
+                    if (isBenchmarkLogfile) {
+                        logfileWriter.write(cnt + "," + average + System.getProperty("line.separator"));
+                        logfileWriter.flush();
+                    }
                 }
             }
         } catch (InterruptedException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         } finally {
+            if (isBenchmarkLogfile)
+                try {
+                    logfileWriter.close();
+                }
+                catch (IOException e) {
+                    System.out.println(e.getClass().getName() + ": " + e.getMessage());
+                }
         }
 
         mongoClient.close();
+
     }
 
 }
