@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright 2015 Brian Elvesï¿½ter <${email}>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,8 +61,6 @@ public class RandomEventLocalGenerator<T> implements Runnable {
 
 
     public void run() {
-        KafkaProducer<String, byte[]> producer = createProducer(bootstrapServers);
-
         int cnt = 0;
         try {
             while (cnt < this.max) {
@@ -178,22 +176,7 @@ public class RandomEventLocalGenerator<T> implements Runnable {
         } catch (TException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         } finally {
-            producer.close();
         }
-    }
-
-
-    private static KafkaProducer<String, byte[]> createProducer(String bootstrapServers) {
-        // Specify producer properties
-        Properties props = new Properties();
-        props.put("bootstrap.servers", bootstrapServers);
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
-
-        // Define the producer object
-        KafkaProducer<String, byte[]> producer = new KafkaProducer<String, byte[]>(props);
-
-        return producer;
     }
 
 }
