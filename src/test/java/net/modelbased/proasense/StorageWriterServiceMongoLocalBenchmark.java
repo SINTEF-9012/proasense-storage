@@ -71,7 +71,7 @@ public class StorageWriterServiceMongoLocalBenchmark {
         benchmark.loadClientProperties();
 
         // Benchmark common properties
-        Boolean IS_BENCHMARK_LOGFILE = new Boolean(benchmark.clientProperties.getProperty("proasense.benchmark.common.logfile")).booleanValue();
+        boolean IS_BENCHMARK_LOGFILE = new Boolean(benchmark.clientProperties.getProperty("proasense.benchmark.common.logfile")).booleanValue();
 
         // Kafka broker configuration properties
         String boostrapServers = benchmark.clientProperties.getProperty("bootstrap.servers");

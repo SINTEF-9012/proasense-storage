@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Brian Elvesæter <brian.elvesater@sintef.no>
+ * Copyright 2015 Brian Elvesï¿½ter <brian.elvesater@sintef.no>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,9 @@ public class StorageWriterServiceMongoServer {
         StorageWriterServiceMongoServer storage = new StorageWriterServiceMongoServer();
         storage.loadServerProperties();
 
+        // Benchmark common properties
+        boolean IS_BENCHMARK_LOGFILE = new Boolean(storage.serverProperties.getProperty("proasense.benchmark.common.logfile")).booleanValue();
+
         // Kafka broker configuration properties
         String zooKeeper = storage.serverProperties.getProperty("zookeeper.connect");
         String groupId = "StorageWriterServiceMongoServer";
@@ -123,9 +126,9 @@ public class StorageWriterServiceMongoServer {
         // Create threads for MongoDB event writers
         for (int i = 0; i < NO_MONGODB_WRITERS; i++) {
             if (IS_MONGODB_SYNCDRIVER)
-                workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT));
+                workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, i));
             else
-                workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT));
+                workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, i));
         }
 
         // Create thread for MongoDB heartbeat
