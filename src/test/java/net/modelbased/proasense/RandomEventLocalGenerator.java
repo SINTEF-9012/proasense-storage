@@ -49,7 +49,7 @@ public class RandomEventLocalGenerator<T> implements Runnable {
     private EventGenerator eventGenerator;
 
 
-    public RandomEventLocalGenerator(Class<T> eventType, BlockingQueue<EventDocument> queue, String bootstrapServers, String groupId, String topic, String collectionId, int sleep, int max) {
+    public RandomEventLocalGenerator(Class<T> eventType, BlockingQueue<EventDocument> queue, String collectionId, int sleep, int max) {
         this.eventType = eventType;
         this.queue = queue;
         this.bootstrapServers = bootstrapServers;

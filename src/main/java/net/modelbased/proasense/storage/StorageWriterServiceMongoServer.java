@@ -79,12 +79,19 @@ public class StorageWriterServiceMongoServer {
         String sensappURL = storage.serverProperties.getProperty("proasense.storage.sensapp.url");
 
         // Kafka event listeners configuration properties
-        String SIMPLEEVENT_TOPICFILTER = storage.serverProperties.getProperty("proasense.storage.event.simple.topicfilter");
-        String DERIVEDEVENT_TOPICFILTER = storage.serverProperties.getProperty("proasense.storage.event.derived.topicfilter");
+        String SIMPLEEVENT_TOPIC = storage.serverProperties.getProperty("proasense.storage.event.simple.topic");
+        String DERIVEDEVENT_TOPIC = storage.serverProperties.getProperty("proasense.storage.event.derived.topic");
         String PREDICTEDEVENT_TOPIC = storage.serverProperties.getProperty("proasense.storage.event.predicted.topic");
         String ANOMALYEVENT_TOPIC = storage.serverProperties.getProperty("proasense.storage.event.anomaly.topic");
         String RECOMMENDATIONEVENT_TOPIC = storage.serverProperties.getProperty("proasense.storage.event.recommendation.topic");
         String FEEDBACKEVENT_TOPIC = storage.serverProperties.getProperty("proasense.storage.event.feedback.topic");
+
+        boolean IS_SIMPLEEVENT_FILTER = new Boolean(storage.serverProperties.getProperty("proasense.storage.event.simple.filter")).booleanValue();
+        boolean IS_DERIVEDEVENT_FILTER = new Boolean(storage.serverProperties.getProperty("proasense.storage.event.derived.filter")).booleanValue();
+        boolean IS_PREDICTEDEVENT_FILTER = new Boolean(storage.serverProperties.getProperty("proasense.storage.event.predicted.filter")).booleanValue();
+        boolean IS_ANOMALYEVENT_FILTER = new Boolean(storage.serverProperties.getProperty("proasense.storage.event.anomaly.filter")).booleanValue();
+        boolean IS_RECOMMENDATIONEVENT_FILTER = new Boolean(storage.serverProperties.getProperty("proasense.storage.event.recommendation.filter")).booleanValue();
+        boolean IS_FEEDBACKEVENT_FILTER = new Boolean(storage.serverProperties.getProperty("proasense.storage.event.feedback.filter")).booleanValue();
 
         int NO_SIMPLEEVENT_LISTENERS = new Integer(storage.serverProperties.getProperty("proasense.storage.event.simple.listeners")).intValue();
         int NO_DERIVEDEVENT_LISTENERS = new Integer(storage.serverProperties.getProperty("proasense.storage.event.derived.listeners")).intValue();
@@ -118,12 +125,35 @@ public class StorageWriterServiceMongoServer {
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
         // Create thread for Kafka event listeners
-        workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, SIMPLEEVENT_TOPICFILTER));
-        workers.add(new EventListenerKafkaFilter<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, DERIVEDEVENT_TOPICFILTER));
-        workers.add(new EventListenerKafkaTopic<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, PREDICTEDEVENT_TOPIC));
-        workers.add(new EventListenerKafkaTopic<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, ANOMALYEVENT_TOPIC));
-        workers.add(new EventListenerKafkaTopic<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, RECOMMENDATIONEVENT_TOPIC));
-        workers.add(new EventListenerKafkaTopic<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, FEEDBACKEVENT_TOPIC));
+        if (IS_SIMPLEEVENT_FILTER)
+            workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, SIMPLEEVENT_TOPIC));
+        else
+            workers.add(new EventListenerKafkaTopic<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, SIMPLEEVENT_TOPIC));
+
+        if (IS_DERIVEDEVENT_FILTER)
+            workers.add(new EventListenerKafkaFilter<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, DERIVEDEVENT_TOPIC));
+        else
+            workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, DERIVEDEVENT_TOPIC));
+
+        if (IS_PREDICTEDEVENT_FILTER)
+            workers.add(new EventListenerKafkaFilter<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, PREDICTEDEVENT_TOPIC));
+        else
+            workers.add(new EventListenerKafkaTopic<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, PREDICTEDEVENT_TOPIC));
+
+        if (IS_ANOMALYEVENT_FILTER)
+            workers.add(new EventListenerKafkaFilter<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, ANOMALYEVENT_TOPIC));
+        else
+            workers.add(new EventListenerKafkaTopic<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, ANOMALYEVENT_TOPIC));
+
+        if (IS_RECOMMENDATIONEVENT_FILTER)
+            workers.add(new EventListenerKafkaFilter<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, RECOMMENDATIONEVENT_TOPIC));
+        else
+            workers.add(new EventListenerKafkaTopic<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, RECOMMENDATIONEVENT_TOPIC));
+
+        if (IS_FEEDBACKEVENT_FILTER)
+            workers.add(new EventListenerKafkaFilter<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, FEEDBACKEVENT_TOPIC));
+        else
+            workers.add(new EventListenerKafkaTopic<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, FEEDBACKEVENT_TOPIC));
 
         // Create threads for MongoDB event writers
         for (int i = 0; i < NO_MONGODB_WRITERS; i++) {

@@ -75,18 +75,7 @@ public class StorageWriterServiceMongoLocalBenchmark {
         // Benchmark common properties
         boolean IS_BENCHMARK_LOGFILE = new Boolean(benchmark.clientProperties.getProperty("proasense.benchmark.common.logfile")).booleanValue();
 
-        // Kafka broker configuration properties
-        String boostrapServers = benchmark.clientProperties.getProperty("bootstrap.servers");
-        String groupId = "StorageWriterServiceMongoLocalBenchmark";
-
         // Local event generators configuration properties
-        String SIMPLEEVENT_TOPICFILTER = benchmark.clientProperties.getProperty("proasense.benchmark.local.simple.topicfilter");
-        String DERIVEDEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.local.derived.topic");
-        String PREDICTEDEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.local.predicted.topic");
-        String ANOMALYEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.local.anomaly.topic");
-        String RECOMMENDATIONEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.local.recommendation.topic");
-        String FEEDBACKEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.local.feedback.topic");
-
         int NO_SIMPLEEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.local.simple.generators")).intValue();
         int NO_SIMPLEEVENT_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.local.simple.rate")).intValue();
         int NO_SIMPLEEVENT_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.local.simple.messages")).intValue();
@@ -136,32 +125,32 @@ public class StorageWriterServiceMongoLocalBenchmark {
 
         // Create threads for random simple event generators
         for (int i = 0; i < NO_SIMPLEEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, boostrapServers, groupId, SIMPLEEVENT_TOPICFILTER + i, "mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, "mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
         }
 
         // Create threads for random derived event generators
         for (int i = 0; i < NO_DERIVEDEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<DerivedEvent>(DerivedEvent.class, queue, boostrapServers, groupId, DERIVEDEVENT_TOPIC, "mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<DerivedEvent>(DerivedEvent.class, queue, "mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
         }
 
         // Create threads for random predicted event generators
         for (int i = 0; i < NO_PREDICTEDEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<PredictedEvent>(PredictedEvent.class, queue, boostrapServers, groupId, PREDICTEDEVENT_TOPIC, "mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<PredictedEvent>(PredictedEvent.class, queue, "mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
         }
 
         // Create threads for random anomaly event generators
         for (int i = 0; i < NO_ANOMALYEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<AnomalyEvent>(AnomalyEvent.class, queue, boostrapServers, groupId, ANOMALYEVENT_TOPIC, "mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<AnomalyEvent>(AnomalyEvent.class, queue, "mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
         }
 
         // Create threads for random recommendation event generators
         for (int i = 0; i < NO_RECOMMENDATIONEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<RecommendationEvent>(RecommendationEvent.class, queue, boostrapServers, groupId, RECOMMENDATIONEVENT_TOPIC, "mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<RecommendationEvent>(RecommendationEvent.class, queue, "mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
         }
 
         // Create threads for random feedback event generators
         for (int i = 0; i < NO_FEEDBACKEVENT_GENERATORS; i++) {
-            workers.add(new RandomEventLocalGenerator<FeedbackEvent>(FeedbackEvent.class, queue, boostrapServers, groupId, FEEDBACKEVENT_TOPIC, "mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
+            workers.add(new RandomEventLocalGenerator<FeedbackEvent>(FeedbackEvent.class, queue, "mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
         }
 
         // Create threads for Mongo storage event writers
