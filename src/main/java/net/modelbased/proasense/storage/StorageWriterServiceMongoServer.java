@@ -124,36 +124,53 @@ public class StorageWriterServiceMongoServer {
         ArrayList<Runnable> workers = new ArrayList<Runnable>(NO_TOTAL_THREADS);
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
-        // Create thread for Kafka event listeners
-        if (IS_SIMPLEEVENT_FILTER)
-            workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, SIMPLEEVENT_TOPIC));
-        else
-            workers.add(new EventListenerKafkaTopic<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, SIMPLEEVENT_TOPIC));
+        // Create threads for Kafka simple event listeners
+        for (int i = 0; i < NO_SIMPLEEVENT_LISTENERS; i++) {
+            if (IS_SIMPLEEVENT_FILTER)
+                workers.add(new EventListenerKafkaFilter<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, SIMPLEEVENT_TOPIC));
+            else
+                workers.add(new EventListenerKafkaTopic<SimpleEvent>(SimpleEvent.class, queue, zooKeeper, groupId, SIMPLEEVENT_TOPIC));
+        }
 
-        if (IS_DERIVEDEVENT_FILTER)
-            workers.add(new EventListenerKafkaFilter<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, DERIVEDEVENT_TOPIC));
-        else
-            workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, DERIVEDEVENT_TOPIC));
+        // Create threads for Kafka derived event listeners
+        for (int i = 0; i < NO_DERIVEDEVENT_LISTENERS; i++) {
+            if (IS_DERIVEDEVENT_FILTER)
+                workers.add(new EventListenerKafkaFilter<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, DERIVEDEVENT_TOPIC));
+            else
+                workers.add(new EventListenerKafkaTopic<DerivedEvent>(DerivedEvent.class, queue, zooKeeper, groupId, DERIVEDEVENT_TOPIC));
+        }
 
-        if (IS_PREDICTEDEVENT_FILTER)
-            workers.add(new EventListenerKafkaFilter<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, PREDICTEDEVENT_TOPIC));
-        else
-            workers.add(new EventListenerKafkaTopic<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, PREDICTEDEVENT_TOPIC));
+        // Create threads for Kafka predicted event listeners
+        for (int i = 0; i < NO_PREDICTEDEVENT_LISTENERS; i++) {
+            if (IS_PREDICTEDEVENT_FILTER)
+                workers.add(new EventListenerKafkaFilter<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, PREDICTEDEVENT_TOPIC));
+            else
+                workers.add(new EventListenerKafkaTopic<PredictedEvent>(PredictedEvent.class, queue, zooKeeper, groupId, PREDICTEDEVENT_TOPIC));
+        }
 
-        if (IS_ANOMALYEVENT_FILTER)
-            workers.add(new EventListenerKafkaFilter<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, ANOMALYEVENT_TOPIC));
-        else
-            workers.add(new EventListenerKafkaTopic<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, ANOMALYEVENT_TOPIC));
+        // Create threads for Kafka anomaly event listeners
+        for (int i = 0; i < NO_ANOMALYEVENT_LISTENERS; i++) {
+            if (IS_ANOMALYEVENT_FILTER)
+                workers.add(new EventListenerKafkaFilter<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, ANOMALYEVENT_TOPIC));
+            else
+                workers.add(new EventListenerKafkaTopic<AnomalyEvent>(AnomalyEvent.class, queue, zooKeeper, groupId, ANOMALYEVENT_TOPIC));
+        }
 
-        if (IS_RECOMMENDATIONEVENT_FILTER)
-            workers.add(new EventListenerKafkaFilter<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, RECOMMENDATIONEVENT_TOPIC));
-        else
-            workers.add(new EventListenerKafkaTopic<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, RECOMMENDATIONEVENT_TOPIC));
+        // Create threads for Kafka recommendation event listeners
+        for (int i = 0; i < NO_RECOMMENDATIONEVENT_LISTENERS; i++) {
+            if (IS_RECOMMENDATIONEVENT_FILTER)
+                workers.add(new EventListenerKafkaFilter<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, RECOMMENDATIONEVENT_TOPIC));
+            else
+                workers.add(new EventListenerKafkaTopic<RecommendationEvent>(RecommendationEvent.class, queue, zooKeeper, groupId, RECOMMENDATIONEVENT_TOPIC));
+        }
 
-        if (IS_FEEDBACKEVENT_FILTER)
-            workers.add(new EventListenerKafkaFilter<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, FEEDBACKEVENT_TOPIC));
-        else
-            workers.add(new EventListenerKafkaTopic<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, FEEDBACKEVENT_TOPIC));
+        // Create threads for Kafka feedback event listeners
+        for (int i = 0; i < NO_FEEDBACKEVENT_LISTENERS; i++) {
+            if (IS_FEEDBACKEVENT_FILTER)
+                workers.add(new EventListenerKafkaFilter<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, FEEDBACKEVENT_TOPIC));
+            else
+                workers.add(new EventListenerKafkaTopic<FeedbackEvent>(FeedbackEvent.class, queue, zooKeeper, groupId, FEEDBACKEVENT_TOPIC));
+        }
 
         // Create threads for MongoDB event writers
         for (int i = 0; i < NO_MONGODB_WRITERS; i++) {
