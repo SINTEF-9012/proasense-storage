@@ -49,6 +49,7 @@ public class EventWriterMongoAsync implements Runnable {
     private int bulkSize;
     private int maxWait;
     private boolean isBenchmarkLogfile;
+    private int logSize = 10000;
     private Writer logfileWriter;
     private int threadNumber;
 
@@ -82,6 +83,7 @@ public class EventWriterMongoAsync implements Runnable {
         int cnt = 0;
         long timer1 = System.currentTimeMillis();
         long timer2 = System.currentTimeMillis();
+        boolean skipLog = false;
 
         Map<String, List<Document>> documentMap = new HashMap<String, List<Document>>();
         try {
@@ -94,6 +96,13 @@ public class EventWriterMongoAsync implements Runnable {
                 EventDocument eventDocument = queue.take();
 
                 String collectionId = eventDocument.getCollectionId();
+
+                if (!collectionId.matches(EventProperties.STORAGE_HEARTBEAT)) {
+                    cnt++;
+                    skipLog = false;
+                }
+                else
+                    skipLog = true;
 
                 // Add data for bulk write
                 if (!collectionId.matches(EventProperties.STORAGE_HEARTBEAT)) {
@@ -137,17 +146,23 @@ public class EventWriterMongoAsync implements Runnable {
                     }
                 }
 
-                if (cnt % this.bulkSize == 0) {
+                // Benchmark output
+                if ((!skipLog) && (cnt % this.logSize == 0)) {
                     timer2 = System.currentTimeMillis();
-                    long average = (this.bulkSize*1000) / (timer2 - timer1);
-                    System.out.println("Benchmark: ");
-                    System.out.println("  Total records written: " + cnt);
-                    System.out.println("  Average records/s: " + average);
-                    timer1 = timer2;
+                    long difference = timer2 - timer1;
 
-                    if (isBenchmarkLogfile) {
-                        logfileWriter.write(cnt + "," + average + System.getProperty("line.separator"));
-                        logfileWriter.flush();
+                    if (difference != 0) {
+                        long average = (this.logSize * 1000) / (timer2 - timer1);
+
+                        System.out.println("Benchmark: ");
+                        System.out.println("  Total records written: " + cnt);
+                        System.out.println("  Average records/s: " + average);
+                        timer1 = timer2;
+
+                        if (isBenchmarkLogfile) {
+                            logfileWriter.write(cnt + "," + average + System.getProperty("line.separator"));
+                            logfileWriter.flush();
+                        }
                     }
                 }
             }
