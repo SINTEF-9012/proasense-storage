@@ -28,7 +28,7 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import java.util.Properties;
 
 
-public class SimpleEventKafkaGenerator<T> implements Runnable {
+public class LoadTestingKafkaGenerator<T> implements Runnable {
     private Class<T> eventType;
     private String bootstrapServers;
     private String groupId;
@@ -39,7 +39,7 @@ public class SimpleEventKafkaGenerator<T> implements Runnable {
     private EventGenerator eventGenerator;
 
 
-    public SimpleEventKafkaGenerator(Class<T> eventType, String bootstrapServers, String groupId, String topic, String collectionId, int messages_per_second, int max_messages) {
+    public LoadTestingKafkaGenerator(Class<T> eventType, String bootstrapServers, String groupId, String topic, String collectionId, int messages_per_second, int max_messages) {
         this.eventType = eventType;
         this.bootstrapServers = bootstrapServers;
         this.groupId = groupId;
@@ -57,7 +57,6 @@ public class SimpleEventKafkaGenerator<T> implements Runnable {
         int cnt = 0;
         try {
             while (cnt < this.max_messages) {
-                cnt++;
                 Thread.sleep(1000);
 
                 String eventTypeName = eventType.getName();
@@ -76,6 +75,7 @@ public class SimpleEventKafkaGenerator<T> implements Runnable {
                         producer.send(message);
                     }
                 }
+                cnt = cnt + this.messages_per_second;
             }
         } catch (InterruptedException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());

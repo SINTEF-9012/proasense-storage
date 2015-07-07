@@ -24,22 +24,11 @@ import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
 import eu.proasense.internal.SimpleEvent;
 
-import net.modelbased.proasense.storage.EventHeartbeat;
-import net.modelbased.proasense.storage.EventDocument;
-import net.modelbased.proasense.storage.EventListenerKafkaFilter;
-import net.modelbased.proasense.storage.EventListenerKafkaTopic;
-import net.modelbased.proasense.storage.EventWriterMongoAsync;
-import net.modelbased.proasense.storage.EventWriterMongoSync;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -140,10 +129,11 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
         if (IS_LOAD_TESTING_ENABLED) {
             int NO_MESSAGES_PER_SECOND = NO_LOAD_TESTING_SENSORS * (1000/NO_LOAD_TESTING_RATE);
+            int NO_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
             if (IS_SIMPLEEVENT_FILTER)
-                workers.add(new SimpleEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC + ".0", "load_testing", NO_MESSAGES_PER_SECOND, NO_LOAD_TESTING_MESSAGES));
+                workers.add(new LoadTestingKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC + ".0", "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
             else
-                workers.add(new SimpleEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC, "load_testing", NO_MESSAGES_PER_SECOND, NO_LOAD_TESTING_MESSAGES));
+                workers.add(new LoadTestingKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC, "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
         }
         else {
             // Create threads for random simple event generators

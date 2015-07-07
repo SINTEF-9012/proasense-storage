@@ -136,7 +136,8 @@ public class StorageWriterServiceMongoLocalBenchmark {
 
         if (IS_LOAD_TESTING_ENABLED) {
             int NO_MESSAGES_PER_SECOND = NO_LOAD_TESTING_SENSORS * (1000/NO_LOAD_TESTING_RATE);
-            workers.add(new SimpleEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, "load_testing", NO_MESSAGES_PER_SECOND, NO_LOAD_TESTING_MESSAGES));
+            int NO_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
+            workers.add(new LoadTestingLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
         }
         else {
             // Create threads for random simple event generators

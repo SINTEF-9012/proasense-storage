@@ -28,7 +28,7 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import java.util.concurrent.BlockingQueue;
 
 
-public class SimpleEventLocalGenerator<T> implements Runnable {
+public class LoadTestingLocalGenerator<T> implements Runnable {
     private Class<T> eventType;
     private BlockingQueue<EventDocument> queue;
     private String collectionId;
@@ -37,7 +37,7 @@ public class SimpleEventLocalGenerator<T> implements Runnable {
     private EventGenerator eventGenerator;
 
 
-    public SimpleEventLocalGenerator(Class<T> eventType, BlockingQueue<EventDocument> queue, String collectionId, int messages_per_second, int max_messages) {
+    public LoadTestingLocalGenerator(Class<T> eventType, BlockingQueue<EventDocument> queue, String collectionId, int messages_per_second, int max_messages) {
         this.eventType = eventType;
         this.queue = queue;
         this.collectionId = collectionId;
@@ -51,7 +51,6 @@ public class SimpleEventLocalGenerator<T> implements Runnable {
         int cnt = 0;
         try {
             while (cnt < this.max_messages) {
-                cnt++;
                 Thread.sleep(1000);
 
                 String eventTypeName = eventType.getName();
@@ -71,6 +70,7 @@ public class SimpleEventLocalGenerator<T> implements Runnable {
                         queue.put(eventDocument);
                     }
                 }
+                cnt = cnt + this.messages_per_second;
             }
         } catch (InterruptedException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
