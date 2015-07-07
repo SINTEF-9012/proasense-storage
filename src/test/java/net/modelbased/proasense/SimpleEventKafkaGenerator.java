@@ -18,28 +18,32 @@
 package net.modelbased.proasense;
 
 import eu.proasense.internal.SimpleEvent;
-import net.modelbased.proasense.storage.EventDocument;
-import net.modelbased.proasense.storage.EventDocumentConverter;
 import net.modelbased.proasense.storage.EventProperties;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.Properties;
 
 
-public class SimpleEventLocalGenerator<T> implements Runnable {
+public class SimpleEventKafkaGenerator<T> implements Runnable {
     private Class<T> eventType;
-    private BlockingQueue<EventDocument> queue;
+    private String bootstrapServers;
+    private String groupId;
+    private String topic;
     private String collectionId;
     private int messages_per_second;
     private int max_messages;
     private EventGenerator eventGenerator;
 
 
-    public SimpleEventLocalGenerator(Class<T> eventType, BlockingQueue<EventDocument> queue, String collectionId, int messages_per_second, int max_messages) {
+    public SimpleEventKafkaGenerator(Class<T> eventType, String bootstrapServers, String groupId, String topic, String collectionId, int messages_per_second, int max_messages) {
         this.eventType = eventType;
-        this.queue = queue;
+        this.bootstrapServers = bootstrapServers;
+        this.groupId = groupId;
+        this.topic = topic;
         this.collectionId = collectionId;
         this.messages_per_second = messages_per_second;
         this.max_messages = max_messages;
@@ -48,6 +52,8 @@ public class SimpleEventLocalGenerator<T> implements Runnable {
 
 
     public void run() {
+        KafkaProducer<String, byte[]> producer = createProducer(bootstrapServers);
+
         int cnt = 0;
         try {
             while (cnt < this.max_messages) {
@@ -65,10 +71,9 @@ public class SimpleEventLocalGenerator<T> implements Runnable {
                         TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
                         byte[] bytes = serializer.serialize((SimpleEvent) event);
 
-                        EventDocumentConverter converter = new EventDocumentConverter((SimpleEvent) event);
-                        EventDocument eventDocument = new EventDocument(converter.getCollectionId(), converter.getDocument());
-
-                        queue.put(eventDocument);
+                        // Publish message
+                        ProducerRecord<String, byte[]> message = new ProducerRecord<String, byte[]>(this.topic, bytes);
+                        producer.send(message);
                     }
                 }
             }
@@ -77,7 +82,22 @@ public class SimpleEventLocalGenerator<T> implements Runnable {
         } catch (TException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         } finally {
+            producer.close();
         }
+    }
+
+
+    private static KafkaProducer<String, byte[]> createProducer(String bootstrapServers) {
+        // Specify producer properties
+        Properties props = new Properties();
+        props.put("bootstrap.servers", bootstrapServers);
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
+
+        // Define the producer object
+        KafkaProducer<String, byte[]> producer = new KafkaProducer<String, byte[]>(props);
+
+        return producer;
     }
 
 }
