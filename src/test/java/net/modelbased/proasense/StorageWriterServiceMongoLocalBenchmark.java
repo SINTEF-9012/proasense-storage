@@ -74,6 +74,7 @@ public class StorageWriterServiceMongoLocalBenchmark {
 
         // Benchmark common properties
         boolean IS_BENCHMARK_LOGFILE = new Boolean(benchmark.clientProperties.getProperty("proasense.benchmark.common.logfile")).booleanValue();
+        int NO_BENCHMARK_LOGSIZE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.common.logsize")).intValue();
 
         // Benchmark load testing properties
         boolean IS_LOAD_TESTING_ENABLED = new Boolean(benchmark.clientProperties.getProperty("proasense.benchmark.load.testing")).booleanValue();
@@ -174,9 +175,9 @@ public class StorageWriterServiceMongoLocalBenchmark {
         // Create threads for Mongo storage event writers
         for (int i = 0; i < NO_MONGODB_WRITERS; i++) {
             if (IS_MONGODB_SYNCDRIVER)
-                workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, i));
+                workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
             else
-                workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, i));
+                workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
         }
 
         // Create thread for MongoDB heartbeat

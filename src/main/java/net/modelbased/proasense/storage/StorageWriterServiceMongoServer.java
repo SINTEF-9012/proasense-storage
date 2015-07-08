@@ -70,6 +70,7 @@ public class StorageWriterServiceMongoServer {
 
         // Benchmark common properties
         boolean IS_BENCHMARK_LOGFILE = new Boolean(storage.serverProperties.getProperty("proasense.benchmark.common.logfile")).booleanValue();
+        int NO_BENCHMARK_LOGSIZE = new Integer(storage.serverProperties.getProperty("proasense.benchmark.common.logsize")).intValue();
 
         // Kafka broker configuration properties
         String zooKeeper = storage.serverProperties.getProperty("zookeeper.connect");
@@ -175,9 +176,9 @@ public class StorageWriterServiceMongoServer {
         // Create threads for MongoDB event writers
         for (int i = 0; i < NO_MONGODB_WRITERS; i++) {
             if (IS_MONGODB_SYNCDRIVER)
-                workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, i));
+                workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
             else
-                workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, i));
+                workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
         }
 
         // Create thread for MongoDB heartbeat

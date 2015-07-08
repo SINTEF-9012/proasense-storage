@@ -19,25 +19,20 @@ package net.modelbased.proasense.storage;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.async.client.MongoIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
 
@@ -48,8 +43,8 @@ public class EventWriterMongoSync implements Runnable {
     private String mongoURL;
     private int bulkSize;
     private int maxWait;
-    private boolean isBenchmarkLogfile;
-    private int logSize = 10000;
+    private boolean isLogfile;
+    private int logSize;
     private Writer logfileWriter;
     private int threadNumber;
 
@@ -59,18 +54,30 @@ public class EventWriterMongoSync implements Runnable {
         this.mongoURL = mongoURL;
         this.bulkSize = bulkSize;
         this.maxWait = maxWait;
+        this.logSize = bulkSize;
     }
 
 
-    public EventWriterMongoSync(BlockingQueue<EventDocument> queue, String mongoURL, int bulkSize, int maxWait, boolean isBenchmarkLogfile, int threadNumber) {
+    public EventWriterMongoSync(BlockingQueue<EventDocument> queue, String mongoURL, int bulkSize, int maxWait, boolean isLogfile, int threadNumber) {
         this.queue = queue;
         this.mongoURL = mongoURL;
         this.bulkSize = bulkSize;
         this.maxWait = maxWait;
-        this.isBenchmarkLogfile = isBenchmarkLogfile;
+        this.isLogfile = isLogfile;
+        this.logSize = bulkSize;
         this.threadNumber = threadNumber;
     }
 
+
+    public EventWriterMongoSync(BlockingQueue<EventDocument> queue, String mongoURL, int bulkSize, int maxWait, boolean isLogfile, int logSize, int threadNumber) {
+        this.queue = queue;
+        this.mongoURL = mongoURL;
+        this.bulkSize = bulkSize;
+        this.maxWait = maxWait;
+        this.isLogfile = isLogfile;
+        this.logSize = logSize;
+        this.threadNumber = threadNumber;
+    }
 
     public void run() {
         // Connect to MongoDB database
@@ -87,7 +94,7 @@ public class EventWriterMongoSync implements Runnable {
 
         Map<String, List<Document>> documentMap = new HashMap<String, List<Document>>();
         try {
-            if (isBenchmarkLogfile)
+            if (isLogfile)
                 logfileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("EventWriterMongoSync_benchmark_" + this.threadNumber + ".txt"), "ISO-8859-1"));
 
             while (true) {
@@ -150,7 +157,7 @@ public class EventWriterMongoSync implements Runnable {
                         System.out.println("  Average records/s: " + average);
                         timer1 = timer2;
 
-                        if (isBenchmarkLogfile) {
+                        if (isLogfile) {
                             logfileWriter.write(cnt + "," + average + System.getProperty("line.separator"));
                             logfileWriter.flush();
                         }
@@ -162,7 +169,7 @@ public class EventWriterMongoSync implements Runnable {
         } catch (IOException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         } finally {
-            if (isBenchmarkLogfile)
+            if (isLogfile)
                 try {
                     logfileWriter.close();
                 }
