@@ -49,7 +49,7 @@ public class EventGenerator {
 
         // Define properties
         Map<String, ComplexValue> properties = new HashMap<String, ComplexValue>();
-        properties.put("raw.value", value);
+        properties.put("value", value);
 
         // Define simple event
         SimpleEvent event = new SimpleEvent();
@@ -69,7 +69,7 @@ public class EventGenerator {
 
         // Define properties
         Map<String, ComplexValue> properties = new HashMap<String, ComplexValue>();
-        properties.put("derived.value", value);
+        properties.put("value", value);
 
         // Define derived event
         DerivedEvent event = new DerivedEvent();
@@ -90,7 +90,7 @@ public class EventGenerator {
 
         // Define properties
         Map<String, ComplexValue> properties = new HashMap<String, ComplexValue>();
-        properties.put("predicted.value", value);
+        properties.put("value", value);
 
         // Define params
         List<Double> params = new ArrayList<Double>();
@@ -134,7 +134,7 @@ public class EventGenerator {
 
         // Define properties
         Map<String, ComplexValue> properties = new HashMap<String, ComplexValue>();
-        properties.put("recommendation.value", value);
+        properties.put("value", value);
 
         // Define recommendation event
         RecommendationEvent event = new RecommendationEvent();
@@ -157,7 +157,7 @@ public class EventGenerator {
 
         // Define properties
         Map<String, ComplexValue> properties = new HashMap<String, ComplexValue>();
-        properties.put("recommendation.value", value);
+        properties.put("value", value);
 
         // Define feedback event
         FeedbackEvent event = new FeedbackEvent();
