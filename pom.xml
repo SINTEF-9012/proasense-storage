@@ -5,9 +5,13 @@
 
 	<groupId>net.modelbased.proasense</groupId>
 	<artifactId>proasense-storage</artifactId>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>proasense-storage</name>
+    <modules>
+        <module>storage-writer</module>
+        <module>proasense-common</module>
+    </modules>
+    <name>proasense-storage</name>
     <description>ProaSense sensing architecture extensions for SensApp</description>
     <inceptionYear>2015</inceptionYear>
  	<url>http://www.proasense.eu</url>

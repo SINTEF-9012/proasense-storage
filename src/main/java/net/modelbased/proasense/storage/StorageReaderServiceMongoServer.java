@@ -37,7 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
-@Path("/StorageReaderServiceMongoSync")
+@Path("/")
 public class StorageReaderServiceMongoServer {
     private Properties serverProperties;
 
@@ -83,6 +83,17 @@ public class StorageReaderServiceMongoServer {
         executor.shutdown();
 
         return Response.status(201).entity(queryResult.toString()).build();
+    }
+
+
+    @GET
+    @Path("/verify")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response verifyRESTService(InputStream incomingData) {
+        String result = "StorageReaderRESTService successfully started...";
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
     }
 
 
