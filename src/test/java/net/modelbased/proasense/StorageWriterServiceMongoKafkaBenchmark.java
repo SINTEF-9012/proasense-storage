@@ -72,7 +72,7 @@ public class StorageWriterServiceMongoKafkaBenchmark {
         int NO_LOAD_TESTING_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.load.messages")).intValue();
 
         // Kafka broker configuration properties
-        String boostrapServers = benchmark.clientProperties.getProperty("bootstrap.servers");
+        String boostrapServers = benchmark.clientProperties.getProperty("kafka.bootstrap.servers");
         String groupId = "StorageWriterServiceMongoKafkaBenchmark";
 
         // Kafka event generators configuration properties
