@@ -5,17 +5,30 @@
 
 	<groupId>net.modelbased.proasense</groupId>
 	<artifactId>proasense-storage</artifactId>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 	<version>1.0-SNAPSHOT</version>
+
+    <modules>
+        <module>storage-base</module>
+        <module>storage-registry</module>
+        <module>storage-writer</module>
+        <module>storage-reader</module>
+        <module>storage-adapter</module>
+    </modules>
+
     <name>proasense-storage</name>
     <description>ProaSense sensing architecture extensions for SensApp</description>
-    <inceptionYear>2015</inceptionYear>
- 	<url>http://www.proasense.eu</url>
+ 	<url>https://github.com/SINTEF-9012/proasense-storage</url>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+<!--
     <properties>
         <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
     </properties>
-
+-->
     <repositories>
         <repository>
             <id>Maven2-repository</id>
@@ -30,6 +43,12 @@
     </repositories>
 
  	<dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>eu.proasense.internal</groupId>
             <artifactId>thrift-messages</artifactId>
@@ -50,12 +69,6 @@
             <artifactId>commons-math3</artifactId>
             <version>3.4.1</version>
         </dependency>
-        <dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.thrift</groupId>
 			<artifactId>libthrift</artifactId>
@@ -115,11 +128,6 @@
             <groupId>org.jinterop</groupId>
             <artifactId>j-interop</artifactId>
             <version>2.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.0.1</version>
         </dependency>
     </dependencies>
 
