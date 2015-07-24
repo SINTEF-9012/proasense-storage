@@ -26,6 +26,12 @@ import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
 import eu.proasense.internal.SimpleEvent;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,11 +43,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
+@Path("/")
 public class StorageWriterMongoService {
     private Properties serverProperties;
 
 
     public StorageWriterMongoService() {
+        // Get server properties
+        this.serverProperties = loadServerProperties();
     }
 
 
@@ -64,10 +73,21 @@ public class StorageWriterMongoService {
     }
 
 
+    @GET
+    @Path("/serverproperties")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response printServerProperties() {
+        String result = this.serverProperties.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
     public static void main(String[] args) {
         // Get server properties
         StorageWriterMongoService storage = new StorageWriterMongoService();
-        storage.loadServerProperties();
+//        storage.loadServerProperties();
 
         // Benchmark common properties
         boolean IS_BENCHMARK_LOGFILE = new Boolean(storage.serverProperties.getProperty("proasense.benchmark.common.logfile")).booleanValue();
