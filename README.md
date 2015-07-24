@@ -5,6 +5,8 @@ The storage component for the Sensing Architecture developed in the ProaSense pr
 * MongoDB 3.0 or higher
 
 ## Setup
+
+###Modules
 The storage component consists of four modules:
 
 * **storage-base**, which contains common, shared base classes for the Storage Writer, Storage Reader and Storage Registry services.
@@ -12,15 +14,21 @@ The storage component consists of four modules:
 * **storage-reader**, which contains the classes for the Storage Reader service.
 * **storage-registry**, which contains the classes for the Storage Registry service.
 
-### Property files
+### Configuration files
+Each module has its own set of configuration files under the `resources` folder:
 
-#### server.properties
-The `server.properties` file contains the configuration properties for the Storage Writer and Storage Reader services.
+* The **`server.properties`** file contains the configuration properties for the Storage Writer and Storage Reader services.
+* The **`client.properties`** file contains the configuration for the test and benchmark code.
 
 ### Compile
 ```
 mvn clean install
+mvn package
 ```
+
+## Storage Writer service
+
+### Compile
 
 ### Run the Storage Writer service
 ```
@@ -28,11 +36,28 @@ cd storage-writer
 mvn exec:java -Dexec.mainClass=net.modelbased.proasense.storage.writer.StorageWriterMongoService
 ```
 
+### Test and benchmark
+
+#### Run the local storage writer benchmark
+```
+mvn exec:java -Dexec.classpathScope=test -Dexec.mainClass=net.modelbased.proasense.storage.writer.StorageWriterServiceMongoLocalBenchmark
+```
+
+### Run the Kafka storage writer benchmark
+```
+mvn exec:java -Dexec.classpathScope=test -Dexec.mainClass=net.modelbased.proasense.storage.writer.StorageWriterServiceMongoKafkaBenchmark
+```
+
+
+## Storage Reader service
+
 ### Deploy the Storage Reader service
 ```
 cd storage-reader
 mvn jetty:run
 ```
+
+## Storage Registry service
 
 ### Deploy the Storage Registry service
 ```
@@ -54,7 +79,8 @@ mvn exec:java -Dexec.classpathScope=test -Dexec.mainClass=net.modelbased.proasen
 
 ### Run the local storage reader benchmark
 ```
-mvn exec:java -Dexec.classpathScope=test -Dexec.mainClass=net.modelbased.proasense.storage.reader.StorageReaderServiceMongoLocalBenchmark
+cd storage-reader
+mvn exec:java -Dexec.classpathScope=test -Dexec.mainClass=net.modelbased.proasense.storage.reader.StorageReaderMongoServiceLocalBenchmark
 ```
 
 ### Run the Kafka storage writer benchmark

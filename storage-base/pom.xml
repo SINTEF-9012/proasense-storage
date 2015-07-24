@@ -11,7 +11,7 @@
 
     <artifactId>storage-base</artifactId>
     <packaging>jar</packaging>
-    <name>storage-base (Maven jar)</name>
+    <name>storage-base (Maven jar file)</name>
 
     <dependencies>
         <dependency>

@@ -47,13 +47,13 @@ import java.util.concurrent.Executors;
 
 
 @Path("/")
-public class StorageReaderServiceMongoServer {
+public class StorageReaderMongoService {
     private Properties serverProperties;
     private String MONGODB_URL;
     private String MONGODB_DATABASE;
 
 
-    public StorageReaderServiceMongoServer() {
+    public StorageReaderMongoService() {
         // Get server properties
         serverProperties = loadServerProperties();
 

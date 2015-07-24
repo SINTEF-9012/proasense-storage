@@ -33,11 +33,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class StorageReaderServiceMongoLocalBenchmark {
+public class StorageReaderMongoServiceLocalBenchmark {
     private Properties clientProperties;
 
 
-    public StorageReaderServiceMongoLocalBenchmark() {
+    public StorageReaderMongoServiceLocalBenchmark() {
     }
 
 
@@ -62,7 +62,7 @@ public class StorageReaderServiceMongoLocalBenchmark {
 
     public static void main(String[] args) {
         // Get benchmark properties
-        StorageReaderServiceMongoLocalBenchmark benchmark = new StorageReaderServiceMongoLocalBenchmark();
+        StorageReaderMongoServiceLocalBenchmark benchmark = new StorageReaderMongoServiceLocalBenchmark();
         benchmark.loadClientProperties();
 
         // Kafka broker configuration properties

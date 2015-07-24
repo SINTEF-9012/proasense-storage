@@ -17,7 +17,7 @@ package net.modelbased.proasense.storage.adapter;
 
 import net.modelbased.proasense.storage.model.JsonPrinter;
 import net.modelbased.proasense.storage.model.Sensor;
-import net.modelbased.proasense.storage.registry.RestRequest;
+//import net.modelbased.proasense.storage.registry.RestRequest;
 
 import eu.proasense.internal.ComplexValue;
 import eu.proasense.internal.SimpleEvent;
@@ -231,8 +231,8 @@ public class DataInfrastructureAdapterConsumer {
         }
 
         String js = JsonPrinter.sensorToJson(sensor);
-        if(!RestRequest.isSensorRegistered(sensor))
-            RestRequest.postSensor(sensor);
+//        if(!RestRequest.isSensorRegistered(sensor))
+//            RestRequest.postSensor(sensor);
 
         return sensor;
     }
