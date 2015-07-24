@@ -13,7 +13,6 @@
         <module>storage-registry</module>
         <module>storage-writer</module>
         <module>storage-reader</module>
-        <module>storage-adapter</module>
     </modules>
 
     <name>proasense-storage</name>
