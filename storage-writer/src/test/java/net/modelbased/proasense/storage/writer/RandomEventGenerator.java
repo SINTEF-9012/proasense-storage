@@ -30,12 +30,12 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class EventGenerator {
+public class RandomEventGenerator {
     private RandomDataGenerator randomData;
     private RandomGenerator randomNumber;
 
 
-    public EventGenerator() {
+    public RandomEventGenerator() {
         this.randomData = new RandomDataGenerator();
         this.randomNumber = new MersenneTwister();
     }

@@ -33,11 +33,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class StorageWriterServiceMongoKafkaBenchmark {
+public class StorageWriterMongoServiceKafkaBenchmark {
     private Properties clientProperties;
 
 
-    public StorageWriterServiceMongoKafkaBenchmark() {
+    public StorageWriterMongoServiceKafkaBenchmark() {
     }
 
 
@@ -62,7 +62,7 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
     public static void main(String[] args) {
         // Get benchmark properties
-        StorageWriterServiceMongoKafkaBenchmark benchmark = new StorageWriterServiceMongoKafkaBenchmark();
+        StorageWriterMongoServiceKafkaBenchmark benchmark = new StorageWriterMongoServiceKafkaBenchmark();
         benchmark.loadClientProperties();
 
         // Benchmark load testing properties
@@ -73,7 +73,7 @@ public class StorageWriterServiceMongoKafkaBenchmark {
 
         // Kafka broker configuration properties
         String boostrapServers = benchmark.clientProperties.getProperty("kafka.bootstrap.servers");
-        String groupId = "StorageWriterServiceMongoKafkaBenchmark";
+        String groupId = "StorageWriterMongoServiceKafkaBenchmark";
 
         // Kafka event generators configuration properties
         String SIMPLEEVENT_TOPIC = benchmark.clientProperties.getProperty("proasense.benchmark.kafka.simple.topic");
@@ -131,9 +131,9 @@ public class StorageWriterServiceMongoKafkaBenchmark {
             int NO_MESSAGES_PER_SECOND = NO_LOAD_TESTING_SENSORS * (1000/NO_LOAD_TESTING_RATE);
             int NO_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
             if (IS_SIMPLEEVENT_FILTER)
-                workers.add(new LoadTestingKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC + ".0", "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
+                workers.add(new SimpleEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC + ".0", "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
             else
-                workers.add(new LoadTestingKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC, "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
+                workers.add(new SimpleEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC, "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
         }
         else {
             // Create threads for random simple event generators

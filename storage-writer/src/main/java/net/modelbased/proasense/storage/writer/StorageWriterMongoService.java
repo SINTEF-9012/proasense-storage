@@ -74,9 +74,20 @@ public class StorageWriterMongoService {
 
 
     @GET
-    @Path("/serverproperties")
+    @Path("/server/status")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response printServerProperties() {
+    public Response getServerStatus() {
+        String result = "ProaSense Storage Writer Service running...";
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/server/properties")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getServerProperties() {
         String result = this.serverProperties.toString();
 
         // Return HTTP response 200 in case of success

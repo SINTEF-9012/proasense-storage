@@ -44,7 +44,7 @@ public class RandomEventLocalGenerator<T> implements Runnable {
     private String collectionId;
     private int sleep;
     private int max;
-    private EventGenerator eventGenerator;
+    private RandomEventGenerator eventGenerator;
 
 
     public RandomEventLocalGenerator(Class<T> eventType, BlockingQueue<EventDocument> queue, String collectionId, int sleep, int max) {
@@ -56,7 +56,7 @@ public class RandomEventLocalGenerator<T> implements Runnable {
         this.collectionId = collectionId;
         this.sleep = sleep;
         this.max = max;
-        this.eventGenerator = new EventGenerator();
+        this.eventGenerator = new RandomEventGenerator();
     }
 
 

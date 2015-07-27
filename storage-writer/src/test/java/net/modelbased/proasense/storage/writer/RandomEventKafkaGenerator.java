@@ -43,7 +43,7 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
     private String collectionId;
     private int sleep;
     private int max;
-    private EventGenerator eventGenerator;
+    private RandomEventGenerator eventGenerator;
 
 
     public RandomEventKafkaGenerator(Class<T> eventType, String bootstrapServers, String groupId, String topic, String collectionId, int sleep, int max) {
@@ -54,7 +54,7 @@ public class RandomEventKafkaGenerator<T> implements Runnable {
         this.collectionId = collectionId;
         this.sleep = sleep;
         this.max = max;
-        this.eventGenerator = new EventGenerator();
+        this.eventGenerator = new RandomEventGenerator();
     }
 
 

@@ -25,9 +25,6 @@ import eu.proasense.internal.RecommendationEvent;
 import eu.proasense.internal.SimpleEvent;
 
 import net.modelbased.proasense.storage.EventDocument;
-import net.modelbased.proasense.storage.writer.EventWriterMongoAsync;
-import net.modelbased.proasense.storage.writer.EventWriterMongoSync;
-import net.modelbased.proasense.storage.writer.EventHeartbeat;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,11 +37,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class StorageWriterServiceMongoLocalBenchmark {
+public class StorageWriterMongoServiceLocalBenchmark {
     private Properties clientProperties;
 
 
-    public StorageWriterServiceMongoLocalBenchmark() {
+    public StorageWriterMongoServiceLocalBenchmark() {
     }
 
 
@@ -69,7 +66,7 @@ public class StorageWriterServiceMongoLocalBenchmark {
 
     public static void main(String[] args) {
         // Get benchmark properties
-        StorageWriterServiceMongoLocalBenchmark benchmark = new StorageWriterServiceMongoLocalBenchmark();
+        StorageWriterMongoServiceLocalBenchmark benchmark = new StorageWriterMongoServiceLocalBenchmark();
         benchmark.loadClientProperties();
 
         // Benchmark common properties
@@ -138,7 +135,7 @@ public class StorageWriterServiceMongoLocalBenchmark {
         if (IS_LOAD_TESTING_ENABLED) {
             int NO_MESSAGES_PER_SECOND = NO_LOAD_TESTING_SENSORS * (1000/NO_LOAD_TESTING_RATE);
             int NO_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
-            workers.add(new LoadTestingLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
+            workers.add(new SimpleEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
         }
         else {
             // Create threads for random simple event generators
