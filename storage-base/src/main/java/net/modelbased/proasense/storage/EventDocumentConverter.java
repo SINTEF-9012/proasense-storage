@@ -19,6 +19,7 @@ package net.modelbased.proasense.storage;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
 import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.ComplexValue;
 import eu.proasense.internal.DerivedEvent;
@@ -27,9 +28,13 @@ import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
 import eu.proasense.internal.SimpleEvent;
 import eu.proasense.internal.VariableType;
+
+import org.apache.log4j.Logger;
+
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
+
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -38,6 +43,8 @@ import java.util.Map;
 
 
 public class EventDocumentConverter {
+    public final static Logger logger = Logger.getLogger(EventDocumentConverter.class);
+
     private EventDocument eventDocument;
 
     public EventDocumentConverter(SimpleEvent event) {
@@ -220,19 +227,19 @@ public class EventDocumentConverter {
             VariableType valueType = value.getType();
 
             if (valueType.equals(VariableType.LONG)) {
-                propertiesObj.put(key.replace(".", "_"), new Long(valueKey));
+                propertiesObj.put(key.replace(".", "_"), new Long(valueKey.replace(" ", "")));
             }
             if (valueType.equals(VariableType.STRING)) {
                 propertiesObj.put(key.replace(".", "_"), new String(valueKey));
             }
             if (valueType.equals(VariableType.DOUBLE)) {
-                propertiesObj.put(key.replace(".", "_"), new Double(valueKey));
+                propertiesObj.put(key.replace(".", "_"), new Double(valueKey.replace(" ", "")));
             }
             if (valueType.equals(VariableType.BLOB)) {
-                propertiesObj.put(key.replace(".", "_"), new String(valueKey.toString()));
+                propertiesObj.put(key.replace(".", "_"), new String(valueKey));
             }
             if (valueType.equals(VariableType.BOOLEAN)) {
-                propertiesObj.put(key.replace(".", "_"), new Boolean(valueKey.toString()));
+                propertiesObj.put(key.replace(".", "_"), new Boolean(valueKey.replace(" ", "")));
             }
         }
 
