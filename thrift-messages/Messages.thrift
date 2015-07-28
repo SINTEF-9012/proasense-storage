@@ -11,7 +11,8 @@ enum VariableType {
 	LONG,
 	STRING,
 	DOUBLE,
-	BLOB
+	BLOB,
+	BOOLEAN
 }
 
 struct ComplexValue {

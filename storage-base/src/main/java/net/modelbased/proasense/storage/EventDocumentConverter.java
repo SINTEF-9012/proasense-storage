@@ -231,6 +231,9 @@ public class EventDocumentConverter {
             if (valueType.equals(VariableType.BLOB)) {
                 propertiesObj.put(key.replace(".", "_"), new String(valueKey.toString()));
             }
+            if (valueType.equals(VariableType.BOOLEAN)) {
+                propertiesObj.put(key.replace(".", "_"), new Boolean(valueKey.toString()));
+            }
         }
 
         return propertiesObj;
