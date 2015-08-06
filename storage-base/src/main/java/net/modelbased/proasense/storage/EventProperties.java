@@ -35,6 +35,8 @@ public class EventProperties {
     public static String RECOMMENDATIONEVENT_STORAGE_COLLECTION_NAME = "recommendation.system";
     public static String FEEDBACKEVENT_STORAGE_COLLECTION_NAME = "feedback.system";
 
+    public static String REGISTRY_DATABASE_NAME = "proasense_registry";
+
     public static String STORAGE_DATABASE_NAME = "proasense_db";
     public static String STORAGE_SERIALIZED_EVENT_KEY = "SERIALIZED_EVENT";
     public static String STORAGE_HEARTBEAT = "STORAGE_HEARTBEAT";

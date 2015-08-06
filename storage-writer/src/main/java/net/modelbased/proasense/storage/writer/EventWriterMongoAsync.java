@@ -52,6 +52,8 @@ public class EventWriterMongoAsync implements Runnable {
     private int logSize;
     private Writer logfileWriter;
     private int threadNumber;
+    private boolean isLoadTest = false;
+    private int loadTestMaxMessages;
 
 
     public EventWriterMongoAsync(BlockingQueue<EventDocument> queue, String mongoURL, int bulkSize, int maxWait) {
@@ -84,6 +86,20 @@ public class EventWriterMongoAsync implements Runnable {
         this.threadNumber = threadNumber;
     }
 
+
+    public EventWriterMongoAsync(BlockingQueue<EventDocument> queue, String mongoURL, int bulkSize, int maxWait, boolean isLogfile, int logSize, int threadNumber, int loadTestMaxMessages) {
+        this.queue = queue;
+        this.mongoURL = mongoURL;
+        this.bulkSize = bulkSize;
+        this.maxWait = maxWait;
+        this.isLogfile = isLogfile;
+        this.logSize = logSize;
+        this.threadNumber = threadNumber;
+        this.isLoadTest = true;
+        this.loadTestMaxMessages = loadTestMaxMessages;
+    }
+
+
     public void run() {
         // Connect to MongoDB database
         MongoClient mongoClient = MongoClients.create(mongoURL);
@@ -93,8 +109,9 @@ public class EventWriterMongoAsync implements Runnable {
         Map<String, MongoCollection<Document>> collectionMap = new HashMap<String, MongoCollection<Document>>();
 
         int cnt = 0;
-        long timer1 = System.currentTimeMillis();
-        long timer2 = System.currentTimeMillis();
+        long timer0 = System.currentTimeMillis();
+        long timer1 = timer0;
+        long timer2 = timer0;
         boolean skipLog = false;
 
         Map<String, List<Document>> documentMap = new HashMap<String, List<Document>>();
@@ -166,13 +183,33 @@ public class EventWriterMongoAsync implements Runnable {
                         long average = (this.logSize * 1000) / (timer2 - timer1);
 
                         System.out.println("Benchmark: ");
-                        System.out.println("  Total records written: " + cnt);
+                        System.out.println("  Records written  : " + cnt);
                         System.out.println("  Average records/s: " + average);
                         timer1 = timer2;
 
                         if (isLogfile) {
                             logfileWriter.write(cnt + "," + average + System.getProperty("line.separator"));
                             logfileWriter.flush();
+                        }
+
+                        if (cnt == this.loadTestMaxMessages) {
+                            long loadTestStart = timer0 / 1000;
+                            long loadTestEnd = timer2 / 1000;
+                            long loadTestTime = loadTestEnd - loadTestStart;
+                            long loadTestAverage = this.loadTestMaxMessages / loadTestTime;
+
+                            System.out.println("*****************************");
+                            System.out.println("Load test results: ");
+                            System.out.println("  Records written  : " + cnt);
+                            System.out.println("  Average records/s: " + loadTestAverage);
+
+                            if (isLogfile) {
+                                logfileWriter.write("*****************************" + System.getProperty("line.separator"));
+                                logfileWriter.write("Load test results: " + System.getProperty("line.separator"));
+                                logfileWriter.write("  Records written  : " + cnt + System.getProperty("line.separator"));
+                                logfileWriter.write("  Average records/s: " + loadTestAverage + System.getProperty("line.separator"));
+                                logfileWriter.flush();
+                            }
                         }
                     }
                 }

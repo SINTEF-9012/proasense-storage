@@ -78,6 +78,8 @@ public class StorageWriterMongoServiceLocalBenchmark {
         int NO_LOAD_TESTING_SENSORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.load.sensors")).intValue();
         int NO_LOAD_TESTING_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.load.rate")).intValue();
         int NO_LOAD_TESTING_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.load.messages")).intValue();
+        int NO_LOAD_TESTING_MESSAGES_PER_SECOND = NO_LOAD_TESTING_SENSORS * (1000 / NO_LOAD_TESTING_RATE);
+        int NO_LOAD_TESTING_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
 
         // Local event generators configuration properties
         int NO_SIMPLEEVENT_GENERATORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.local.simple.generators")).intValue();
@@ -112,7 +114,7 @@ public class StorageWriterMongoServiceLocalBenchmark {
         int NO_MONGODB_WRITERS = new Integer(benchmark.clientProperties.getProperty("proasense.storage.mongodb.writers")).intValue();
         int NO_MONGODB_BULKSIZE = new Integer(benchmark.clientProperties.getProperty("proasense.storage.mongodb.bulksize")).intValue();
         int NO_MONGODB_MAXWAIT = new Integer(benchmark.clientProperties.getProperty("proasense.storage.mongodb.maxwait")).intValue();
-        int NO_MONGOSTORAGE_HEARTBEAT = NO_MONGODB_MAXWAIT*2;
+        int NO_MONGOSTORAGE_HEARTBEAT = NO_MONGODB_MAXWAIT * 2;
 
         // Blocking queue for multi-threaded application
         int NO_BLOCKINGQUEUE_SIZE = 1000000;
@@ -125,19 +127,16 @@ public class StorageWriterMongoServiceLocalBenchmark {
             NO_TOTAL_THREADS = 1 + NO_MONGODB_WRITERS + 1;
         else
             NO_TOTAL_THREADS = NO_SIMPLEEVENT_GENERATORS + NO_DERIVEDEVENT_GENERATORS
-                + NO_PREDICTEDEVENT_GENERATORS + NO_ANOMALYEVENT_GENERATORS + NO_RECOMMENDATIONEVENT_GENERATORS + NO_FEEDBACKEVENT_GENERATORS
-                + NO_MONGODB_WRITERS + 1;
+                    + NO_PREDICTEDEVENT_GENERATORS + NO_ANOMALYEVENT_GENERATORS + NO_RECOMMENDATIONEVENT_GENERATORS + NO_FEEDBACKEVENT_GENERATORS
+                    + NO_MONGODB_WRITERS + 1;
 
         // Create executor environment for threads
         ArrayList<Runnable> workers = new ArrayList<Runnable>(NO_TOTAL_THREADS);
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
         if (IS_LOAD_TESTING_ENABLED) {
-            int NO_MESSAGES_PER_SECOND = NO_LOAD_TESTING_SENSORS * (1000/NO_LOAD_TESTING_RATE);
-            int NO_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
-            workers.add(new SimpleEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
-        }
-        else {
+            workers.add(new SimpleEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, "load_testing", NO_LOAD_TESTING_MESSAGES_PER_SECOND, NO_LOAD_TESTING_MAX_MESSAGES));
+        } else {
             // Create threads for random simple event generators
             for (int i = 0; i < NO_SIMPLEEVENT_GENERATORS; i++) {
                 workers.add(new RandomEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, "mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
@@ -169,12 +168,26 @@ public class StorageWriterMongoServiceLocalBenchmark {
             }
         }
 
+        // Adjust max message settings if running multiple writer threads
+        if (NO_MONGODB_WRITERS > 1) {
+            int NO_LOAD_TESTING_THREAD_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.load.threadmessages")).intValue();
+            NO_LOAD_TESTING_MAX_MESSAGES = NO_LOAD_TESTING_THREAD_MESSAGES;
+        }
+
         // Create threads for Mongo storage event writers
         for (int i = 0; i < NO_MONGODB_WRITERS; i++) {
-            if (IS_MONGODB_SYNCDRIVER)
-                workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
-            else
-                workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
+            if (IS_LOAD_TESTING_ENABLED) {
+                if (IS_MONGODB_SYNCDRIVER)
+                    workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i, NO_LOAD_TESTING_MAX_MESSAGES));
+                else
+                    workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i, NO_LOAD_TESTING_MAX_MESSAGES));
+            }
+            else {
+                if (IS_MONGODB_SYNCDRIVER)
+                    workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
+                else
+                    workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
+            }
         }
 
         // Create thread for MongoDB heartbeat

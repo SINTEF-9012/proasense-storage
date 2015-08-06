@@ -64,7 +64,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/simple/default")
+    @Path("/query/simple/default")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryDefaultSimpleEvents(
             @QueryParam("sensorId") String sensorId,
@@ -97,7 +97,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/simple/average")
+    @Path("/query/simple/average")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryAverageSimpleEvents(
             @QueryParam("sensorId") String sensorId,
@@ -126,7 +126,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/simple/maximum")
+    @Path("/query/simple/maximum")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryMaximumSimpleEvents(
             @QueryParam("sensorId") String sensorId,
@@ -155,7 +155,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/simple/minimum")
+    @Path("/query/simple/minimum")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryMinimumSimpleEvents(
             @QueryParam("sensorId") String sensorId,
@@ -184,7 +184,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/derived/default")
+    @Path("/query/derived/default")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryDefaultDerivedEvents(
             @QueryParam("componentId") String componentId,
@@ -217,7 +217,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/derived/average")
+    @Path("/query/derived/average")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryAverageDerivedEvents(
             @QueryParam("componentId") String componentId,
@@ -246,7 +246,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/derived/maximum")
+    @Path("/query/derived/maximum")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryMaximumDerivedEvents(
             @QueryParam("componentId") String componentId,
@@ -275,7 +275,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/derived/minimum")
+    @Path("/query/derived/minimum")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryMinimumDerivedEvents(
             @QueryParam("componentId") String componentId,
@@ -304,7 +304,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/predicted/default")
+    @Path("/query/predicted/default")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryDefaultPredictedEvents(
             @QueryParam("startTime") long startTime,
@@ -336,7 +336,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/anomaly/default")
+    @Path("/query/anomaly/default")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryDefaultAnomalyEvents(
         @QueryParam("startTime") long startTime,
@@ -368,7 +368,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/recommendation/default")
+    @Path("/query/recommendation/default")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryDefaultRecommendationEvents(
             @QueryParam("startTime") long startTime,
@@ -400,7 +400,7 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/feedback/default")
+    @Path("/query/feedback/default")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryDefaultFeedbackEvents(
             @QueryParam("startTime") long startTime,
@@ -432,10 +432,21 @@ public class StorageReaderMongoService {
 
 
     @GET
-    @Path("/serverproperties")
+    @Path("/server/status")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getServerStatus() {
+        String result = "ProaSense Storage Reader Service running...";
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/server/properties")
     @Produces(MediaType.TEXT_PLAIN)
     public Response printServerProperties() {
-        String result = "MONGODB_URL = " + this.MONGODB_URL + ", MONGODB_DATABASE = " + this.MONGODB_DATABASE;
+        String result = this.serverProperties.toString();
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
