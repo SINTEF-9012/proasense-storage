@@ -40,12 +40,12 @@ mvn exec:java -Dexec.mainClass=net.modelbased.proasense.storage.writer.StorageWr
 
 #### Run the local storage writer benchmark
 ```
-mvn exec:java -Dexec.classpathScope=test -Dexec.mainClass=net.modelbased.proasense.storage.writer.StorageWriterServiceMongoLocalBenchmark
+mvn exec:java -Dexec.classpathScope=test -Dexec.mainClass=net.modelbased.proasense.storage.writer.StorageWriterMongoServiceLocalBenchmark
 ```
 
 ### Run the Kafka storage writer benchmark
 ```
-mvn exec:java -Dexec.classpathScope=test -Dexec.mainClass=net.modelbased.proasense.storage.writer.StorageWriterServiceMongoKafkaBenchmark
+mvn exec:java -Dexec.classpathScope=test -Dexec.mainClass=net.modelbased.proasense.storage.writer.StorageWriterMongoServiceKafkaBenchmark
 ```
 
 
