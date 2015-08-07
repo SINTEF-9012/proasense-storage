@@ -152,8 +152,8 @@ public class EventListenerKafkaTopic<T> implements Runnable {
         props.put("zookeeper.connect", a_zookeeper);
         props.put("group.id", a_groupId);
         props.put("zookeeper.connection.timeout.ms", "1000000");
-        props.put("zookeeper.session.timeout.ms", "400");
-        props.put("zookeeper.sync.time.ms", "200");
+        props.put("zookeeper.session.timeout.ms", "6000");
+        props.put("zookeeper.sync.time.ms", "2000");
         props.put("auto.commit.interval.ms", "1000");
 
         // Create the connection to the cluster
