@@ -70,6 +70,8 @@ public class StorageWriterMongoServiceKafkaBenchmark {
         int NO_LOAD_TESTING_SENSORS = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.load.sensors")).intValue();
         int NO_LOAD_TESTING_RATE = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.load.rate")).intValue();
         int NO_LOAD_TESTING_MESSAGES = new Integer(benchmark.clientProperties.getProperty("proasense.benchmark.load.messages")).intValue();
+        int NO_LOAD_TESTING_MESSAGES_PER_SECOND = NO_LOAD_TESTING_SENSORS * (1000/NO_LOAD_TESTING_RATE);
+        int NO_LOAD_TESTING_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
 
         // Kafka broker configuration properties
         String boostrapServers = benchmark.clientProperties.getProperty("kafka.bootstrap.servers");
@@ -128,12 +130,10 @@ public class StorageWriterMongoServiceKafkaBenchmark {
         ExecutorService executor = Executors.newFixedThreadPool(NO_TOTAL_THREADS);
 
         if (IS_LOAD_TESTING_ENABLED) {
-            int NO_MESSAGES_PER_SECOND = NO_LOAD_TESTING_SENSORS * (1000/NO_LOAD_TESTING_RATE);
-            int NO_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
             if (IS_SIMPLEEVENT_FILTER)
-                workers.add(new SimpleEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC + ".0", "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
+                workers.add(new SimpleEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC + ".0", "load_testing", NO_LOAD_TESTING_MESSAGES_PER_SECOND, NO_LOAD_TESTING_MAX_MESSAGES));
             else
-                workers.add(new SimpleEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC, "load_testing", NO_MESSAGES_PER_SECOND, NO_MAX_MESSAGES));
+                workers.add(new SimpleEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC, "load_testing", NO_LOAD_TESTING_MESSAGES_PER_SECOND, NO_LOAD_TESTING_MAX_MESSAGES));
         }
         else {
             // Create threads for random simple event generators

@@ -104,6 +104,14 @@ public class StorageWriterMongoService {
         boolean IS_BENCHMARK_LOGFILE = new Boolean(storage.serverProperties.getProperty("proasense.benchmark.common.logfile")).booleanValue();
         int NO_BENCHMARK_LOGSIZE = new Integer(storage.serverProperties.getProperty("proasense.benchmark.common.logsize")).intValue();
 
+        // Benchmark load testing properties
+        boolean IS_LOAD_TESTING_ENABLED = new Boolean(storage.serverProperties.getProperty("proasense.benchmark.load.testing")).booleanValue();
+        int NO_LOAD_TESTING_SENSORS = new Integer(storage.serverProperties.getProperty("proasense.benchmark.load.sensors")).intValue();
+        int NO_LOAD_TESTING_RATE = new Integer(storage.serverProperties.getProperty("proasense.benchmark.load.rate")).intValue();
+        int NO_LOAD_TESTING_MESSAGES = new Integer(storage.serverProperties.getProperty("proasense.benchmark.load.messages")).intValue();
+        int NO_LOAD_TESTING_MESSAGES_PER_SECOND = NO_LOAD_TESTING_SENSORS * (1000/NO_LOAD_TESTING_RATE);
+        int NO_LOAD_TESTING_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
+
         // Kafka broker configuration properties
         String zooKeeper = storage.serverProperties.getProperty("zookeeper.connect");
         String groupId = "StorageWriterServiceMongoServer";
@@ -207,10 +215,18 @@ public class StorageWriterMongoService {
 
         // Create threads for MongoDB event writers
         for (int i = 0; i < NO_MONGODB_WRITERS; i++) {
-            if (IS_MONGODB_SYNCDRIVER)
-                workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
-            else
-                workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
+            if (IS_LOAD_TESTING_ENABLED) {
+                if (IS_MONGODB_SYNCDRIVER)
+                    workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i, NO_LOAD_TESTING_MAX_MESSAGES));
+                else
+                    workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i, NO_LOAD_TESTING_MAX_MESSAGES));
+            }
+            else {
+                if (IS_MONGODB_SYNCDRIVER)
+                    workers.add(new EventWriterMongoSync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
+                else
+                    workers.add(new EventWriterMongoAsync(queue, MONGODB_URL, NO_MONGODB_BULKSIZE, NO_MONGODB_MAXWAIT, IS_BENCHMARK_LOGFILE, NO_BENCHMARK_LOGSIZE, i));
+            }
         }
 
         // Create thread for MongoDB heartbeat
