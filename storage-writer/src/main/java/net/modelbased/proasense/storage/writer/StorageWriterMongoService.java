@@ -159,7 +159,7 @@ public class StorageWriterMongoService {
         int NO_TOTAL_THREADS = 0;
 
         if (IS_LOAD_TESTING_ENABLED)
-            NO_TOTAL_THREADS = 1
+            NO_TOTAL_THREADS = NO_SIMPLEEVENT_LISTENERS
                     + NO_MONGODB_WRITERS + 1;
         else
             NO_TOTAL_THREADS = NO_SIMPLEEVENT_LISTENERS + NO_DERIVEDEVENT_LISTENERS
