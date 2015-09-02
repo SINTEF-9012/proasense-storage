@@ -85,7 +85,6 @@ public class EventDocumentConverter {
 
 
     private EventDocument convertSimpleEventToDocument(SimpleEvent event) {
-//        Document document = new Document("_id", event.getTimestamp());
         Document document = new Document("_id", new ObjectId());
         document.append("timestamp", event.getTimestamp());
         document.append("sensorId", event.getSensorId());
@@ -227,7 +226,12 @@ public class EventDocumentConverter {
             VariableType valueType = value.getType();
 
             if (valueType.equals(VariableType.LONG)) {
-                propertiesObj.put(key.replace(".", "_"), new Long(valueKey.replace(" ", "")));
+                try {
+                    propertiesObj.put(key.replace(".", "_"), new Long(valueKey.replace(" ", "")));
+                }
+                catch (NumberFormatException e) {
+                    propertiesObj.put(key.replace(".", "_"), new Long(0));
+                }
             }
             if (valueType.equals(VariableType.STRING)) {
                 propertiesObj.put(key.replace(".", "_"), new String(valueKey));
