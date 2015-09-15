@@ -237,7 +237,12 @@ public class EventDocumentConverter {
                 propertiesObj.put(key.replace(".", "_"), new String(valueKey));
             }
             if (valueType.equals(VariableType.DOUBLE)) {
-                propertiesObj.put(key.replace(".", "_"), new Double(valueKey.replace(" ", "")));
+                try {
+                    propertiesObj.put(key.replace(".", "_"), new Double(valueKey.replace(" ", "")));
+                }
+                catch (NumberFormatException e) {
+                    propertiesObj.put(key.replace(".", "_"), new Double(0.0));
+                }
             }
             if (valueType.equals(VariableType.BLOB)) {
                 propertiesObj.put(key.replace(".", "_"), new String(valueKey));

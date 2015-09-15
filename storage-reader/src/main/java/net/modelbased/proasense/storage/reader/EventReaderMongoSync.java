@@ -81,7 +81,12 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.SIMPLE) && queryOperation.equals(EventQueryOperation.AVERAGE)) {
-            long resultAverage = 0;
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+
+            long resultAverageLong = 0;
+            double resultAverageDouble = 0;
+
             long collectionSize = 0;
 
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
@@ -90,30 +95,72 @@ public class EventReaderMongoSync implements Callable {
                 collectionSize++;
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Long value = (Long)eventProps.get(this.propertyKey);
-                resultAverage = resultAverage + value;
-            }
-            resultAverage = resultAverage / collectionSize;
 
-            Document resultDoc = new Document("RESULT", resultAverage);
-            foundDocuments.add(resultDoc);
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long) {
+                    Long value = (Long)valueObj;
+                    resultAverageLong = resultAverageLong + value;
+                    longProperty = true;
+                }
+                else if (valueObj instanceof Double) {
+                    Double value = (Double)valueObj;
+                    resultAverageDouble = resultAverageDouble + value;
+                    doubleProperty = true;
+                }
+            }
+
+            if (longProperty) {
+                Long resultAverage = resultAverageLong / collectionSize;
+
+                Document resultDoc = new Document("RESULT", resultAverage);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                Double resultAverage = resultAverageDouble / collectionSize;
+
+                Document resultDoc = new Document("RESULT", resultAverage);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.SIMPLE) && queryOperation.equals(EventQueryOperation.MAXIMUM)) {
-            long resultMaximum = Long.MIN_VALUE;
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+
+            long resultMaximumLong = Long.MIN_VALUE;
+            double resultMaximumDouble = Double.MIN_VALUE;
 
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Long value = (Long)eventProps.get(this.propertyKey);
-                if (value > resultMaximum)
-                    resultMaximum = value;
+
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long) {
+                    long value = (Long)valueObj;
+                    if (value > resultMaximumLong)
+                        resultMaximumLong = value;
+                    longProperty = true;
+                }
+                else if (valueObj instanceof Double) {
+                    double value = (Double)valueObj;
+                    if (value > resultMaximumDouble)
+                        resultMaximumDouble = value;
+                    doubleProperty = true;
+                }
             }
 
-            Document resultDoc = new Document("RESULT", resultMaximum);
-            foundDocuments.add(resultDoc);
+            if (longProperty) {
+                Long resultMaximum = resultMaximumLong;
+                Document resultDoc = new Document("RESULT", resultMaximum);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                Double resultMaximum = resultMaximumDouble;
+                Document resultDoc = new Document("RESULT", resultMaximum);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.SIMPLE) && queryOperation.equals(EventQueryOperation.MINUMUM)) {
@@ -143,7 +190,12 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.DERIVED) && queryOperation.equals(EventQueryOperation.AVERAGE)) {
-            double resultAverage = 0;
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+
+            long resultAverageLong = 0;
+            double resultAverageDouble = 0;
+
             long collectionSize = 0;
 
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
@@ -152,13 +204,32 @@ public class EventReaderMongoSync implements Callable {
                 collectionSize++;
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Double value = (Double)eventProps.get(this.propertyKey);
-                resultAverage = resultAverage + value;
-            }
-            resultAverage = resultAverage / collectionSize;
 
-            Document resultDoc = new Document("RESULT", resultAverage);
-            foundDocuments.add(resultDoc);
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long) {
+                    Long value = (Long)valueObj;
+                    resultAverageLong = resultAverageLong + value;
+                    longProperty = true;
+                }
+                else if (valueObj instanceof Double) {
+                    Double value = (Double)valueObj;
+                    resultAverageDouble = resultAverageDouble + value;
+                    doubleProperty = true;
+                }
+            }
+
+            if (longProperty) {
+                Long resultAverage = resultAverageLong / collectionSize;
+
+                Document resultDoc = new Document("RESULT", resultAverage);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                Double resultAverage = resultAverageDouble / collectionSize;
+
+                Document resultDoc = new Document("RESULT", resultAverage);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.DERIVED) && queryOperation.equals(EventQueryOperation.MAXIMUM)) {
