@@ -73,6 +73,7 @@ public class EventReaderMongoSync implements Callable {
 
         if (queryType.equals(EventQueryType.SIMPLE) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -81,29 +82,35 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.SIMPLE) && queryOperation.equals(EventQueryOperation.AVERAGE)) {
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
             boolean longProperty = false;
             boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
 
             long resultAverageLong = 0;
             double resultAverageDouble = 0;
-
             long collectionSize = 0;
-
-            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 collectionSize++;
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-
-                Object valueObj = eventProps.get(this.propertyKey);
-                if (valueObj instanceof Long) {
-                    Long value = (Long)valueObj;
+                if (longProperty) {
+                    Long value = (Long)eventProps.get(this.propertyKey);
                     resultAverageLong = resultAverageLong + value;
-                    longProperty = true;
                 }
-                else if (valueObj instanceof Double) {
-                    Double value = (Double)valueObj;
+                else if (doubleProperty) {
+                    Double value = (Double)eventProps.get(this.propertyKey);
                     resultAverageDouble = resultAverageDouble + value;
                     doubleProperty = true;
                 }
@@ -111,43 +118,47 @@ public class EventReaderMongoSync implements Callable {
 
             if (longProperty) {
                 Long resultAverage = resultAverageLong / collectionSize;
-
                 Document resultDoc = new Document("RESULT", resultAverage);
                 foundDocuments.add(resultDoc);
             }
             else if (doubleProperty) {
                 Double resultAverage = resultAverageDouble / collectionSize;
-
                 Document resultDoc = new Document("RESULT", resultAverage);
                 foundDocuments.add(resultDoc);
             }
         }
 
         if (queryType.equals(EventQueryType.SIMPLE) && queryOperation.equals(EventQueryOperation.MAXIMUM)) {
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
             boolean longProperty = false;
             boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
 
             long resultMaximumLong = Long.MIN_VALUE;
             double resultMaximumDouble = Double.MIN_VALUE;
-
-            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-
-                Object valueObj = eventProps.get(this.propertyKey);
-                if (valueObj instanceof Long) {
-                    long value = (Long)valueObj;
+                if (longProperty) {
+                    long value = (Long)eventProps.get(this.propertyKey);
                     if (value > resultMaximumLong)
                         resultMaximumLong = value;
-                    longProperty = true;
                 }
-                else if (valueObj instanceof Double) {
-                    double value = (Double)valueObj;
+                else if (doubleProperty) {
+                    double value = (Double)eventProps.get(this.propertyKey);
                     if (value > resultMaximumDouble)
                         resultMaximumDouble = value;
-                    doubleProperty = true;
                 }
             }
 
@@ -164,24 +175,54 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.SIMPLE) && queryOperation.equals(EventQueryOperation.MINUMUM)) {
-            long resultMinimum = Long.MAX_VALUE;
-
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
+
+            long resultMinimumLong = Long.MAX_VALUE;
+            double resultMinimumDouble = Double.MAX_VALUE;
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Long value = (Long)eventProps.get(this.propertyKey);
-                if (value < resultMinimum)
-                    resultMinimum = value;
+                if (longProperty) {
+                    long value = (Long)eventProps.get(this.propertyKey);
+                    if (value < resultMinimumLong)
+                        resultMinimumLong = value;
+                }
+                else if (doubleProperty) {
+                    Double value = (Double)eventProps.get(this.propertyKey);
+                    if (value < resultMinimumDouble)
+                        resultMinimumDouble = value;
+                }
             }
 
-            Document resultDoc = new Document("RESULT", resultMinimum);
-            foundDocuments.add(resultDoc);
+            if (longProperty) {
+                long resultMinimum = resultMinimumLong;
+                Document resultDoc = new Document("RESULT", resultMinimum);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                double resultMinimum = resultMinimumDouble;
+                Document resultDoc = new Document("RESULT", resultMinimum);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.DERIVED) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -190,84 +231,147 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.DERIVED) && queryOperation.equals(EventQueryOperation.AVERAGE)) {
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
             boolean longProperty = false;
             boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
 
             long resultAverageLong = 0;
             double resultAverageDouble = 0;
-
             long collectionSize = 0;
-
-            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 collectionSize++;
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-
-                Object valueObj = eventProps.get(this.propertyKey);
-                if (valueObj instanceof Long) {
-                    Long value = (Long)valueObj;
+                if (longProperty) {
+                    Long value = (Long)eventProps.get(this.propertyKey);
                     resultAverageLong = resultAverageLong + value;
-                    longProperty = true;
                 }
-                else if (valueObj instanceof Double) {
-                    Double value = (Double)valueObj;
+                else if (doubleProperty) {
+                    Double value = (Double)eventProps.get(this.propertyKey);
                     resultAverageDouble = resultAverageDouble + value;
-                    doubleProperty = true;
                 }
             }
 
             if (longProperty) {
                 Long resultAverage = resultAverageLong / collectionSize;
-
                 Document resultDoc = new Document("RESULT", resultAverage);
                 foundDocuments.add(resultDoc);
             }
             else if (doubleProperty) {
                 Double resultAverage = resultAverageDouble / collectionSize;
-
                 Document resultDoc = new Document("RESULT", resultAverage);
                 foundDocuments.add(resultDoc);
             }
         }
 
         if (queryType.equals(EventQueryType.DERIVED) && queryOperation.equals(EventQueryOperation.MAXIMUM)) {
-            double resultMaximum = Double.MIN_VALUE;
-
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
+
+            long resultMaximumLong = Long.MIN_VALUE;
+            double resultMaximumDouble = Double.MIN_VALUE;
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Double value = (Double)eventProps.get(this.propertyKey);
-                if (value > resultMaximum)
-                    resultMaximum = value;
+                if (longProperty) {
+                    long value = (Long)eventProps.get(this.propertyKey);
+                    if (value > resultMaximumLong)
+                        resultMaximumLong = value;
+                }
+                else if (doubleProperty) {
+                    double value = (Double)eventProps.get(this.propertyKey);
+                    if (value > resultMaximumDouble)
+                        resultMaximumDouble = value;
+                    doubleProperty = true;
+                }
             }
 
-            Document resultDoc = new Document("RESULT", resultMaximum);
-            foundDocuments.add(resultDoc);
+            if (longProperty) {
+                long resultMaximum = resultMaximumLong;
+                Document resultDoc = new Document("RESULT", resultMaximum);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                double resultMaximum = resultMaximumDouble;
+                Document resultDoc = new Document("RESULT", resultMaximum);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.DERIVED) && queryOperation.equals(EventQueryOperation.MINUMUM)) {
-            double resultMinimum = Double.MAX_VALUE;
-
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
+
+            long resultMinimumLong = Long.MAX_VALUE;
+            double resultMinimumDouble = Double.MAX_VALUE;
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Double value = (Double)eventProps.get(this.propertyKey);
-                if (value < resultMinimum)
-                    resultMinimum = value;
+                if (longProperty) {
+                    long value = (Long)eventProps.get(this.propertyKey);
+                    if (value < resultMinimumLong)
+                        resultMinimumLong = value;
+                }
+                else if (doubleProperty) {
+                    double value = (Double)eventProps.get(this.propertyKey);
+                    if (value < resultMinimumDouble)
+                        resultMinimumDouble = value;
+                }
             }
 
-            Document resultDoc = new Document("RESULT", resultMinimum);
-            foundDocuments.add(resultDoc);
+            if (longProperty) {
+                long resultMinimum = resultMinimumLong;
+                Document resultDoc = new Document("RESULT", resultMinimum);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                double resultMinimum = resultMinimumDouble;
+                Document resultDoc = new Document("RESULT", resultMinimum);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.PREDICTED) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -276,60 +380,146 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.PREDICTED) && queryOperation.equals(EventQueryOperation.AVERAGE)) {
-            long resultAverage = 0;
-            long collectionSize = 0;
-
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
+
+            long resultAverageLong = 0;
+            double resultAverageDouble = 0;
+            long collectionSize = 0;
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 collectionSize++;
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Long value = (Long)eventProps.get(this.propertyKey);
-                resultAverage = resultAverage + value;
+                if (longProperty) {
+                    long value = (Long)eventProps.get(this.propertyKey);
+                    resultAverageLong = resultAverageLong + value;
+                }
+                else if (doubleProperty) {
+                    double value = (Double)eventProps.get(this.propertyKey);
+                    resultAverageDouble = resultAverageDouble + value;
+                }
             }
-            resultAverage = resultAverage / collectionSize;
 
-            Document resultDoc = new Document("RESULT", resultAverage);
-            foundDocuments.add(resultDoc);
+            if (longProperty) {
+                long resultAverage = resultAverageLong / collectionSize;
+                Document resultDoc = new Document("RESULT", resultAverage);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                double resultAverage = resultAverageDouble / collectionSize;
+                Document resultDoc = new Document("RESULT", resultAverage);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.PREDICTED) && queryOperation.equals(EventQueryOperation.MAXIMUM)) {
-            long resultMaximum = Long.MIN_VALUE;
-
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
+
+            long resultMaximumLong = Long.MIN_VALUE;
+            double resultMaximumDouble = Double.MIN_VALUE;
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Long value = (Long)eventProps.get(this.propertyKey);
-                if (value > resultMaximum)
-                    resultMaximum = value;
+                if (longProperty) {
+                    long value = (Long)eventProps.get(this.propertyKey);
+                    if (value > resultMaximumLong)
+                        resultMaximumLong = value;
+                }
+                else if (doubleProperty) {
+                    double value = (Double)eventProps.get(this.propertyKey);
+                    if (value > resultMaximumDouble)
+                        resultMaximumDouble = value;
+                }
             }
 
-            Document resultDoc = new Document("RESULT", resultMaximum);
-            foundDocuments.add(resultDoc);
+            if (longProperty) {
+                long resultMaximum = resultMaximumLong;
+                Document resultDoc = new Document("RESULT", resultMaximum);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                double resultMaximum = resultMaximumDouble;
+                Document resultDoc = new Document("RESULT", resultMaximum);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.PREDICTED) && queryOperation.equals(EventQueryOperation.MINUMUM)) {
-            long resultMinimum = Long.MAX_VALUE;
-
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
+
+            long resultMinimumLong = Long.MAX_VALUE;
+            double resultMinimumDouble = Double.MAX_VALUE;
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Long value = (Long)eventProps.get(this.propertyKey);
-                if (value < resultMinimum)
-                    resultMinimum = value;
+                if (longProperty) {
+                    long value = (Long)eventProps.get(this.propertyKey);
+                    if (value < resultMinimumLong)
+                        resultMinimumLong = value;
+                }
+                else if (doubleProperty) {
+                    double value = (Long)eventProps.get(this.propertyKey);
+                    if (value < resultMinimumDouble)
+                        resultMinimumDouble = value;
+                }
             }
 
-            Document resultDoc = new Document("RESULT", resultMinimum);
-            foundDocuments.add(resultDoc);
+            if (longProperty) {
+                long resultMinimum = resultMinimumLong;
+                Document resultDoc = new Document("RESULT", resultMinimum);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                double resultMinimum = resultMinimumDouble;
+                Document resultDoc = new Document("RESULT", resultMinimum);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.ANOMALY) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -339,6 +529,7 @@ public class EventReaderMongoSync implements Callable {
 
         if (queryType.equals(EventQueryType.RECOMMENDATION) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
@@ -347,60 +538,146 @@ public class EventReaderMongoSync implements Callable {
         }
 
         if (queryType.equals(EventQueryType.RECOMMENDATION) && queryOperation.equals(EventQueryOperation.AVERAGE)) {
-            long resultAverage = 0;
-            long collectionSize = 0;
-
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
+
+            long resultAverageLong = 0;
+            double resultAverageDouble = 0;
+            long collectionSize = 0;
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 collectionSize++;
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Long value = (Long)eventProps.get(this.propertyKey);
-                resultAverage = resultAverage + value;
+                if (longProperty) {
+                    long value = (Long)eventProps.get(this.propertyKey);
+                    resultAverageLong = resultAverageLong + value;
+                }
+                else if (doubleProperty) {
+                    double value = (Double)eventProps.get(this.propertyKey);
+                    resultAverageDouble = resultAverageDouble + value;
+                }
             }
-            resultAverage = resultAverage / collectionSize;
 
-            Document resultDoc = new Document("RESULT", resultAverage);
-            foundDocuments.add(resultDoc);
+            if (longProperty) {
+                long resultAverage = resultAverageLong / collectionSize;
+                Document resultDoc = new Document("RESULT", resultAverage);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                double resultAverage = resultAverageDouble / collectionSize;
+                Document resultDoc = new Document("RESULT", resultAverage);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.RECOMMENDATION) && queryOperation.equals(EventQueryOperation.MAXIMUM)) {
-            long resultMaximum = Long.MIN_VALUE;
-
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
+
+            long resultMaximumLong = Long.MIN_VALUE;
+            double resultMaximumDouble = Double.MIN_VALUE;
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Long value = (Long)eventProps.get(this.propertyKey);
-                if (value > resultMaximum)
-                    resultMaximum = value;
+                if (longProperty) {
+                    long value = (Long)eventProps.get(this.propertyKey);
+                    if (value > resultMaximumLong)
+                        resultMaximumLong = value;
+                }
+                else if (doubleProperty) {
+                    double value = (Double)eventProps.get(this.propertyKey);
+                    if (value > resultMaximumDouble)
+                        resultMaximumDouble = value;
+                }
             }
 
-            Document resultDoc = new Document("RESULT", resultMaximum);
-            foundDocuments.add(resultDoc);
+            if (longProperty) {
+                long resultMaximum = resultMaximumLong;
+                Document resultDoc = new Document("RESULT", resultMaximum);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                double resultMaximum = resultMaximumDouble;
+                Document resultDoc = new Document("RESULT", resultMaximum);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.RECOMMENDATION) && queryOperation.equals(EventQueryOperation.MINUMUM)) {
-            long resultMinimum = Long.MAX_VALUE;
-
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
+            boolean longProperty = false;
+            boolean doubleProperty = false;
+            MongoCursor<Document> firstCursor = it.iterator();
+            if (firstCursor.hasNext()) {
+                Document doc = firstCursor.next();
+                Document eventProps = (Document)doc.get("eventProperties");
+                Object valueObj = eventProps.get(this.propertyKey);
+                if (valueObj instanceof Long)
+                    longProperty = true;
+                else if (valueObj instanceof Double)
+                    doubleProperty = true;
+            }
+
+            long resultMinimumLong = Long.MAX_VALUE;
+            double resultMinimumDouble = Double.MAX_VALUE;
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 Document eventProps = (Document)doc.get("eventProperties");
-                Long value = (Long)eventProps.get(this.propertyKey);
-                if (value < resultMinimum)
-                    resultMinimum = value;
+                if (longProperty) {
+                    long value = (Long)eventProps.get(this.propertyKey);
+                    if (value < resultMinimumLong)
+                        resultMinimumLong = value;
+                }
+                else if (doubleProperty) {
+                    double value = (Double)eventProps.get(this.propertyKey);
+                    if (value < resultMinimumDouble)
+                        resultMinimumDouble = value;
+                }
             }
 
-            Document resultDoc = new Document("RESULT", resultMinimum);
-            foundDocuments.add(resultDoc);
+            if (longProperty) {
+                long resultMinimum = resultMinimumLong;
+                Document resultDoc = new Document("RESULT", resultMinimum);
+                foundDocuments.add(resultDoc);
+            }
+            else if (doubleProperty) {
+                double resultMinimum = resultMinimumDouble;
+                Document resultDoc = new Document("RESULT", resultMinimum);
+                foundDocuments.add(resultDoc);
+            }
         }
 
         if (queryType.equals(EventQueryType.FEEDBACK) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
             FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime)));
+
             MongoCursor<Document> cursor = it.iterator();
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
