@@ -6,7 +6,8 @@ sudo apt-get --yes --force-yes install default-jdk
 sudo apt-get --yes --force-yes install nano
 sudo apt-get --yes --force-yes install maven
 sudo apt-get --yes --force-yes install tomcat7
-sudo cp configs/tomcat-users.xml etc/tomcat7/tomcat-users.xml
+sudo apt-get --yes --force-yes install tomcat7-admin
+sudo cp configs/tomcat-users.xml /etc/tomcat7/tomcat-users.xml
 sudo service tomcat7 restart
 sudo apt-get --yes --force-yes install -y mongodb-org
 sudo cp configs/mongod.conf /etc/mongod.conf
