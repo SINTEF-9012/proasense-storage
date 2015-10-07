@@ -93,6 +93,6 @@ mvn exec:java -Dexec.classpathScope=test -Dexec.mainClass=net.modelbased.proasen
 mvn clean install
 ```
 
-## User guide
-* TBD
-[User Guide](https://github.com/SINTEF-9012/proasense-storage/wiki/User-Guide)
+## Documentation
+* [Installation Guide](https://github.com/SINTEF-9012/proasense-storage/wiki/Installation-Guide)
+* [User Guide](https://github.com/SINTEF-9012/proasense-storage/wiki/User-Guide)
