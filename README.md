@@ -95,3 +95,4 @@ mvn clean install
 
 ## User guide
 * TBD
+[User Guide](https://github.com/SINTEF-9012/proasense-storage/wiki/User-Guide)
