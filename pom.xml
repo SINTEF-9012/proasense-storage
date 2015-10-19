@@ -23,11 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
-<!--
-    <properties>
-        <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-    </properties>
--->
+
     <repositories>
         <repository>
             <id>Maven2-repository</id>
@@ -37,7 +33,7 @@
         <repository>
             <id>archiva.public</id>
             <name>Nissatech Public Repository</name>
-            <url>http://maven.nissatech.com/repository/public/</url>
+            <url>http://maven.nissatech.com/repository/public</url>
         </repository>
     </repositories>
 
