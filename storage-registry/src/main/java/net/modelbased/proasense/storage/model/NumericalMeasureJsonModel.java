@@ -1,5 +1,7 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright (C) 2014-2015 SINTEF
+ *
+ *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,31 +19,30 @@ package net.modelbased.proasense.storage.model;
 
 import java.util.List;
 
-
-public class StringMeasureJsonModel extends MeasureJsonModel {
+public class NumericalMeasureJsonModel extends MeasureJsonModel {
 	
-	public StringMeasureJsonModel() {
+	public NumericalMeasureJsonModel() {
 		super();
 	}
 	
-	public StringMeasureJsonModel(String bn, String bu) {
+	public NumericalMeasureJsonModel(String bn, String bu) {
 		super(bn, bu);
 	}
 	
-	public StringMeasureJsonModel(String bn, long bt, String bu, List<ValueJsonModel> e) {
+	public NumericalMeasureJsonModel(String bn, long bt, String bu, List<ValueJsonModel> e) {
 		super(bn, bt, bu, e);
 	}
 	
-	public StringMeasureJsonModel appendMeasure(String value, long time) {
-		getE().add(new StringValueJsonModel(value, time));
+	public NumericalMeasureJsonModel appendMeasure(float value, long time) {
+		getE().add(new NumericalValueJsonModel(value, time));
 		return this;
 	}
 	
-	public StringMeasureJsonModel appendMeasure(StringMeasure measure) {
+	public NumericalMeasureJsonModel appendMeasure(NumericalMeasure measure) {
 		if (!measure.getSensor().equals(getBn())) {
 			throw new IllegalArgumentException("Incompatible sensor name: " + measure.getSensor());
 		} 
-		getE().add(new StringValueJsonModel(measure.getValue(), measure.getTime()));
+		getE().add(new NumericalValueJsonModel(measure.getValue(), measure.getTime()));
 		return this;
 	}
 

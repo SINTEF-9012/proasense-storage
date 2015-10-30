@@ -1,5 +1,7 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright (C) 2014-2015 SINTEF
+ *
+ *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,40 +17,18 @@
  */
 package net.modelbased.proasense.storage.model;
 
-public class SensorJsonModel {
-	
-	public static class Schema {
-		
-		private String backend;
-		private String template;
-		
-		public Schema(String backend, String template) {
-			this.backend = backend;
-			this.template = template;
-		}
-		
-		public String getBackend() {
-			return backend;
-		}
-		public void setBackend(String backend) {
-			this.backend = backend;
-		}
-		public String getTemplate() {
-			return template;
-		}
-		public void setTemplate(String template) {
-			this.template = template;
-		}
-	}
+import java.util.List;
+
+public class ComposititeJsonModel {
 	
 	private String id;
 	private String descr;
-	private Schema schema;
+	private List<String> sensors;
 	
-	public SensorJsonModel(String id, String descr, Schema schema) {
+	public ComposititeJsonModel(String id, String descr, List<String> sensors) {
 		this.id = id;
 		this.descr = descr;
-		this.schema = schema;
+		this.sensors = sensors;
 	}
 	
 	public String getId() {
@@ -63,10 +43,10 @@ public class SensorJsonModel {
 	public void setDescr(String descr) {
 		this.descr = descr;
 	}
-	public Schema getSchema() {
-		return schema;
+	public List<String> getSensors() {
+		return sensors;
 	}
-	public void setSchema(Schema schema) {
-		this.schema = schema;
+	public void setSensors(List<String> sensors) {
+		this.sensors = sensors;
 	}
 }

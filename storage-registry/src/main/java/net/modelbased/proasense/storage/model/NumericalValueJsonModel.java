@@ -1,5 +1,7 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright (C) 2014-2015 SINTEF
+ *
+ *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +17,24 @@
  */
 package net.modelbased.proasense.storage.model;
 
-public class StringValueJsonModel extends ValueJsonModel {
+public class NumericalValueJsonModel extends ValueJsonModel {
 	
-	private String sv;
+	private float v;
 	
-	public StringValueJsonModel() {
+	public NumericalValueJsonModel() {
+		super();
 	}
 	
-	public StringValueJsonModel(String sv, long t) {
+	public NumericalValueJsonModel(float v, long t) {
 		super(t);
-		this.sv = sv;
+		this.v = v;
 	}
 	
-	public String getSv() {
-		return sv;
+	public float getV() {
+		return v;
 	}
 	
-	public void setSv(String sv) {
-		this.sv = sv;
+	public void setV(int v) {
+		this.v = v;
 	}
 }

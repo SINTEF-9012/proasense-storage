@@ -1,5 +1,7 @@
 /**
- * Copyright 2015 Brian Elvesæter <${email}>
+ * Copyright (C) 2014-2015 SINTEF
+ *
+ *     Brian ElvesÃ¦ter <brian.elvesater@sintef.no>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,29 +17,29 @@
  */
 package net.modelbased.proasense.storage.model;
 
-public class StringMeasure extends Measure {
+public class NumericalMeasure extends Measure {
 	
-	private String value;
+	private float value;
 	
-	public StringMeasure() {
+	public NumericalMeasure() {
 		super();
 	}
 	
-	public StringMeasure(int id, String sensor, String value, long time, long basetime, boolean uploaded) {
+	public NumericalMeasure(int id, String sensor, float value, long time, long basetime, boolean uploaded) {
 		super(id, sensor, time, basetime, uploaded);
 		this.value = value;
 	}
 
-	public String getValue() {
+	public float getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(float value) {
 		this.value = value;
 	}
 	
 	@Override
 	public String toString() {
-		return "STRING MEASURE/ Id: " + getId() + " - Sensor: " + getSensor() + " - Value: " + getValue() + " - Time: " + getTime() + " - Uploaded:" + isUploaded();
+		return "MEASURE/ Id: " + getId() + " - Sensor: " + getSensor() + " - Value: " + getValue() + " - Time: " + getTime() + " - Uploaded:" + isUploaded();
 	}
 }
