@@ -5,6 +5,7 @@ sudo apt-get update
 sudo apt-get --yes --force-yes install default-jdk
 sudo apt-get --yes --force-yes install nano
 sudo apt-get --yes --force-yes install maven
+sudo apt-get --yes --force-yes remove maven2
 sudo apt-get --yes --force-yes install tomcat7
 sudo apt-get --yes --force-yes install tomcat7-admin
 sudo apt-get --yes --force-yes install -y mongodb-org
