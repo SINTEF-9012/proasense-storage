@@ -9,8 +9,10 @@
     </parent>
 
     <artifactId>storage-writer</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>storage-writer (Maven Webapp)</name>
+    <name>storage-writer</name>
+    <url>https://github.com/SINTEF-9012/proasense-storage/tree/master/storage-writer</url>
 
     <dependencies>
         <dependency>

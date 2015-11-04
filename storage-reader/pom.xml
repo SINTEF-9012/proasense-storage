@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>storage-reader</artifactId>
-    <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
     <name>storage-reader</name>
     <url>https://github.com/SINTEF-9012/proasense-storage/tree/master/storage-reader</url>
 
