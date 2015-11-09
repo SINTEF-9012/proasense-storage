@@ -98,7 +98,6 @@ public class StorageWriterMongoService {
     public static void main(String[] args) {
         // Get server properties
         StorageWriterMongoService storage = new StorageWriterMongoService();
-//        storage.loadServerProperties();
 
         // Benchmark common properties
         boolean IS_BENCHMARK_LOGFILE = new Boolean(storage.serverProperties.getProperty("proasense.benchmark.common.logfile")).booleanValue();
