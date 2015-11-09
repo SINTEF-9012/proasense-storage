@@ -17,21 +17,25 @@
  */
 package net.modelbased.proasense.storage.writer;
 
+import net.modelbased.proasense.storage.EventDocument;
+import net.modelbased.proasense.storage.EventDocumentConverter;
+import net.modelbased.proasense.storage.EventProperties;
+
 import eu.proasense.internal.AnomalyEvent;
 import eu.proasense.internal.DerivedEvent;
 import eu.proasense.internal.FeedbackEvent;
 import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
 import eu.proasense.internal.SimpleEvent;
+
 import kafka.consumer.Consumer;
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.ConsumerIterator;
 import kafka.consumer.ConsumerTimeoutException;
 import kafka.consumer.KafkaStream;
+import kafka.consumer.Whitelist;
 import kafka.javaapi.consumer.ConsumerConnector;
-import net.modelbased.proasense.storage.EventDocument;
-import net.modelbased.proasense.storage.EventDocumentConverter;
-import net.modelbased.proasense.storage.EventProperties;
+
 import org.apache.thrift.TBase;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
@@ -47,32 +51,87 @@ import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 
 
-public class EventListenerKafkaTopic<T> implements Runnable {
+public class EventListenerKafka<T> implements Runnable {
     private Properties kafkaProperties;
     private Class<T> eventType;
     private BlockingQueue<EventDocument> queue;
     private String zooKeeper;
     private String groupId;
     private String topic;
+    private Boolean isTopicFilter;
 
-    public EventListenerKafkaTopic(Class<T> eventType, BlockingQueue<EventDocument> queue, String zooKeeper, String groupId, String topic) {
+
+    public EventListenerKafka(Class<T> eventType, BlockingQueue<EventDocument> queue, String zooKeeper, String groupId, String topic, boolean isTopicFilter) {
+        // Get Kafka properties
+        this.kafkaProperties = loadKafkaProperties();
+
+        // Get event listener properties
         this.eventType = eventType;
         this.queue = queue;
         this.zooKeeper = zooKeeper;
         this.groupId = groupId;
         this.topic = topic;
+        this.isTopicFilter = isTopicFilter;
     }
 
-    public void run() {
-        ConsumerConnector kafkaConsumer = createKafkaConsumer(zooKeeper, groupId);
 
-        // Create topic map
-        Map<String, Integer> topicCountMap = new HashMap<String, Integer>();;
-        topicCountMap.put(topic, 1);
+    private Properties loadKafkaProperties() {
+        Properties kafkaProperties = new Properties();
+        String propFilename = "kafka.properties";
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
+
+        try {
+            if (inputStream != null) {
+                kafkaProperties.load(inputStream);
+            } else
+                throw new FileNotFoundException("Property file: '" + propFilename + "' not found in classpath.");
+        }
+        catch (IOException e) {
+            System.out.println("Exception:" + e.getMessage());
+        }
+
+        return kafkaProperties;
+    }
+
+
+    private ConsumerConnector createKafkaConsumer(String zooKeeper, String groupId) {
+        // Specify consumer properties
+        Properties props = new Properties();
+        props.put("zookeeper.connect", zooKeeper);
+        props.put("group.id", groupId);
+//        props.put("zookeeper.connection.timeout.ms", this.kafkaProperties.getProperty("zookeeper.connection.timeout.ms"));
+        props.put("zookeeper.session.timeout.ms", this.kafkaProperties.getProperty("zookeeper.session.timeout.ms"));
+        props.put("zookeeper.sync.time.ms", this.kafkaProperties.getProperty("zookeeper.sync.time.ms"));
+        props.put("auto.commit.interval.ms", this.kafkaProperties.getProperty("auto.commit.interval.ms"));
+
+        // Create the connection to the cluster
+        ConsumerConfig config = new ConsumerConfig(props);
+        ConsumerConnector consumer = Consumer.createJavaConsumerConnector(config);
+
+        return consumer;
+    }
+
+
+    public void run() {
+        // Create Kafka consumer
+        ConsumerConnector kafkaConsumer = createKafkaConsumer(this.zooKeeper, this.groupId);
+
+        // Create message streams
+        KafkaStream<byte[], byte[]> messageAndMetadatas;
+        if (this.isTopicFilter) {
+            // Create message streams by filter
+            List<KafkaStream<byte[], byte[]>> streams = kafkaConsumer.createMessageStreamsByFilter(new Whitelist(this.topic));
+            messageAndMetadatas = streams.get(0);
+        }
+        else {
+            // Create message streams by topic map
+            Map<String, Integer> topicCountMap = new HashMap<String, Integer>();;
+            topicCountMap.put(this.topic, 1);
+            Map<String, List<KafkaStream<byte[], byte[]>>> streams = kafkaConsumer.createMessageStreams(topicCountMap);
+            messageAndMetadatas = streams.get(this.topic).get(0);
+        }
 
         // Consume message
-        Map<String, List<KafkaStream<byte[], byte[]>>> streams = kafkaConsumer.createMessageStreams(topicCountMap);
-        KafkaStream<byte[], byte[]> messageAndMetadatas = streams.get(topic).get(0);
         ConsumerIterator<byte[], byte[]> it = messageAndMetadatas.iterator();
 
         int cnt = 0;
@@ -143,43 +202,6 @@ public class EventListenerKafkaTopic<T> implements Runnable {
             kafkaConsumer.commitOffsets();
             kafkaConsumer.shutdown();
         }
-    }
-
-
-    private static ConsumerConnector createKafkaConsumer(String a_zookeeper, String a_groupId) {
-        // Specify consumer properties
-        Properties props = new Properties();
-        props.put("zookeeper.connect", a_zookeeper);
-        props.put("group.id", a_groupId);
-        props.put("zookeeper.connection.timeout.ms", "1000000");
-        props.put("zookeeper.session.timeout.ms", "30000");
-        props.put("zookeeper.sync.time.ms", "2000");
-        props.put("auto.commit.interval.ms", "1000");
-
-        // Create the connection to the cluster
-        ConsumerConfig config = new ConsumerConfig(props);
-        ConsumerConnector consumer = Consumer.createJavaConsumerConnector(config);
-
-        return consumer;
-    }
-
-
-    private Properties getDefaultProperties() {
-        kafkaProperties = new Properties();
-        String propFilename = "/resources/kafka.properties";
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
-
-        try {
-            if (inputStream != null) {
-                kafkaProperties.load(inputStream);
-            } else
-                throw new FileNotFoundException("Property file: '" + propFilename + "' not found in classpath.");
-        }
-        catch (IOException e) {
-            System.out.println("Exception:" + e.getMessage());
-        }
-
-        return kafkaProperties;
     }
 
 }

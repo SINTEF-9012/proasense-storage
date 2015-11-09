@@ -38,11 +38,13 @@ public class StorageWriterMongoServiceKafkaBenchmark {
 
 
     public StorageWriterMongoServiceKafkaBenchmark() {
+        // Get client properties
+        this.clientProperties = loadClientProperties();
     }
 
 
     private Properties loadClientProperties() {
-        clientProperties = new Properties();
+        Properties clientProperties = new Properties();
         String propFilename = "client.properties";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
 
@@ -63,7 +65,6 @@ public class StorageWriterMongoServiceKafkaBenchmark {
     public static void main(String[] args) {
         // Get benchmark properties
         StorageWriterMongoServiceKafkaBenchmark benchmark = new StorageWriterMongoServiceKafkaBenchmark();
-        benchmark.loadClientProperties();
 
         // Benchmark load testing properties
         boolean IS_LOAD_TESTING_ENABLED = new Boolean(benchmark.clientProperties.getProperty("proasense.benchmark.load.testing")).booleanValue();
@@ -139,49 +140,49 @@ public class StorageWriterMongoServiceKafkaBenchmark {
             // Create threads for random simple event generators
             for (int i = 0; i < NO_SIMPLEEVENT_GENERATORS; i++) {
                 if (IS_SIMPLEEVENT_FILTER)
-                    workers.add(new RandomEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC + "." + i, "mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC + "." + i, "test." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
                 else
-                    workers.add(new RandomEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC, "mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<SimpleEvent>(SimpleEvent.class, boostrapServers, groupId, SIMPLEEVENT_TOPIC, "test." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
             }
 
             // Create threads for random derived event generators
             for (int i = 0; i < NO_DERIVEDEVENT_GENERATORS; i++) {
                 if (IS_DERIVEDEVENT_FILTER)
-                    workers.add(new RandomEventKafkaGenerator<DerivedEvent>(DerivedEvent.class, boostrapServers, groupId, DERIVEDEVENT_TOPIC + "." + i, "mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<DerivedEvent>(DerivedEvent.class, boostrapServers, groupId, DERIVEDEVENT_TOPIC + "." + i, "test." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
                 else
-                    workers.add(new RandomEventKafkaGenerator<DerivedEvent>(DerivedEvent.class, boostrapServers, groupId, DERIVEDEVENT_TOPIC, "mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<DerivedEvent>(DerivedEvent.class, boostrapServers, groupId, DERIVEDEVENT_TOPIC, "test." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
             }
 
             // Create threads for random predicted event generators
             for (int i = 0; i < NO_PREDICTEDEVENT_GENERATORS; i++) {
                 if (IS_PREDICTEDEVENT_FILTER)
-                    workers.add(new RandomEventKafkaGenerator<PredictedEvent>(PredictedEvent.class, boostrapServers, groupId, PREDICTEDEVENT_TOPIC + "." + i, "mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<PredictedEvent>(PredictedEvent.class, boostrapServers, groupId, PREDICTEDEVENT_TOPIC + "." + i, "test." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
                 else
-                    workers.add(new RandomEventKafkaGenerator<PredictedEvent>(PredictedEvent.class, boostrapServers, groupId, PREDICTEDEVENT_TOPIC, "mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<PredictedEvent>(PredictedEvent.class, boostrapServers, groupId, PREDICTEDEVENT_TOPIC, "test." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
             }
 
             // Create threads for random anomaly event generators
             for (int i = 0; i < NO_ANOMALYEVENT_GENERATORS; i++) {
                 if (IS_ANOMALYEVENT_FILTER)
-                    workers.add(new RandomEventKafkaGenerator<AnomalyEvent>(AnomalyEvent.class, boostrapServers, groupId, ANOMALYEVENT_TOPIC + "." + i, "mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<AnomalyEvent>(AnomalyEvent.class, boostrapServers, groupId, ANOMALYEVENT_TOPIC + "." + i, "test." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
                 else
-                    workers.add(new RandomEventKafkaGenerator<AnomalyEvent>(AnomalyEvent.class, boostrapServers, groupId, ANOMALYEVENT_TOPIC, "mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<AnomalyEvent>(AnomalyEvent.class, boostrapServers, groupId, ANOMALYEVENT_TOPIC, "test." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
             }
 
             // Create threads for random recommendation event generators
             for (int i = 0; i < NO_RECOMMENDATIONEVENT_GENERATORS; i++) {
                 if (IS_RECOMMENDATIONEVENT_FILTER)
-                    workers.add(new RandomEventKafkaGenerator<RecommendationEvent>(RecommendationEvent.class, boostrapServers, groupId, RECOMMENDATIONEVENT_TOPIC + "." + i, "mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<RecommendationEvent>(RecommendationEvent.class, boostrapServers, groupId, RECOMMENDATIONEVENT_TOPIC + "." + i, "test." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
                 else
-                    workers.add(new RandomEventKafkaGenerator<RecommendationEvent>(RecommendationEvent.class, boostrapServers, groupId, RECOMMENDATIONEVENT_TOPIC, "mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<RecommendationEvent>(RecommendationEvent.class, boostrapServers, groupId, RECOMMENDATIONEVENT_TOPIC, "test." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
             }
 
             // Create threads for random feedback event generators
             for (int i = 0; i < NO_FEEDBACKEVENT_GENERATORS; i++) {
                 if (IS_FEEDBACKEVENT_FILTER)
-                    workers.add(new RandomEventKafkaGenerator<FeedbackEvent>(FeedbackEvent.class, boostrapServers, groupId, FEEDBACKEVENT_TOPIC + "." + i, "mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<FeedbackEvent>(FeedbackEvent.class, boostrapServers, groupId, FEEDBACKEVENT_TOPIC + "." + i, "test." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
                 else
-                    workers.add(new RandomEventKafkaGenerator<FeedbackEvent>(FeedbackEvent.class, boostrapServers, groupId, FEEDBACKEVENT_TOPIC, "mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
+                    workers.add(new RandomEventKafkaGenerator<FeedbackEvent>(FeedbackEvent.class, boostrapServers, groupId, FEEDBACKEVENT_TOPIC, "test." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
             }
         }
 

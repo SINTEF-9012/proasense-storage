@@ -42,11 +42,13 @@ public class StorageWriterMongoServiceLocalBenchmark {
 
 
     public StorageWriterMongoServiceLocalBenchmark() {
+        // Get client properties
+        this.clientProperties = loadClientProperties();
     }
 
 
     private Properties loadClientProperties() {
-        clientProperties = new Properties();
+        Properties clientProperties = new Properties();
         String propFilename = "client.properties";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
 
@@ -67,7 +69,7 @@ public class StorageWriterMongoServiceLocalBenchmark {
     public static void main(String[] args) {
         // Get benchmark properties
         StorageWriterMongoServiceLocalBenchmark benchmark = new StorageWriterMongoServiceLocalBenchmark();
-        benchmark.loadClientProperties();
+//        benchmark.loadClientProperties();
 
         // Benchmark common properties
         boolean IS_BENCHMARK_LOGFILE = new Boolean(benchmark.clientProperties.getProperty("proasense.benchmark.common.logfile")).booleanValue();
@@ -139,32 +141,32 @@ public class StorageWriterMongoServiceLocalBenchmark {
         } else {
             // Create threads for random simple event generators
             for (int i = 0; i < NO_SIMPLEEVENT_GENERATORS; i++) {
-                workers.add(new RandomEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, "mhwirth." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
+                workers.add(new RandomEventLocalGenerator<SimpleEvent>(SimpleEvent.class, queue, "test." + i, NO_SIMPLEEVENT_RATE, NO_SIMPLEEVENT_MESSAGES));
             }
 
             // Create threads for random derived event generators
             for (int i = 0; i < NO_DERIVEDEVENT_GENERATORS; i++) {
-                workers.add(new RandomEventLocalGenerator<DerivedEvent>(DerivedEvent.class, queue, "mhwirth." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
+                workers.add(new RandomEventLocalGenerator<DerivedEvent>(DerivedEvent.class, queue, "test." + i, NO_DERIVEDEVENT_RATE, NO_DERIVEDEVENT_MESSAGES));
             }
 
             // Create threads for random predicted event generators
             for (int i = 0; i < NO_PREDICTEDEVENT_GENERATORS; i++) {
-                workers.add(new RandomEventLocalGenerator<PredictedEvent>(PredictedEvent.class, queue, "mhwirth." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
+                workers.add(new RandomEventLocalGenerator<PredictedEvent>(PredictedEvent.class, queue, "test." + i, NO_PREDICTEDEVENT_RATE, NO_PREDICTEDEVENT_MESSAGES));
             }
 
             // Create threads for random anomaly event generators
             for (int i = 0; i < NO_ANOMALYEVENT_GENERATORS; i++) {
-                workers.add(new RandomEventLocalGenerator<AnomalyEvent>(AnomalyEvent.class, queue, "mhwirth." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
+                workers.add(new RandomEventLocalGenerator<AnomalyEvent>(AnomalyEvent.class, queue, "test." + i, NO_ANOMALYEVENT_RATE, NO_ANOMALYEVENT_MESSAGES));
             }
 
             // Create threads for random recommendation event generators
             for (int i = 0; i < NO_RECOMMENDATIONEVENT_GENERATORS; i++) {
-                workers.add(new RandomEventLocalGenerator<RecommendationEvent>(RecommendationEvent.class, queue, "mhwirth." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
+                workers.add(new RandomEventLocalGenerator<RecommendationEvent>(RecommendationEvent.class, queue, "test." + i, NO_RECOMMENDATIONEVENT_RATE, NO_RECOMMENDATIONEVENT_MESSAGES));
             }
 
             // Create threads for random feedback event generators
             for (int i = 0; i < NO_FEEDBACKEVENT_GENERATORS; i++) {
-                workers.add(new RandomEventLocalGenerator<FeedbackEvent>(FeedbackEvent.class, queue, "mhwirth." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
+                workers.add(new RandomEventLocalGenerator<FeedbackEvent>(FeedbackEvent.class, queue, "test." + i, NO_FEEDBACKEVENT_RATE, NO_FEEDBACKEVENT_MESSAGES));
             }
         }
 

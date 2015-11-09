@@ -18,12 +18,13 @@
 package net.modelbased.proasense.storage.writer;
 
 import net.modelbased.proasense.storage.EventDocument;
+import net.modelbased.proasense.storage.EventProperties;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import net.modelbased.proasense.storage.EventProperties;
+
 import org.bson.Document;
 
 import java.io.BufferedWriter;
