@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-workspace name="ProaSense" soapui-version="5.0.0" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-workspace name="ProaSense" soapui-version="5.2.1" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
   <con:project name="DataInfrastructure">W:/GitHub/proasense-storage/soapui/DataInfrastructure---EventPlayer-api-playback-soapui-project.xml</con:project>
   <con:project name="SensApp">W:/GitHub/proasense-storage/soapui/SensApp-soapui-project.xml</con:project>
   <con:project name="StorageReaderService">W:/GitHub/proasense-storage/soapui/StorageReaderService-soapui-project.xml</con:project>
   <con:project name="StorageRegistryService">W:/GitHub/proasense-storage/soapui/StorageRegistryService-soapui-project.xml</con:project>
+  <con:collectInfoForSupport>false</con:collectInfoForSupport>
 </con:soapui-workspace>

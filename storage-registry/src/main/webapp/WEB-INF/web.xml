@@ -18,12 +18,12 @@
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>net.modelbased.proasense.storage.registry</param-value>
+            <param-value>net.modelbased.proasense.storage.fuseki</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>proasense-storage-registry</servlet-name>
-        <url-pattern>/registry/*</url-pattern>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>

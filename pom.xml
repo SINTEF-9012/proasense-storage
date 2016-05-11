@@ -12,9 +12,9 @@
 
     <modules>
         <module>storage-base</module>
-        <module>storage-registry</module>
         <module>storage-writer</module>
         <module>storage-reader</module>
+        <module>storage-registry</module>
     </modules>
 
     <repositories>
