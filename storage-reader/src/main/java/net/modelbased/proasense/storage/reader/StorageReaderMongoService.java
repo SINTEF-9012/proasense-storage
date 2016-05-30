@@ -114,7 +114,8 @@ public class StorageReaderMongoService {
 
         List<Document> queryResult = null;
         List<SimpleEvent> responseResult = new ArrayList<SimpleEvent>();
-        String result = "";
+        StringBuilder json = new StringBuilder();
+
         try {
             queryResult = query.call();
 
@@ -124,8 +125,10 @@ public class StorageReaderMongoService {
                 SimpleEvent event = new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent();
                 byte[] bytes = serializer.serialize(event);
 
+                json.append(bytes);
+                json.append(",");
 //                String str = new String(bytes, "UTF-8");
-                result = result + "," + bytes;
+//                result = result + "," + bytes;
 
                 responseResult.add(event);
 //                responseResult.add(new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent());
@@ -134,6 +137,7 @@ public class StorageReaderMongoService {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
+        String result = json.toString();
 //        String result = responseResult.toString();
 
         // Return HTTP response 200 in case of success

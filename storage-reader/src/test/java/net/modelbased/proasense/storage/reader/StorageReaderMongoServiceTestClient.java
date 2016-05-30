@@ -128,10 +128,15 @@ public class StorageReaderMongoServiceTestClient {
             handler = new BasicResponseHandler();
             body = handler.handleResponse(response);
 
-            System.out.println("SIMPLE.DEFAULT:" + body);
+            System.out.println("SIMPLE.DEFAULT: " + body);
             // The result is a list of simple events that need to be converted to the defined Apache Thrift Messages
  //               String[] stringResults = body.split("\\), ", -1);
 //                System.out.println("SIMPLE.DEFAULT2:" + stringResults.toString());
+
+            String[] bodyArray = body.split("\\,");
+            for (int i = 0; i < bodyArray.length; i++) {
+                System.out.println("SIMPLE.DEFAULT.ARRAY(" + i + "): " + bodyArray[i].toString());
+            }
 
             byte[] bytes = body.getBytes();
             TDeserializer deserializer = new TDeserializer(new TJSONProtocol.Factory());
