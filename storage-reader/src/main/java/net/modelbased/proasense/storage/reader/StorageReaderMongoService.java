@@ -137,7 +137,9 @@ public class StorageReaderMongoService {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
+        // Convert to string and remove trailing ,
         String result = json.toString();
+        result = result.substring(0, result.length()-1);
 //        String result = responseResult.toString();
 
         // Return HTTP response 200 in case of success
