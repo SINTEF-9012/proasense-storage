@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
+ * Copyright (C) 2014-2016 SINTEF
  *
  *     Brian Elvesæter <brian.elvesater@sintef.no>
  *
@@ -20,27 +20,124 @@ package net.modelbased.proasense.storage.fuseki;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 @Path("/")
 public class StorageRegistryFusekiService {
     private Properties serverProperties;
-    private String MONGODB_URL;
-    private String MONGODB_DATABASE;
+
+    private String FUSEKI_SPARQL_ENDPOINT;
 
 
     public StorageRegistryFusekiService() {
         // Get server properties
         serverProperties = loadServerProperties();
 
-        // MongoDB event reader configuration properties
-        this.MONGODB_URL = serverProperties.getProperty("proasense.storage.mongodb.url");
-        this.MONGODB_DATABASE = serverProperties.getProperty("proasense.storage.mongodb.database");
+        // Apache Fuseki registry configuration properties
+        this.FUSEKI_SPARQL_ENDPOINT = serverProperties.getProperty("proasense.storage.fuseki.sparql.endpoint");
+    }
+
+
+    @GET
+    @Path("/query/machine/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryMachineList()
+    {
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<List<String>> query = new SparqlQueryCall(FUSEKI_SPARQL_ENDPOINT, null);
+        executor.submit(query);
+
+        List<String> queryResult = null;
+        try {
+            queryResult = query.call();
+
+//            for (Document doc : queryResult) {
+//                responseResult.add(new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent());
+//            }
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        String result = queryResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/machine/properties")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryMachineProperties(
+            @QueryParam("machineId") String machineId
+    )
+    {
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<List<String>> query = new SparqlQueryCall(FUSEKI_SPARQL_ENDPOINT, null);
+        executor.submit(query);
+
+        List<String> queryResult = null;
+        try {
+            queryResult = query.call();
+
+//            for (Document doc : queryResult) {
+//                responseResult.add(new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent());
+//            }
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        String result = queryResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/sensor/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response querySensorList()
+    {
+        List<String> queryResult = null;
+
+        //
+
+        String result = queryResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/sensor/properties")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response querySensorProperties(
+            @QueryParam("sensorId") String sensorId
+    )
+    {
+        List<String> queryResult = null;
+
+        //
+
+        String result = queryResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
     }
 
 
@@ -48,7 +145,7 @@ public class StorageRegistryFusekiService {
     @Path("/server/status")
     @Produces(MediaType.TEXT_PLAIN)
     public Response getServerStatus() {
-        String result = "ProaSense Storage Reader Service running...";
+        String result = "ProaSense Storage Registry Service running...";
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
