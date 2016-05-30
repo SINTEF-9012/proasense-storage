@@ -114,7 +114,7 @@ public class StorageReaderMongoService {
 
         List<Document> queryResult = null;
         List<SimpleEvent> responseResult = new ArrayList<SimpleEvent>();
-        String result = null;
+        String result = "";
         try {
             queryResult = query.call();
 

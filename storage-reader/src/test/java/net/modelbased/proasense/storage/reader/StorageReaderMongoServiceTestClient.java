@@ -32,6 +32,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TJSONProtocol;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.BufferedReader;
@@ -131,6 +132,12 @@ public class StorageReaderMongoServiceTestClient {
             // The result is a list of simple events that need to be converted to the defined Apache Thrift Messages
  //               String[] stringResults = body.split("\\), ", -1);
 //                System.out.println("SIMPLE.DEFAULT2:" + stringResults.toString());
+
+            byte[] bytes = body.getBytes();
+            TDeserializer deserializer = new TDeserializer(new TJSONProtocol.Factory());
+            SimpleEvent event = new SimpleEvent();
+            deserializer.deserialize(event, bytes);
+/**
             HttpEntity entity = response.getEntity();
             InputStream is = entity.getContent();
 
@@ -144,6 +151,7 @@ public class StorageReaderMongoServiceTestClient {
 //                TDeserializer deserializer = new TDeserializer(new TBinaryProtocol.Factory());
 //                SimpleEvent event = new SimpleEvent();
 //                deserializer.deserialize(event, bytes);
+**/
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
