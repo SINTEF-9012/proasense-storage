@@ -26,10 +26,12 @@ import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
 import eu.proasense.internal.SimpleEvent;
 
+import net.modelbased.proasense.storage.EventProperties;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TJSONProtocol;
 import org.bson.Document;
+import org.bson.types.Binary;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -100,7 +102,7 @@ public class StorageReaderMongoService {
 **/
 
 @GET
-@Path("/query/simple/default")
+@Path("/query/simple/default2")
 @Produces(MediaType.APPLICATION_JSON)
 public Response queryDefaultSimpleEvents(
         @QueryParam("sensorId") String sensorId,
@@ -122,15 +124,14 @@ public Response queryDefaultSimpleEvents(
 
         TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
         for (Document doc : queryResult) {
-            SimpleEvent event = new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent();
-            byte[] bytes = serializer.serialize(event);
+            Binary serializedEvent = (Binary)doc.get(EventProperties.STORAGE_SERIALIZED_EVENT_KEY);
 
-            json.append(bytes);
+            json.append(serializedEvent.toString());
             json.append(",");
 //                String str = new String(bytes, "UTF-8");
 //                result = result + "," + bytes;
 
-            responseResult.add(event);
+//            responseResult.add(event);
 //                responseResult.add(new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent());
         }
     } catch (Exception e) {
