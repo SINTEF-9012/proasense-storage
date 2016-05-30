@@ -129,19 +129,23 @@ public class StorageReaderMongoServiceTestClient {
             body = handler.handleResponse(response);
 
             System.out.println("SIMPLE.DEFAULT: " + body);
-            // The result is a list of simple events that need to be converted to the defined Apache Thrift Messages
- //               String[] stringResults = body.split("\\), ", -1);
-//                System.out.println("SIMPLE.DEFAULT2:" + stringResults.toString());
+            // The result is a list of simple events serialized as JSON and need to be deserialized as Apache Thrift messages
 
+            TDeserializer deserializer = new TDeserializer(new TJSONProtocol.Factory());
             String[] bodyArray = body.split("\\,");
             for (int i = 0; i < bodyArray.length; i++) {
                 System.out.println("SIMPLE.DEFAULT.ARRAY(" + i + "): " + bodyArray[i].toString());
+                byte[] bytes = bodyArray[i].getBytes();
+                System.out.println("SIMPLE.DEFAULT.BYTE(" + i + "): " + bytes.toString());
+                SimpleEvent event = new SimpleEvent();
+                deserializer.deserialize(event, bytes);
+                System.out.println("SIMPLE.DEFAULT.EVENT(" + i + "): " + event.toString());
             }
 
-            byte[] bytes = body.getBytes();
-            TDeserializer deserializer = new TDeserializer(new TJSONProtocol.Factory());
-            SimpleEvent event = new SimpleEvent();
-            deserializer.deserialize(event, bytes);
+//            byte[] bytes = body.getBytes();
+//            TDeserializer deserializer = new TDeserializer(new TJSONProtocol.Factory());
+//            SimpleEvent event = new SimpleEvent();
+//            deserializer.deserialize(event, bytes);
 /**
             HttpEntity entity = response.getEntity();
             InputStream is = entity.getContent();

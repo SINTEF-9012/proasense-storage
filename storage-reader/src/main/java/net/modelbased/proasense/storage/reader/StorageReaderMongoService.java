@@ -27,6 +27,7 @@ import eu.proasense.internal.RecommendationEvent;
 import eu.proasense.internal.SimpleEvent;
 
 import org.apache.thrift.TSerializer;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TJSONProtocol;
 import org.bson.Document;
 
@@ -98,6 +99,54 @@ public class StorageReaderMongoService {
     }
 **/
 
+@GET
+@Path("/query/simple/default")
+@Produces(MediaType.APPLICATION_JSON)
+public Response queryDefaultSimpleEvents(
+        @QueryParam("sensorId") String sensorId,
+        @QueryParam("startTime") long startTime,
+        @QueryParam("endTime") long endTime)
+{
+    String collectionId = "simple." + sensorId;
+
+    ExecutorService executor = Executors.newFixedThreadPool(1);
+    Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, MONGODB_DATABASE, EventQueryType.SIMPLE, collectionId, startTime, endTime, null, EventQueryOperation.DEFAULT, null);
+    executor.submit(query);
+
+    List<Document> queryResult = null;
+    List<SimpleEvent> responseResult = new ArrayList<SimpleEvent>();
+    StringBuilder json = new StringBuilder();
+
+    try {
+        queryResult = query.call();
+
+        TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
+        for (Document doc : queryResult) {
+            SimpleEvent event = new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent();
+            byte[] bytes = serializer.serialize(event);
+
+            json.append(bytes);
+            json.append(",");
+//                String str = new String(bytes, "UTF-8");
+//                result = result + "," + bytes;
+
+            responseResult.add(event);
+//                responseResult.add(new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent());
+        }
+    } catch (Exception e) {
+        System.out.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+
+    // Convert to string and remove trailing ,
+    String result = json.toString();
+    result = result.substring(0, result.length()-1);
+//        String result = responseResult.toString();
+
+    // Return HTTP response 200 in case of success
+    return Response.status(200).entity(result).build();
+}
+
+/**
     @GET
     @Path("/query/simple/default")
     @Produces(MediaType.APPLICATION_JSON)
@@ -145,6 +194,7 @@ public class StorageReaderMongoService {
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
     }
+**/
 
     @GET
     @Path("/query/simple/average")
