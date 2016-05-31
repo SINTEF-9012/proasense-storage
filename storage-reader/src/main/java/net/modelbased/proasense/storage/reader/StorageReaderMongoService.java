@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 SINTEF
+ * Copyright (C) 2014-2016 SINTEF
  *
  *     Brian Elvesæter <brian.elvesater@sintef.no>
  *
@@ -26,12 +26,9 @@ import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.RecommendationEvent;
 import eu.proasense.internal.SimpleEvent;
 
-import net.modelbased.proasense.storage.EventProperties;
 import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TJSONProtocol;
 import org.bson.Document;
-import org.bson.types.Binary;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
