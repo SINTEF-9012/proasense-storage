@@ -48,11 +48,11 @@ import java.util.List;
 import java.util.Properties;
 
 
-public class StorageReaderMongoServiceTestClient {
+public class StorageReaderScrapRateTestClient {
     private Properties clientProperties;
 
 
-    public StorageReaderMongoServiceTestClient() {
+    public StorageReaderScrapRateTestClient() {
     }
 
 
@@ -102,7 +102,7 @@ public class StorageReaderMongoServiceTestClient {
 
         // Default query for simple events
         requestUrl = new StringBuilder(STORAGE_READER_SERVICE_URL);
-        requestUrl.append("/storage-reader/query/simple/default");
+        requestUrl.append("/storage-reader/query/simple/default2");
 
         params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("sensorId", QUERY_SIMPLE_SENSORID));
@@ -131,7 +131,8 @@ public class StorageReaderMongoServiceTestClient {
             System.out.println("SIMPLE.DEFAULT: " + body);
             // The result is a list of simple events serialized as JSON and need to be deserialized as Apache Thrift messages
 
-            TDeserializer deserializer = new TDeserializer(new TJSONProtocol.Factory());
+//            TDeserializer deserializer = new TDeserializer(new TJSONProtocol.Factory());
+            TDeserializer deserializer = new TDeserializer(new TBinaryProtocol.Factory());
             String[] bodyArray = body.split("\\,");
             for (int i = 0; i < bodyArray.length; i++) {
                 System.out.println("SIMPLE.DEFAULT.ARRAY(" + i + "): " + bodyArray[i].toString());

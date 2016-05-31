@@ -67,11 +67,56 @@ public class StorageReaderMongoService {
         this.MONGODB_DATABASE = serverProperties.getProperty("proasense.storage.mongodb.database");
     }
 
-/**
+
     @GET
     @Path("/query/simple/default")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryDefaultSimpleEvents(
+            @QueryParam("sensorId") String sensorId,
+            @QueryParam("startTime") long startTime,
+            @QueryParam("endTime") long endTime)
+    {
+        String collectionId = "simple." + sensorId;
+
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, MONGODB_DATABASE, EventQueryType.SIMPLE, collectionId, startTime, endTime, null, EventQueryOperation.DEFAULT, null);
+        executor.submit(query);
+
+        List<Document> queryResult = null;
+        StringBuilder responseResult = new StringBuilder("[");
+        try {
+            queryResult = query.call();
+
+            for (Document doc : queryResult) {
+                SimpleEvent event = new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent();
+
+                // Serialize event as JSON
+                TSerializer serializer = new TSerializer(new TJSONProtocol.Factory());
+                String jsonEvent = serializer.toString(event);
+
+                responseResult.append(jsonEvent);
+                responseResult.append(",");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+        responseResult.append("]");
+        String result = responseResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/simple/default2")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryDefaultSimpleEvents2(
             @QueryParam("sensorId") String sensorId,
             @QueryParam("startTime") long startTime,
             @QueryParam("endTime") long endTime)
@@ -99,103 +144,7 @@ public class StorageReaderMongoService {
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
     }
-**/
 
-@GET
-@Path("/query/simple/default2")
-@Produces(MediaType.APPLICATION_JSON)
-public Response queryDefaultSimpleEvents(
-        @QueryParam("sensorId") String sensorId,
-        @QueryParam("startTime") long startTime,
-        @QueryParam("endTime") long endTime)
-{
-    String collectionId = "simple." + sensorId;
-
-    ExecutorService executor = Executors.newFixedThreadPool(1);
-    Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, MONGODB_DATABASE, EventQueryType.SIMPLE, collectionId, startTime, endTime, null, EventQueryOperation.DEFAULT, null);
-    executor.submit(query);
-
-    List<Document> queryResult = null;
-    List<SimpleEvent> responseResult = new ArrayList<SimpleEvent>();
-    StringBuilder json = new StringBuilder();
-
-    try {
-        queryResult = query.call();
-
-        TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
-        for (Document doc : queryResult) {
-            Binary serializedEvent = (Binary)doc.get(EventProperties.STORAGE_SERIALIZED_EVENT_KEY);
-
-            json.append(serializedEvent.toString());
-            json.append(",");
-//                String str = new String(bytes, "UTF-8");
-//                result = result + "," + bytes;
-
-//            responseResult.add(event);
-//                responseResult.add(new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent());
-        }
-    } catch (Exception e) {
-        System.out.println(e.getClass().getName() + ": " + e.getMessage());
-    }
-
-    // Convert to string and remove trailing ,
-    String result = json.toString();
-    result = result.substring(0, result.length()-1);
-//        String result = responseResult.toString();
-
-    // Return HTTP response 200 in case of success
-    return Response.status(200).entity(result).build();
-}
-
-/**
-    @GET
-    @Path("/query/simple/default")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response queryDefaultSimpleEvents(
-        @QueryParam("sensorId") String sensorId,
-        @QueryParam("startTime") long startTime,
-        @QueryParam("endTime") long endTime)
-    {
-        String collectionId = "simple." + sensorId;
-
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, MONGODB_DATABASE, EventQueryType.SIMPLE, collectionId, startTime, endTime, null, EventQueryOperation.DEFAULT, null);
-        executor.submit(query);
-
-        List<Document> queryResult = null;
-        List<SimpleEvent> responseResult = new ArrayList<SimpleEvent>();
-        StringBuilder json = new StringBuilder();
-
-        try {
-            queryResult = query.call();
-
-            TSerializer serializer = new TSerializer(new TJSONProtocol.Factory());
-
-            for (Document doc : queryResult) {
-                SimpleEvent event = new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent();
-                byte[] bytes = serializer.serialize(event);
-
-                json.append(bytes);
-                json.append(",");
-//                String str = new String(bytes, "UTF-8");
-//                result = result + "," + bytes;
-
-                responseResult.add(event);
-//                responseResult.add(new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent());
-            }
-        } catch (Exception e) {
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-
-        // Convert to string and remove trailing ,
-        String result = json.toString();
-        result = result.substring(0, result.length()-1);
-//        String result = responseResult.toString();
-
-        // Return HTTP response 200 in case of success
-        return Response.status(200).entity(result).build();
-    }
-**/
 
     @GET
     @Path("/query/simple/average")
