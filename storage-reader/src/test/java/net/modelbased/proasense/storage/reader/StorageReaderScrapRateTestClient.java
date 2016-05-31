@@ -17,9 +17,8 @@
  */
 package net.modelbased.proasense.storage.reader;
 
-import eu.proasense.internal.PredictedEvent;
 import eu.proasense.internal.SimpleEvent;
-import org.apache.http.HttpEntity;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -29,12 +28,16 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+
 import org.apache.thrift.TBase;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TJSONProtocol;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.ws.rs.core.StreamingOutput;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -102,7 +105,7 @@ public class StorageReaderScrapRateTestClient {
 
         // Default query for simple events
         requestUrl = new StringBuilder(STORAGE_READER_SERVICE_URL);
-        requestUrl.append("/storage-reader/query/simple/default2");
+        requestUrl.append("/storage-reader/query/simple/default");
 
         params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("sensorId", QUERY_SIMPLE_SENSORID));
@@ -129,43 +132,23 @@ public class StorageReaderScrapRateTestClient {
             body = handler.handleResponse(response);
 
             System.out.println("SIMPLE.DEFAULT: " + body);
-            // The result is a list of simple events serialized as JSON and need to be deserialized as Apache Thrift messages
+            // The result is an array of simple events serialized as JSON using Apache Thrift.
+            // The simple events can be deserialized into Java objects using Apache Thrift.
 
-//            TDeserializer deserializer = new TDeserializer(new TJSONProtocol.Factory());
-            TDeserializer deserializer = new TDeserializer(new TBinaryProtocol.Factory());
-            String[] bodyArray = body.split("\\,");
-            for (int i = 0; i < bodyArray.length; i++) {
-                System.out.println("SIMPLE.DEFAULT.ARRAY(" + i + "): " + bodyArray[i].toString());
-                byte[] bytes = bodyArray[i].getBytes();
-                System.out.println("SIMPLE.DEFAULT.BYTE(" + i + "): " + bytes.toString());
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode nodeArray = mapper.readTree(body);
+
+            for (JsonNode node : nodeArray) {
+                byte[] bytes = node.toString().getBytes();
+                TDeserializer deserializer = new TDeserializer(new TJSONProtocol.Factory());
                 SimpleEvent event = new SimpleEvent();
                 deserializer.deserialize(event, bytes);
-                System.out.println("SIMPLE.DEFAULT.EVENT(" + i + "): " + event.toString());
+                System.out.println(event.toString());
             }
-
-//            byte[] bytes = body.getBytes();
-//            TDeserializer deserializer = new TDeserializer(new TJSONProtocol.Factory());
-//            SimpleEvent event = new SimpleEvent();
-//            deserializer.deserialize(event, bytes);
-/**
-            HttpEntity entity = response.getEntity();
-            InputStream is = entity.getContent();
-
-            StreamingOutput output = (StreamingOutput)response.getEntity();
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            output.write(outputStream);
-
-            System.out.println("SIMPLE.DEFAULT.BYTES:" + outputStream.toString());
-
-            // Convert message to Apache Thrift struct
-//                TDeserializer deserializer = new TDeserializer(new TBinaryProtocol.Factory());
-//                SimpleEvent event = new SimpleEvent();
-//                deserializer.deserialize(event, bytes);
-**/
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-/**
+
         // Average query for simple events
         requestUrl = new StringBuilder(STORAGE_READER_SERVICE_URL);
         requestUrl.append("/storage-reader/query/simple/average");
@@ -265,7 +248,6 @@ public class StorageReaderScrapRateTestClient {
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
- **/
     }
 
 }
