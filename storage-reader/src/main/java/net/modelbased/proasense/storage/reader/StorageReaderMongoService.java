@@ -245,6 +245,51 @@ public class StorageReaderMongoService {
         executor.submit(query);
 
         List<Document> queryResult = null;
+        StringBuilder responseResult = new StringBuilder("[");
+        try {
+            queryResult = query.call();
+
+            for (Document doc : queryResult) {
+                DerivedEvent event = new EventConverter<DerivedEvent>(DerivedEvent.class, doc).getEvent();
+
+                // Serialize event as JSON
+                TSerializer serializer = new TSerializer(new TJSONProtocol.Factory());
+                String jsonEvent = serializer.toString(event);
+
+                responseResult.append(jsonEvent);
+                responseResult.append(",");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+        responseResult.append("]");
+        String result = responseResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/derived/default2")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryDefaultDerivedEvents2(
+            @QueryParam("componentId") String componentId,
+            @QueryParam("startTime") long startTime,
+            @QueryParam("endTime") long endTime)
+    {
+        String collectionId = "derived." + componentId;
+
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, MONGODB_DATABASE, EventQueryType.DERIVED, collectionId, startTime, endTime, null, EventQueryOperation.DEFAULT, null);
+        executor.submit(query);
+
+        List<Document> queryResult = null;
         List<DerivedEvent> responseResult = new ArrayList<DerivedEvent>();
         try {
             queryResult = query.call();
@@ -364,6 +409,50 @@ public class StorageReaderMongoService {
         executor.submit(query);
 
         List<Document> queryResult = null;
+        StringBuilder responseResult = new StringBuilder("[");
+        try {
+            queryResult = query.call();
+
+            for (Document doc : queryResult) {
+                PredictedEvent event = new EventConverter<PredictedEvent>(PredictedEvent.class, doc).getEvent();
+
+                // Serialize event as JSON
+                TSerializer serializer = new TSerializer(new TJSONProtocol.Factory());
+                String jsonEvent = serializer.toString(event);
+
+                responseResult.append(jsonEvent);
+                responseResult.append(",");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+        responseResult.append("]");
+        String result = responseResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/predicted/default2")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryDefaultPredictedEvents2(
+            @QueryParam("startTime") long startTime,
+            @QueryParam("endTime") long endTime)
+    {
+        String collectionId = "predicted.system";
+
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, MONGODB_DATABASE, EventQueryType.PREDICTED, collectionId, startTime, endTime, null, EventQueryOperation.DEFAULT, null);
+        executor.submit(query);
+
+        List<Document> queryResult = null;
         List<PredictedEvent> responseResult = new ArrayList<PredictedEvent>();
         try {
             queryResult = query.call();
@@ -388,6 +477,50 @@ public class StorageReaderMongoService {
     public Response queryDefaultAnomalyEvents(
         @QueryParam("startTime") long startTime,
         @QueryParam("endTime") long endTime)
+    {
+        String collectionId = "anomaly.system";
+
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, MONGODB_DATABASE, EventQueryType.ANOMALY, collectionId, startTime, endTime, null, EventQueryOperation.DEFAULT, null);
+        executor.submit(query);
+
+        List<Document> queryResult = null;
+        StringBuilder responseResult = new StringBuilder("[");
+        try {
+            queryResult = query.call();
+
+            for (Document doc : queryResult) {
+                AnomalyEvent event = new EventConverter<AnomalyEvent>(AnomalyEvent.class, doc).getEvent();
+
+                // Serialize event as JSON
+                TSerializer serializer = new TSerializer(new TJSONProtocol.Factory());
+                String jsonEvent = serializer.toString(event);
+
+                responseResult.append(jsonEvent);
+                responseResult.append(",");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+        responseResult.append("]");
+        String result = responseResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/anomaly/default2")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryDefaultAnomalyEvents2(
+            @QueryParam("startTime") long startTime,
+            @QueryParam("endTime") long endTime)
     {
         String collectionId = "anomaly.system";
 
@@ -428,6 +561,50 @@ public class StorageReaderMongoService {
         executor.submit(query);
 
         List<Document> queryResult = null;
+        StringBuilder responseResult = new StringBuilder("[");
+        try {
+            queryResult = query.call();
+
+            for (Document doc : queryResult) {
+                RecommendationEvent event = new EventConverter<RecommendationEvent>(RecommendationEvent.class, doc).getEvent();
+
+                // Serialize event as JSON
+                TSerializer serializer = new TSerializer(new TJSONProtocol.Factory());
+                String jsonEvent = serializer.toString(event);
+
+                responseResult.append(jsonEvent);
+                responseResult.append(",");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+        responseResult.append("]");
+        String result = responseResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/recommendation/default2")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryDefaultRecommendationEvents2(
+            @QueryParam("startTime") long startTime,
+            @QueryParam("endTime") long endTime)
+    {
+        String collectionId = "recommendation.system";
+
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, MONGODB_DATABASE, EventQueryType.RECOMMENDATION, collectionId, startTime, endTime, null, EventQueryOperation.DEFAULT, null);
+        executor.submit(query);
+
+        List<Document> queryResult = null;
         List<RecommendationEvent> responseResult = new ArrayList<RecommendationEvent>();
         try {
             queryResult = query.call();
@@ -450,6 +627,50 @@ public class StorageReaderMongoService {
     @Path("/query/feedback/default")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryDefaultFeedbackEvents(
+            @QueryParam("startTime") long startTime,
+            @QueryParam("endTime") long endTime)
+    {
+        String collectionId = "feedback.system";
+
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, MONGODB_DATABASE, EventQueryType.FEEDBACK, collectionId, startTime, endTime, null, EventQueryOperation.DEFAULT, null);
+        executor.submit(query);
+
+        List<Document> queryResult = null;
+        StringBuilder responseResult = new StringBuilder("[");
+        try {
+            queryResult = query.call();
+
+            for (Document doc : queryResult) {
+                FeedbackEvent event = new EventConverter<FeedbackEvent>(FeedbackEvent.class, doc).getEvent();
+
+                // Serialize event as JSON
+                TSerializer serializer = new TSerializer(new TJSONProtocol.Factory());
+                String jsonEvent = serializer.toString(event);
+
+                responseResult.append(jsonEvent);
+                responseResult.append(",");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+        responseResult.append("]");
+        String result = responseResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/feedback/default2")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryDefaultFeedbackEvents2(
             @QueryParam("startTime") long startTime,
             @QueryParam("endTime") long endTime)
     {
