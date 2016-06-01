@@ -196,11 +196,30 @@ public class StorageRegistryFusekiService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response querySensorList()
     {
-        List<String> queryResult = null;
+        String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?x\n" +
+                "  WHERE {\n" +
+                "    ?subject rdfs:subClassOf+ ssn:Sensor .\n" +
+                "    ?x rdf:type ?subject.\n" +
+                "  }\n" +
+                "ORDER BY ASC (?x)";
 
-        //
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_SENSOR_LIST);
+        ResultSet results = qe.execSelect();
 
-        String result = queryResult.toString();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        String result = resultsJson;
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
@@ -214,11 +233,31 @@ public class StorageRegistryFusekiService {
             @QueryParam("sensorId") String sensorId
     )
     {
-        List<String> queryResult = null;
+        // Query for sensor properties
+        String SPARQL_SENSOR_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?property ?value\n" +
+                "  WHERE {\n" +
+                "    pssn:dustParticleSensor ?property ?value .\n" +
+                "}";
 
-        //
+        SPARQL_SENSOR_PROPERTIES = SPARQL_SENSOR_PROPERTIES.replaceAll("dustParticleSensor", sensorId);
 
-        String result = queryResult.toString();
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_SENSOR_PROPERTIES);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        String result = resultsJson;
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();

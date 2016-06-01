@@ -145,7 +145,64 @@ public class StorageRegistryScrapRateTestClient {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
+        // Query for sensor list
+        requestUrl = new StringBuilder(STORAGE_REGISTRY_SERVICE_URL);
+        requestUrl.append("/query/sensor/list");
 
+        try {
+            HttpGet query21 = new HttpGet(requestUrl.toString());
+            query21.setHeader("Content-type", "application/json");
+            response = client.execute(query21);
+
+            // Check status code
+            status = response.getStatusLine().getStatusCode();
+            if (status != 200) {
+                throw new RuntimeException("Failed! HTTP error code: " + status);
+            }
+
+            // Get body
+            handler = new BasicResponseHandler();
+            body = handler.handleResponse(response);
+
+            System.out.println("SENSOR LIST: " + body);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+
+        // Query for sensor properties
+        requestUrl = new StringBuilder(STORAGE_REGISTRY_SERVICE_URL);
+        requestUrl.append("/query/sensor/properties");
+
+        params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("sensorId", "dustParticleSensor"));
+
+        queryString = URLEncodedUtils.format(params, "utf-8");
+        requestUrl.append("?");
+        requestUrl.append(queryString);
+
+        try {
+            HttpGet query22 = new HttpGet(requestUrl.toString());
+            query22.setHeader("Content-type", "application/json");
+            response = client.execute(query22);
+
+            // Check status code
+            status = response.getStatusLine().getStatusCode();
+            if (status != 200) {
+                throw new RuntimeException("Failed! HTTP error code: " + status);
+            }
+
+            // Get body
+            handler = new BasicResponseHandler();
+            body = handler.handleResponse(response);
+
+            System.out.println("SENSOR PROPERTIES: " + body);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+
+        /****************************************************/
         // Hardcoded client properties (simple test client)
         String FUSEKI_SPARQL_ENDPOINT = "http://192.168.84.88:8080/fuseki/ProaSenseV8/query";
 
@@ -205,58 +262,6 @@ public class StorageRegistryScrapRateTestClient {
 
         qe.close();
 
-        // Query for machine properties
-        String SPARQL_MACHINE_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?property ?value\n" +
-                "  WHERE {\n" +
-                "    pssn:IMM1 ?property ?value .\n" +
-                "}";
-        qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_MACHINE_PROPERTIES);
-        results = qe.execSelect();
-        ResultSetFormatter.out(System.out, results);
-        qe.close();
-
-        // Query for sensor lists
-        String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?x\n" +
-                "  WHERE {\n" +
-                "    ?subject rdfs:subClassOf+ ssn:Sensor .\n" +
-                "    ?x rdf:type ?subject.\n" +
-                "  }\n" +
-                "ORDER BY ASC (?x)";
-        qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_SENSOR_LIST);
-        results = qe.execSelect();
-        ResultSetFormatter.out(System.out, results);
-        qe.close();
-
-        // Query for sensor properties
-        String SPARQL_SENSOR_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?property ?value\n" +
-                "  WHERE {\n" +
-                "    pssn:dustParticleSensor ?property ?value .\n" +
-                "}";
-        qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_SENSOR_PROPERTIES);
-        results = qe.execSelect();
-        ResultSetFormatter.out(System.out, results);
-        qe.close();
 
         // Query for product list
         String SPARQL_PRODUCT_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
