@@ -219,6 +219,64 @@ public class StorageRegistryFusekiService {
         String resultsJson = baos.toString();
         resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
 
+        StringBuilder responseResult = new StringBuilder();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode rootNode = mapper.readTree(resultsJson);
+            JsonNode resultsNode = rootNode.path("results");
+            JsonNode bindingsNode = resultsNode.path("bindings");
+            Iterator<JsonNode> iterator = bindingsNode.getElements();
+            while (iterator.hasNext()) {
+                JsonNode xNode = iterator.next();
+                List<String> valueNode = xNode.findValuesAsText("value");
+
+                responseResult.append(valueNode.get(0));
+                responseResult.append(",");
+            }
+        } catch (IOException e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        qe.close();
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+        String result = responseResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/sensor/list2")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response querySensorList2()
+    {
+        String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?x\n" +
+                "  WHERE {\n" +
+                "    ?subject rdfs:subClassOf+ ssn:Sensor .\n" +
+                "    ?x rdf:type ?subject.\n" +
+                "  }\n" +
+                "ORDER BY ASC (?x)";
+
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_SENSOR_LIST);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
         String result = resultsJson;
 
         // Return HTTP response 200 in case of success
