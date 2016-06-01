@@ -31,6 +31,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.protocol.TJSONProtocol;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -75,7 +76,7 @@ public class StorageReaderScrapRateTestClient {
 //        client.loadClientProperties();
 
         // Hardcoded client properties (simple test client)
-        String STORAGE_READER_SERVICE_URL = "http://192.168.84.34:8080";
+        String STORAGE_READER_SERVICE_URL = "http://192.168.84.34:8080/storage-reader";
 
         String QUERY_SIMPLE_SENSORID = "1000692";
         String QUERY_SIMPLE_STARTTIME = "1387565891068";
@@ -96,7 +97,7 @@ public class StorageReaderScrapRateTestClient {
 
         // Default query for simple events
         requestUrl = new StringBuilder(STORAGE_READER_SERVICE_URL);
-        requestUrl.append("/storage-reader/query/simple/default");
+        requestUrl.append("/query/simple/default");
 
         params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("sensorId", QUERY_SIMPLE_SENSORID));
@@ -142,7 +143,7 @@ public class StorageReaderScrapRateTestClient {
 
         // Average query for simple events
         requestUrl = new StringBuilder(STORAGE_READER_SERVICE_URL);
-        requestUrl.append("/storage-reader/query/simple/average");
+        requestUrl.append("/query/simple/average");
 
         params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("sensorId", QUERY_SIMPLE_SENSORID));
@@ -176,7 +177,7 @@ public class StorageReaderScrapRateTestClient {
 
         // Maximum query for simple events
         requestUrl = new StringBuilder(STORAGE_READER_SERVICE_URL);
-        requestUrl.append("/storage-reader/query/simple/maximum");
+        requestUrl.append("/query/simple/maximum");
 
         params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("sensorId", QUERY_SIMPLE_SENSORID));
@@ -209,7 +210,7 @@ public class StorageReaderScrapRateTestClient {
 
         // Minimum query for simple events
         requestUrl = new StringBuilder(STORAGE_READER_SERVICE_URL);
-        requestUrl.append("/storage-reader/query/simple/minimum");
+        requestUrl.append("/query/simple/minimum");
 
         params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("sensorId", QUERY_SIMPLE_SENSORID));

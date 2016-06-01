@@ -160,22 +160,31 @@ public class StorageRegistryFusekiService {
             @QueryParam("machineId") String machineId
     )
     {
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        Callable<List<String>> query = new SparqlQueryCall(FUSEKI_SPARQL_ENDPOINT, null);
-        executor.submit(query);
+        String SPARQL_MACHINE_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?property ?value\n" +
+                "  WHERE {\n" +
+                "    pssn:IMM1 ?property ?value .\n" +
+                "}";
 
-        List<String> queryResult = null;
-        try {
-            queryResult = query.call();
+        SPARQL_MACHINE_PROPERTIES = SPARQL_MACHINE_PROPERTIES.replaceAll("IMM1", machineId);
 
-//            for (Document doc : queryResult) {
-//                responseResult.add(new EventConverter<SimpleEvent>(SimpleEvent.class, doc).getEvent());
-//            }
-        } catch (Exception e) {
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
-        }
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_MACHINE_PROPERTIES);
+        ResultSet results = qe.execSelect();
+        qe.close();
 
-        String result = queryResult.toString();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        String result = resultsJson.toString();
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();

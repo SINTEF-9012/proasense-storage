@@ -21,6 +21,17 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -29,6 +40,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -62,6 +74,77 @@ public class StorageRegistryScrapRateTestClient {
         // Get client properties from properties file
 //        StorageReaderMongoServiceTestClient client = new StorageReaderMongoServiceTestClient();
 //        client.loadClientProperties();
+
+        // Hardcoded client properties (simple test client)
+        String STORAGE_REGISTRY_SERVICE_URL = "http://192.168.84.34:8080/storage-registry";
+
+        // Default HTTP client and common properties for requests
+        HttpClient client = new DefaultHttpClient();
+        StringBuilder requestUrl = null;
+        List<NameValuePair> params = null;
+        String queryString = null;
+
+        // Default HTTP response and common properties for responses
+        HttpResponse response = null;
+        ResponseHandler<String> handler = null;
+        int status = 0;
+        String body = null;
+
+        // Query for machine list
+        requestUrl = new StringBuilder(STORAGE_REGISTRY_SERVICE_URL);
+        requestUrl.append("/query/machine/list");
+
+        try {
+            HttpGet query11 = new HttpGet(requestUrl.toString());
+            query11.setHeader("Content-type", "application/json");
+            response = client.execute(query11);
+
+            // Check status code
+            status = response.getStatusLine().getStatusCode();
+            if (status != 200) {
+                throw new RuntimeException("Failed! HTTP error code: " + status);
+            }
+
+            // Get body
+            handler = new BasicResponseHandler();
+            body = handler.handleResponse(response);
+
+            System.out.println("MACHINE LIST: " + body);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        // Query for machine properties
+        requestUrl = new StringBuilder(STORAGE_REGISTRY_SERVICE_URL);
+        requestUrl.append("/query/machine/list");
+
+        params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("machineId", "IMM1"));
+
+        queryString = URLEncodedUtils.format(params, "utf-8");
+        requestUrl.append("?");
+        requestUrl.append(queryString);
+
+        try {
+            HttpGet query12 = new HttpGet(requestUrl.toString());
+            query12.setHeader("Content-type", "application/json");
+            response = client.execute(query12);
+
+            // Check status code
+            status = response.getStatusLine().getStatusCode();
+            if (status != 200) {
+                throw new RuntimeException("Failed! HTTP error code: " + status);
+            }
+
+            // Get body
+            handler = new BasicResponseHandler();
+            body = handler.handleResponse(response);
+
+            System.out.println("MACHINE PROPERTIES: " + body);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
 
         // Hardcoded client properties (simple test client)
         String FUSEKI_SPARQL_ENDPOINT = "http://192.168.84.88:8080/fuseki/ProaSenseV8/query";
@@ -119,12 +202,6 @@ public class StorageRegistryScrapRateTestClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-/**
-        byte[] bytes = baos.toByteArray();
-        for (byte b : bytes)
-            System.out.println("b = " + b);
-**/
 
         qe.close();
 
