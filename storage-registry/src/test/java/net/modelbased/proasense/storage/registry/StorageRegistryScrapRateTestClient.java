@@ -169,7 +169,6 @@ public class StorageRegistryScrapRateTestClient {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-
         // Query for sensor properties
         requestUrl = new StringBuilder(STORAGE_REGISTRY_SERVICE_URL);
         requestUrl.append("/query/sensor/properties");
@@ -201,6 +200,60 @@ public class StorageRegistryScrapRateTestClient {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
+        // Query for product list
+        requestUrl = new StringBuilder(STORAGE_REGISTRY_SERVICE_URL);
+        requestUrl.append("/query/product/list");
+
+        try {
+            HttpGet query31 = new HttpGet(requestUrl.toString());
+            query31.setHeader("Content-type", "application/json");
+            response = client.execute(query31);
+
+            // Check status code
+            status = response.getStatusLine().getStatusCode();
+            if (status != 200) {
+                throw new RuntimeException("Failed! HTTP error code: " + status);
+            }
+
+            // Get body
+            handler = new BasicResponseHandler();
+            body = handler.handleResponse(response);
+
+            System.out.println("PRODUCT LIST: " + body);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        // Query for product properties
+        requestUrl = new StringBuilder(STORAGE_REGISTRY_SERVICE_URL);
+        requestUrl.append("/query/product/properties");
+
+        params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("productId", "Astra_3300"));
+
+        queryString = URLEncodedUtils.format(params, "utf-8");
+        requestUrl.append("?");
+        requestUrl.append(queryString);
+
+        try {
+            HttpGet query22 = new HttpGet(requestUrl.toString());
+            query22.setHeader("Content-type", "application/json");
+            response = client.execute(query22);
+
+            // Check status code
+            status = response.getStatusLine().getStatusCode();
+            if (status != 200) {
+                throw new RuntimeException("Failed! HTTP error code: " + status);
+            }
+
+            // Get body
+            handler = new BasicResponseHandler();
+            body = handler.handleResponse(response);
+
+            System.out.println("PRODUCT PROPERTIES: " + body);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
 
         /****************************************************/
         // Hardcoded client properties (simple test client)
@@ -211,92 +264,6 @@ public class StorageRegistryScrapRateTestClient {
 
         // Common properties for responses
         ResultSet results = null;
-
-        // Query for machine list
-        String SPARQL_MACHINE_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?x\n" +
-                "  WHERE {\n" +
-                "    ?subject rdfs:subClassOf+ pssn:Machine .\n" +
-                "    ?x rdf:type ?subject\n" +
-                "  }\n" +
-                "ORDER BY ASC (?x)";
-        qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_MACHINE_LIST);
-        results = qe.execSelect();
-//        ResultSetFormatter.out(System.out, results);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ResultSetFormatter.outputAsJSON(baos, results);
-        System.out.println("outputAsJSON: " + baos);
-
-        String result = baos.toString();
-        result = result.replaceAll("http://www.sintef.no/pssn#", "");
-        System.out.println("convertedString: " + result);
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            JsonNode rootNode = mapper.readTree(result);
-            System.out.println("rootNode: " + rootNode);
-
-            JsonNode resultsNode = rootNode.path("results");
-            System.out.println("resultsNode: " + resultsNode);
-
-            JsonNode bindingsNode = resultsNode.path("bindings");
-            System.out.println("bindingsNode: " + bindingsNode);
-
-            Iterator<JsonNode> iterator = bindingsNode.getElements();
-            while (iterator.hasNext()) {
-                JsonNode xNode = iterator.next();
-                List<String> valueNode = xNode.findValuesAsText("value");
-                System.out.println("valueNode: " + valueNode.get(0));
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        qe.close();
-
-
-        // Query for product list
-        String SPARQL_PRODUCT_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?x\n" +
-                "  WHERE {\n" +
-                "    ?x rdf:type pssn:Product .\n" +
-                "  }\n" +
-                "ORDER BY ASC (?x)";
-        qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_PRODUCT_LIST);
-        results = qe.execSelect();
-        ResultSetFormatter.out(System.out, results);
-        qe.close();
-
-        // Query for product properties
-        String SPARQL_PRODUCT_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?property ?value\n" +
-                "  WHERE {\n" +
-                "    pssn:Astra_3300 ?property ?value .\n" +
-                "}";
-        qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_PRODUCT_PROPERTIES);
-        results = qe.execSelect();
-        ResultSetFormatter.out(System.out, results);
-        qe.close();
 
         // Query for mould list
         String SPARQL_MOULD_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +

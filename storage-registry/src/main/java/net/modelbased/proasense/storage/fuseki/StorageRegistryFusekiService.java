@@ -242,6 +242,7 @@ public class StorageRegistryFusekiService {
         int responseLength = responseResult.length();
         if (responseLength > 1)
             responseResult.deleteCharAt(responseLength - 1);
+
         String result = responseResult.toString();
 
         // Return HTTP response 200 in case of success
@@ -291,7 +292,6 @@ public class StorageRegistryFusekiService {
             @QueryParam("sensorId") String sensorId
     )
     {
-        // Query for sensor properties
         String SPARQL_SENSOR_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -307,6 +307,135 @@ public class StorageRegistryFusekiService {
         SPARQL_SENSOR_PROPERTIES = SPARQL_SENSOR_PROPERTIES.replaceAll("dustParticleSensor", sensorId);
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_SENSOR_PROPERTIES);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        String result = resultsJson;
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/product/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryProductList()
+    {
+        String SPARQL_PRODUCT_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?x\n" +
+                "  WHERE {\n" +
+                "    ?x rdf:type pssn:Product .\n" +
+                "  }\n" +
+                "ORDER BY ASC (?x)";
+
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_PRODUCT_LIST);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        StringBuilder responseResult = new StringBuilder();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode rootNode = mapper.readTree(resultsJson);
+            JsonNode resultsNode = rootNode.path("results");
+            JsonNode bindingsNode = resultsNode.path("bindings");
+            Iterator<JsonNode> iterator = bindingsNode.getElements();
+            while (iterator.hasNext()) {
+                JsonNode xNode = iterator.next();
+                List<String> valueNode = xNode.findValuesAsText("value");
+
+                responseResult.append(valueNode.get(0));
+                responseResult.append(",");
+            }
+        } catch (IOException e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        qe.close();
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+
+        String result = responseResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/product/list2")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryProductList2()
+    {
+        String SPARQL_PRODUCT_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?x\n" +
+                "  WHERE {\n" +
+                "    ?x rdf:type pssn:Product .\n" +
+                "  }\n" +
+                "ORDER BY ASC (?x)";
+
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_PRODUCT_LIST);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        String result = resultsJson;
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/product/properties")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryProductProperties(
+            @QueryParam("productId") String productId
+    )
+    {
+        String SPARQL_PRODUCT_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?property ?value\n" +
+                "  WHERE {\n" +
+                "    pssn:Astra_3300 ?property ?value .\n" +
+                "}";
+
+        SPARQL_PRODUCT_PROPERTIES = SPARQL_PRODUCT_PROPERTIES.replaceAll("Astra_3300", productId);
+
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_PRODUCT_PROPERTIES);
         ResultSet results = qe.execSelect();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
