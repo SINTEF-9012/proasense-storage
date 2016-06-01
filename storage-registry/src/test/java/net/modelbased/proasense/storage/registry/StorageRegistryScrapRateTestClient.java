@@ -17,11 +17,6 @@
  */
 package net.modelbased.proasense.storage.registry;
 
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -30,16 +25,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-
 import org.apache.http.message.BasicNameValuePair;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -255,49 +245,59 @@ public class StorageRegistryScrapRateTestClient {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        /****************************************************/
-        // Hardcoded client properties (simple test client)
-        String FUSEKI_SPARQL_ENDPOINT = "http://192.168.84.88:8080/fuseki/ProaSenseV8/query";
-
-        // Default Fuseki client and common properties for requests
-        QueryExecution qe = null;
-
-        // Common properties for responses
-        ResultSet results = null;
-
         // Query for mould list
-        String SPARQL_MOULD_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT *\n" +
-                "  WHERE {\n" +
-                "    ?subject rdf:type pssn:Mould .\n" +
-                "  }\n" +
-                "ORDER BY ASC (?x)";
-        qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_MOULD_LIST);
-        results = qe.execSelect();
-        ResultSetFormatter.out(System.out, results);
-        qe.close();
+        requestUrl = new StringBuilder(STORAGE_REGISTRY_SERVICE_URL);
+        requestUrl.append("/query/mould/list");
+
+        try {
+            HttpGet query41 = new HttpGet(requestUrl.toString());
+            query41.setHeader("Content-type", "application/json");
+            response = client.execute(query41);
+
+            // Check status code
+            status = response.getStatusLine().getStatusCode();
+            if (status != 200) {
+                throw new RuntimeException("Failed! HTTP error code: " + status);
+            }
+
+            // Get body
+            handler = new BasicResponseHandler();
+            body = handler.handleResponse(response);
+
+            System.out.println("MOULD LIST: " + body);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
 
         // Query for mould properties
-        String SPARQL_MOULD_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?property ?value\n" +
-                "  WHERE {\n" +
-                "    pssn:MouldID_KSP156.013-02U010 ?property ?value .\n" +
-                "}";
-        qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_MOULD_PROPERTIES);
-        results = qe.execSelect();
-        ResultSetFormatter.out(System.out, results);
-        qe.close();
+        requestUrl = new StringBuilder(STORAGE_REGISTRY_SERVICE_URL);
+        requestUrl.append("/query/product/properties");
+
+        params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("productId", "Astra_3300"));
+
+        queryString = URLEncodedUtils.format(params, "utf-8");
+        requestUrl.append("?");
+        requestUrl.append(queryString);
+
+        try {
+            HttpGet query42 = new HttpGet(requestUrl.toString());
+            query42.setHeader("Content-type", "application/json");
+            response = client.execute(query42);
+
+            // Check status code
+            status = response.getStatusLine().getStatusCode();
+            if (status != 200) {
+                throw new RuntimeException("Failed! HTTP error code: " + status);
+            }
+
+            // Get body
+            handler = new BasicResponseHandler();
+            body = handler.handleResponse(response);
+
+            System.out.println("MOULD PROPERTIES: " + body);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
     }
 }

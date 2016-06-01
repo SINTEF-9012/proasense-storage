@@ -452,6 +452,77 @@ public class StorageRegistryFusekiService {
 
 
     @GET
+    @Path("/query/mould/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryMouldList()
+    {
+        String SPARQL_MOULD_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT *\n" +
+                "  WHERE {\n" +
+                "    ?subject rdf:type pssn:Mould .\n" +
+                "  }\n" +
+                "ORDER BY ASC (?x)";
+
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_MOULD_LIST);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        String result = resultsJson;
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/mould/properties")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryMouldProperties(
+            @QueryParam("mouldId") String productId
+    )
+    {
+        String SPARQL_MOULD_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?property ?value\n" +
+                "  WHERE {\n" +
+                "    pssn:MouldID_KSP156.013-02U010 ?property ?value .\n" +
+                "}";
+
+        SPARQL_MOULD_PROPERTIES = SPARQL_MOULD_PROPERTIES.replaceAll("MouldID_KSP156.013-02U010", productId);
+
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_MOULD_PROPERTIES);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        String result = resultsJson;
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
     @Path("/server/status")
     @Produces(MediaType.TEXT_PLAIN)
     public Response getServerStatus() {
