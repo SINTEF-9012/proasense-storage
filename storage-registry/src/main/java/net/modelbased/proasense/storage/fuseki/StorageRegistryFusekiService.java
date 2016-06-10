@@ -214,6 +214,18 @@ public class StorageRegistryFusekiService {
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
                 "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT *\n" +
+                "  WHERE {\n" +
+                "    ?sensorId rdf:type <http://purl.oclc.org/NET/ssnx/ssn#Sensor>.\n" +
+                "  }\n" +
+                "ORDER BY ASC (?sensorId)";
+
+        String SPARQL_SENSOR_LIST2 = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
                 "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
                 "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
                 "\n" +
@@ -275,6 +287,18 @@ public class StorageRegistryFusekiService {
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
                 "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT *\n" +
+                "  WHERE {\n" +
+                "    ?sensorId rdf:type <http://purl.oclc.org/NET/ssnx/ssn#Sensor>.\n" +
+                "  }\n" +
+                "ORDER BY ASC (?sensorId)";
+
+        String SPARQL_SENSOR_LIST2 = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
                 "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
                 "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
                 "\n" +
@@ -319,10 +343,10 @@ public class StorageRegistryFusekiService {
                 "\n" +
                 "SELECT DISTINCT ?property ?value\n" +
                 "  WHERE {\n" +
-                "    pssn:dustParticleSensor ?property ?value .\n" +
+                "    pssn:SENSORID ?property ?value .\n" +
                 "}";
 
-        SPARQL_SENSOR_PROPERTIES = SPARQL_SENSOR_PROPERTIES.replaceAll("dustParticleSensor", sensorId);
+        SPARQL_SENSOR_PROPERTIES = SPARQL_SENSOR_PROPERTIES.replaceAll("SENSORID", sensorId);
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_SENSOR_PROPERTIES);
         ResultSet results = qe.execSelect();
