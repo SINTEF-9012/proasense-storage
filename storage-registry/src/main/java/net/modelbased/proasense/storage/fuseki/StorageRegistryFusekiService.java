@@ -48,15 +48,29 @@ import java.util.concurrent.Executors;
 public class StorageRegistryFusekiService {
     private Properties serverProperties;
 
-    private String FUSEKI_SPARQL_ENDPOINT;
+    private String FUSEKI_SPARQL_URL;
+    private String FUSEKI_DATASET_DEFAULT;
+    private String FUSEKI_DATASET_HELLA;
+    private String FUSEKI_DATASET_MHWIRTH;
 
+    private String FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+    private String FUSEKI_SPARQL_ENDPOINT_HELLA;
+    private String FUSEKI_SPARQL_ENDPOINT_MHWIRTH;
 
     public StorageRegistryFusekiService() {
         // Get server properties
         serverProperties = loadServerProperties();
 
-        // Apache Fuseki registry configuration properties
-        this.FUSEKI_SPARQL_ENDPOINT = serverProperties.getProperty("proasense.storage.fuseki.sparql.endpoint");
+        // Get Apache Fuseki configuration properties
+        this.FUSEKI_SPARQL_URL      = serverProperties.getProperty("proasense.storage.fuseki.sparql.url");
+        this.FUSEKI_DATASET_DEFAULT = serverProperties.getProperty("proasense.storage.fuseki.dataset.default");
+        this.FUSEKI_DATASET_HELLA   = serverProperties.getProperty("proasense.storage.fuseki.dataset.hella");
+        this.FUSEKI_DATASET_MHWIRTH = serverProperties.getProperty("proasense.storage.fuseki.dataset.mhwirth");
+
+        // Set Apache Fuseki endpoints
+        this.FUSEKI_SPARQL_ENDPOINT_DEFAULT = this.FUSEKI_SPARQL_URL + this.FUSEKI_DATASET_DEFAULT;
+        this.FUSEKI_SPARQL_ENDPOINT_HELLA   = this.FUSEKI_SPARQL_URL + this.FUSEKI_DATASET_HELLA;
+        this.FUSEKI_SPARQL_ENDPOINT_MHWIRTH = this.FUSEKI_SPARQL_URL + this.FUSEKI_DATASET_MHWIRTH;
     }
 
 
@@ -79,7 +93,7 @@ public class StorageRegistryFusekiService {
                 "  }\n" +
                 "ORDER BY ASC (?x)";
 
-        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_MACHINE_LIST);
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_DEFAULT, SPARQL_MACHINE_LIST);
         ResultSet results = qe.execSelect();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -137,7 +151,7 @@ public class StorageRegistryFusekiService {
                 "  }\n" +
                 "ORDER BY ASC (?x)";
 
-        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_MACHINE_LIST);
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_DEFAULT, SPARQL_MACHINE_LIST);
         ResultSet results = qe.execSelect();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -174,7 +188,7 @@ public class StorageRegistryFusekiService {
 
         SPARQL_MACHINE_PROPERTIES = SPARQL_MACHINE_PROPERTIES.replaceAll("IMM1", machineId);
 
-        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_MACHINE_PROPERTIES);
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_DEFAULT, SPARQL_MACHINE_PROPERTIES);
         ResultSet results = qe.execSelect();
         qe.close();
 
@@ -210,7 +224,7 @@ public class StorageRegistryFusekiService {
                 "  }\n" +
                 "ORDER BY ASC (?x)";
 
-        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT, SPARQL_SENSOR_LIST);
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_DEFAULT, SPARQL_SENSOR_LIST);
         ResultSet results = qe.execSelect();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -255,6 +269,8 @@ public class StorageRegistryFusekiService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response querySensorList2()
     {
+        String FUSEKI_SPARQL_ENDPOINT = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+
         String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -292,6 +308,8 @@ public class StorageRegistryFusekiService {
             @QueryParam("sensorId") String sensorId
     )
     {
+        String FUSEKI_SPARQL_ENDPOINT = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+
         String SPARQL_SENSOR_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -327,6 +345,8 @@ public class StorageRegistryFusekiService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryProductList()
     {
+        String FUSEKI_SPARQL_ENDPOINT = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+
         String SPARQL_PRODUCT_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -385,6 +405,8 @@ public class StorageRegistryFusekiService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryProductList2()
     {
+        String FUSEKI_SPARQL_ENDPOINT = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+
         String SPARQL_PRODUCT_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -421,6 +443,8 @@ public class StorageRegistryFusekiService {
             @QueryParam("productId") String productId
     )
     {
+        String FUSEKI_SPARQL_ENDPOINT = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+
         String SPARQL_PRODUCT_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -456,6 +480,8 @@ public class StorageRegistryFusekiService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryMouldList()
     {
+        String FUSEKI_SPARQL_ENDPOINT = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+
         String SPARQL_MOULD_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -514,6 +540,8 @@ public class StorageRegistryFusekiService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryMouldList2()
     {
+        String FUSEKI_SPARQL_ENDPOINT = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+
         String SPARQL_MOULD_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -550,6 +578,8 @@ public class StorageRegistryFusekiService {
             @QueryParam("mouldId") String productId
     )
     {
+        String FUSEKI_SPARQL_ENDPOINT = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+
         String SPARQL_MOULD_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
