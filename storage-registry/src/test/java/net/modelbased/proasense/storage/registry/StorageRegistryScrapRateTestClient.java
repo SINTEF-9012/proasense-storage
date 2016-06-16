@@ -62,7 +62,7 @@ public class StorageRegistryScrapRateTestClient {
 
     public static void main(String[] args) {
         // Get client properties from properties file
-//        StorageReaderMongoServiceTestClient client = new StorageReaderMongoServiceTestClient();
+//        StorageRegistryScrapRateTestClient client = new StorageRegistryScrapRateTestClient();
 //        client.loadClientProperties();
 
         // Hardcoded client properties (simple test client)
