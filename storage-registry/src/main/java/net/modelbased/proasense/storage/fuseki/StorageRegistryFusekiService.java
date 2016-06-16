@@ -50,7 +50,7 @@ public class StorageRegistryFusekiService {
     private Properties serverProperties;
 
     private String FUSEKI_SPARQL_URL;
-    private String FUSEKI_DATASET_DEFAULT;
+    public String FUSEKI_DATASET_DEFAULT;
     private String FUSEKI_DATASET_HELLA;
     private String FUSEKI_DATASET_MHWIRTH;
 
@@ -210,7 +210,7 @@ public class StorageRegistryFusekiService {
     @Path("/query/sensor/list")
     @Produces(MediaType.APPLICATION_JSON)
     public Response querySensorList(
-        @QueryParam("company") String company
+         @QueryParam("company") String company
     )
     {
         String FUSEKI_SPARQL_ENDPOINT_URL = getFusekiSparqlEndpointUrl(company);
@@ -683,12 +683,14 @@ public class StorageRegistryFusekiService {
     private String getFusekiSparqlEndpointUrl(String company) {
         String FUSEKI_SPARQL_ENDPOINT_URL;
 
-        if (company.equals(this.FUSEKI_DATASET_HELLA))
+        if (company == null)
+            FUSEKI_SPARQL_ENDPOINT_URL = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+        else if (company.equals(this.FUSEKI_DATASET_HELLA))
             FUSEKI_SPARQL_ENDPOINT_URL = this.FUSEKI_SPARQL_ENDPOINT_HELLA;
         else if (company.equals(this.FUSEKI_DATASET_MHWIRTH))
             FUSEKI_SPARQL_ENDPOINT_URL = this.FUSEKI_SPARQL_ENDPOINT_MHWIRTH;
         else
-        FUSEKI_SPARQL_ENDPOINT_URL = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+            FUSEKI_SPARQL_ENDPOINT_URL = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
 
         return FUSEKI_SPARQL_ENDPOINT_URL;
     }
