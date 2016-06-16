@@ -24,6 +24,7 @@ import com.hp.hpl.jena.query.ResultSetFormatter;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -68,9 +69,9 @@ public class StorageRegistryFusekiService {
         this.FUSEKI_DATASET_MHWIRTH = serverProperties.getProperty("proasense.storage.fuseki.dataset.mhwirth");
 
         // Set Apache Fuseki endpoints
-        this.FUSEKI_SPARQL_ENDPOINT_DEFAULT = this.FUSEKI_SPARQL_URL + this.FUSEKI_DATASET_DEFAULT;
-        this.FUSEKI_SPARQL_ENDPOINT_HELLA   = this.FUSEKI_SPARQL_URL + this.FUSEKI_DATASET_HELLA;
-        this.FUSEKI_SPARQL_ENDPOINT_MHWIRTH = this.FUSEKI_SPARQL_URL + this.FUSEKI_DATASET_MHWIRTH;
+        this.FUSEKI_SPARQL_ENDPOINT_DEFAULT = this.FUSEKI_SPARQL_URL + "/" + this.FUSEKI_DATASET_DEFAULT + "/query";
+        this.FUSEKI_SPARQL_ENDPOINT_HELLA   = this.FUSEKI_SPARQL_URL + "/" + this.FUSEKI_DATASET_HELLA + "/query";
+        this.FUSEKI_SPARQL_ENDPOINT_MHWIRTH = this.FUSEKI_SPARQL_URL + "/" + this.FUSEKI_DATASET_MHWIRTH + "/query";
     }
 
 
@@ -208,8 +209,12 @@ public class StorageRegistryFusekiService {
     @GET
     @Path("/query/sensor/list")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response querySensorList()
+    public Response querySensorList(
+        @QueryParam("company") String company
+    )
     {
+        String FUSEKI_SPARQL_ENDPOINT_URL = getFusekiSparqlEndpointUrl(company);
+
         String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -236,7 +241,7 @@ public class StorageRegistryFusekiService {
                 "  }\n" +
                 "ORDER BY ASC (?x)";
 
-        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_DEFAULT, SPARQL_SENSOR_LIST);
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_LIST);
         ResultSet results = qe.execSelect();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -672,6 +677,20 @@ public class StorageRegistryFusekiService {
         }
 
         return serverProperties;
+    }
+
+
+    private String getFusekiSparqlEndpointUrl(String company) {
+        String FUSEKI_SPARQL_ENDPOINT_URL;
+
+        if (company.equals(this.FUSEKI_DATASET_HELLA))
+            FUSEKI_SPARQL_ENDPOINT_URL = this.FUSEKI_SPARQL_ENDPOINT_HELLA;
+        else if (company.equals(this.FUSEKI_DATASET_MHWIRTH))
+            FUSEKI_SPARQL_ENDPOINT_URL = this.FUSEKI_SPARQL_ENDPOINT_MHWIRTH;
+        else
+        FUSEKI_SPARQL_ENDPOINT_URL = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
+
+        return FUSEKI_SPARQL_ENDPOINT_URL;
     }
 
 }
