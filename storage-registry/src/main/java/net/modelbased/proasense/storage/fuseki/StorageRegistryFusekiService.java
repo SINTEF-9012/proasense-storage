@@ -23,8 +23,9 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -72,6 +73,240 @@ public class StorageRegistryFusekiService {
         this.FUSEKI_SPARQL_ENDPOINT_DEFAULT = this.FUSEKI_SPARQL_URL + "/" + this.FUSEKI_DATASET_DEFAULT + "/query";
         this.FUSEKI_SPARQL_ENDPOINT_HELLA   = this.FUSEKI_SPARQL_URL + "/" + this.FUSEKI_DATASET_HELLA + "/query";
         this.FUSEKI_SPARQL_ENDPOINT_MHWIRTH = this.FUSEKI_SPARQL_URL + "/" + this.FUSEKI_DATASET_MHWIRTH + "/query";
+    }
+
+
+    @GET
+    @Path("/query/sensor/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response querySensorList(
+            @QueryParam("dataset") String dataset
+    )
+    {
+        String FUSEKI_SPARQL_ENDPOINT_URL = getFusekiSparqlEndpointUrl(dataset);
+
+        String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT *\n" +
+                "  WHERE {\n" +
+                "    ?sensorId rdf:type <http://purl.oclc.org/NET/ssnx/ssn#Sensor>.\n" +
+                "  }\n" +
+                "ORDER BY ASC (?sensorId)";
+
+        String SPARQL_SENSOR_LIST2 = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?x\n" +
+                "  WHERE {\n" +
+                "    ?subject rdfs:subClassOf+ ssn:Sensor .\n" +
+                "    ?x rdf:type ?subject.\n" +
+                "  }\n" +
+                "ORDER BY ASC (?x)";
+
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_LIST);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        StringBuilder responseResult = new StringBuilder();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode rootNode = mapper.readTree(resultsJson);
+            JsonNode resultsNode = rootNode.path("results");
+            JsonNode bindingsNode = resultsNode.path("bindings");
+            Iterator<JsonNode> iterator = bindingsNode.getElements();
+            while (iterator.hasNext()) {
+                JsonNode xNode = iterator.next();
+                List<String> valueNode = xNode.findValuesAsText("value");
+
+                responseResult.append(valueNode.get(0));
+                responseResult.append(",");
+            }
+        } catch (IOException e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        qe.close();
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+
+        String result = responseResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/sensor/list2")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response querySensorList2(
+            @QueryParam("dataset") String dataset
+    )
+    {
+        String FUSEKI_SPARQL_ENDPOINT_URL = getFusekiSparqlEndpointUrl(dataset);
+
+        String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT *\n" +
+                "  WHERE {\n" +
+                "    ?sensorId rdf:type <http://purl.oclc.org/NET/ssnx/ssn#Sensor>.\n" +
+                "  }\n" +
+                "ORDER BY ASC (?sensorId)";
+
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_LIST);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        JSONObject jsonResponse = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        StringBuilder responseResult = new StringBuilder();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode rootNode = mapper.readTree(resultsJson);
+            JsonNode resultsNode = rootNode.path("results");
+            JsonNode bindingsNode = resultsNode.path("bindings");
+            Iterator<JsonNode> iterator = bindingsNode.getElements();
+            while (iterator.hasNext()) {
+                JsonNode xNode = iterator.next();
+                List<String> valueNode = xNode.findValuesAsText("value");
+
+                responseResult.append(valueNode.get(0));
+                // Add sensorId to JSON array
+                jsonArray.put(valueNode.get(0));
+                responseResult.append(",");
+            }
+        } catch (IOException e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        qe.close();
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+
+//        String result = responseResult.toString();
+        jsonResponse.put("sensorIds", jsonArray);
+        String result = jsonResponse.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/sensor/list3")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response querySensorList3(
+            @QueryParam("dataset") String dataset
+    )
+    {
+        String FUSEKI_SPARQL_ENDPOINT_URL = getFusekiSparqlEndpointUrl(dataset);
+
+        String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT *\n" +
+                "  WHERE {\n" +
+                "    ?sensorId rdf:type <http://purl.oclc.org/NET/ssnx/ssn#Sensor>.\n" +
+                "  }\n" +
+                "ORDER BY ASC (?sensorId)";
+
+        String SPARQL_SENSOR_LIST2 = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?x\n" +
+                "  WHERE {\n" +
+                "    ?subject rdfs:subClassOf+ ssn:Sensor .\n" +
+                "    ?x rdf:type ?subject.\n" +
+                "  }\n" +
+                "ORDER BY ASC (?x)";
+
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_LIST);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        String result = resultsJson;
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
+    @Path("/query/sensor/properties")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response querySensorProperties(
+            @QueryParam("dataset") String dataset,
+            @QueryParam("sensorId") String sensorId
+    )
+    {
+        String FUSEKI_SPARQL_ENDPOINT_URL = getFusekiSparqlEndpointUrl(dataset);
+
+        String SPARQL_SENSOR_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
+                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
+                "\n" +
+                "SELECT DISTINCT ?property ?value\n" +
+                "  WHERE {\n" +
+                "    pssn:SENSORID ?property ?value .\n" +
+                "}";
+
+        SPARQL_SENSOR_PROPERTIES = SPARQL_SENSOR_PROPERTIES.replaceAll("SENSORID", sensorId);
+
+        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_PROPERTIES);
+        ResultSet results = qe.execSelect();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ResultSetFormatter.outputAsJSON(baos, results);
+
+        String resultsJson = baos.toString();
+        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+
+        String result = resultsJson;
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
     }
 
 
@@ -211,172 +446,6 @@ public class StorageRegistryFusekiService {
         resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
 
         String result = resultsJson.toString();
-
-        // Return HTTP response 200 in case of success
-        return Response.status(200).entity(result).build();
-    }
-
-
-    @GET
-    @Path("/query/sensor/list")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response querySensorList(
-         @QueryParam("dataset") String dataset
-    )
-    {
-        String FUSEKI_SPARQL_ENDPOINT_URL = getFusekiSparqlEndpointUrl(dataset);
-
-        String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT *\n" +
-                "  WHERE {\n" +
-                "    ?sensorId rdf:type <http://purl.oclc.org/NET/ssnx/ssn#Sensor>.\n" +
-                "  }\n" +
-                "ORDER BY ASC (?sensorId)";
-
-        String SPARQL_SENSOR_LIST2 = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?x\n" +
-                "  WHERE {\n" +
-                "    ?subject rdfs:subClassOf+ ssn:Sensor .\n" +
-                "    ?x rdf:type ?subject.\n" +
-                "  }\n" +
-                "ORDER BY ASC (?x)";
-
-        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_LIST);
-        ResultSet results = qe.execSelect();
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ResultSetFormatter.outputAsJSON(baos, results);
-
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
-
-        StringBuilder responseResult = new StringBuilder();
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            JsonNode rootNode = mapper.readTree(resultsJson);
-            JsonNode resultsNode = rootNode.path("results");
-            JsonNode bindingsNode = resultsNode.path("bindings");
-            Iterator<JsonNode> iterator = bindingsNode.getElements();
-            while (iterator.hasNext()) {
-                JsonNode xNode = iterator.next();
-                List<String> valueNode = xNode.findValuesAsText("value");
-
-                responseResult.append(valueNode.get(0));
-                responseResult.append(",");
-            }
-        } catch (IOException e) {
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-        qe.close();
-
-        // Convert to string and remove trailing ","
-        int responseLength = responseResult.length();
-        if (responseLength > 1)
-            responseResult.deleteCharAt(responseLength - 1);
-
-        String result = responseResult.toString();
-
-        // Return HTTP response 200 in case of success
-        return Response.status(200).entity(result).build();
-    }
-
-
-    @GET
-    @Path("/query/sensor/list2")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response querySensorList2(
-        @QueryParam("dataset") String dataset
-    )
-    {
-        String FUSEKI_SPARQL_ENDPOINT_URL = getFusekiSparqlEndpointUrl(dataset);
-
-        String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT *\n" +
-                "  WHERE {\n" +
-                "    ?sensorId rdf:type <http://purl.oclc.org/NET/ssnx/ssn#Sensor>.\n" +
-                "  }\n" +
-                "ORDER BY ASC (?sensorId)";
-
-        String SPARQL_SENSOR_LIST2 = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?x\n" +
-                "  WHERE {\n" +
-                "    ?subject rdfs:subClassOf+ ssn:Sensor .\n" +
-                "    ?x rdf:type ?subject.\n" +
-                "  }\n" +
-                "ORDER BY ASC (?x)";
-
-        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_LIST);
-        ResultSet results = qe.execSelect();
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ResultSetFormatter.outputAsJSON(baos, results);
-
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
-
-        String result = resultsJson;
-
-        // Return HTTP response 200 in case of success
-        return Response.status(200).entity(result).build();
-    }
-
-
-    @GET
-    @Path("/query/sensor/properties")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response querySensorProperties(
-            @QueryParam("dataset") String dataset,
-            @QueryParam("sensorId") String sensorId
-    )
-    {
-        String FUSEKI_SPARQL_ENDPOINT_URL = getFusekiSparqlEndpointUrl(dataset);
-
-        String SPARQL_SENSOR_PROPERTIES = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?property ?value\n" +
-                "  WHERE {\n" +
-                "    pssn:SENSORID ?property ?value .\n" +
-                "}";
-
-        SPARQL_SENSOR_PROPERTIES = SPARQL_SENSOR_PROPERTIES.replaceAll("SENSORID", sensorId);
-
-        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_PROPERTIES);
-        ResultSet results = qe.execSelect();
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ResultSetFormatter.outputAsJSON(baos, results);
-
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
-
-        String result = resultsJson;
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
