@@ -315,9 +315,11 @@ public class StorageRegistryFusekiService {
             Iterator<JsonNode> iterator = bindingsNode.getElements();
             while (iterator.hasNext()) {
                 JsonNode propertyNode = iterator.next();
+                JsonNode nameNode = propertyNode.get("property");
+                JsonNode valueNode = propertyNode.get("value");
 
-                List<String> propertyName = propertyNode.findValuesAsText("value");
-                List<String> propertyValue = propertyNode.findValuesAsText("value");
+                List<String> propertyName = nameNode.findValuesAsText("value");
+                List<String> propertyValue = valueNode.findValuesAsText("value");
                 jsonResponse.put(propertyName.get(0), propertyValue.get(0));
             }
         } catch (IOException e) {
