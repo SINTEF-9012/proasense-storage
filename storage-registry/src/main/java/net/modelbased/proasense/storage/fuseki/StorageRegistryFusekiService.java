@@ -318,9 +318,16 @@ public class StorageRegistryFusekiService {
                 JsonNode nameNode = propertyNode.get("property");
                 JsonNode valueNode = propertyNode.get("value");
 
-                List<String> propertyName = nameNode.findValuesAsText("value");
-                List<String> propertyValue = valueNode.findValuesAsText("value");
-                jsonResponse.put(propertyName.get(0), propertyValue.get(0));
+                String propertyName = nameNode.findValuesAsText("value").get(0);
+                String propertyValue = valueNode.findValuesAsText("value").get(0);
+
+                if (propertyName.equals("eventProperty")) {
+                    JSONObject eventPropertyNode = new JSONObject();
+                    eventPropertyNode.put(propertyName, propertyValue);
+                    jsonArray.put(eventPropertyNode);
+                }
+                else
+                    jsonResponse.put(propertyName, propertyValue);
             }
         } catch (IOException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
@@ -329,6 +336,7 @@ public class StorageRegistryFusekiService {
 
 //        String result = responseResult.toString();
 //        jsonResponse.put("eventProperties", jsonArray);
+        jsonResponse.put("eventProperties", jsonArray);
         String result = jsonResponse.toString();
 
         // Return HTTP response 200 in case of success
