@@ -300,7 +300,7 @@ public class StorageRegistryFusekiService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
-        JSONObject jsonResponse = new JSONObject("sensor");
+        JSONObject jsonResponse = new JSONObject();
         JSONArray jsonArray = new JSONArray();
 
         String resultsJson = baos.toString();
@@ -326,6 +326,7 @@ public class StorageRegistryFusekiService {
         qe.close();
 
 //        String result = responseResult.toString();
+//        jsonResponse.put("eventProperties", jsonArray);
         String result = jsonResponse.toString();
 
         // Return HTTP response 200 in case of success
