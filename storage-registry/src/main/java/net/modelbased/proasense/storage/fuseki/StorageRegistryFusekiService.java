@@ -302,7 +302,7 @@ public class StorageRegistryFusekiService {
 
         JSONObject jsonResponse = new JSONObject();
         JSONObject eventPropertiesNode = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
+        JSONArray eventPropertiesArray = new JSONArray();
 
         String resultsJson = baos.toString();
         resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
@@ -327,8 +327,8 @@ public class StorageRegistryFusekiService {
 //                    eventPropertyNode.put(propertyName, propertyValue);
 //                    jsonArray.put(eventPropertyNode);
                     JSONObject eventPropertyNode = parseEventProperty(propertyValue);
-                    eventPropertiesNode.put("eventProperty", eventPropertyNode);
-//                    jsonArray.put(eventPropertyNode);
+                    eventPropertiesNode.append("eventProperty", eventPropertyNode);
+//                    eventPropertiesArray.put(eventPropertiesNode);
                 }
                 else if (propertyName.equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
                     // Ignore
