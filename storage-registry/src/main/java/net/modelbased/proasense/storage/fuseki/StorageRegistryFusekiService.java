@@ -105,9 +105,10 @@ public class StorageRegistryFusekiService {
         String jsonResults = baos.toString();
         jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
 
-//        StringBuilder responseResult = new StringBuilder();
-        ObjectMapper mapper = new ObjectMapper();
+        JSONObject jsonResponse = new JSONObject();
         JSONArray sensorArray = new JSONArray();
+
+        ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode rootNode = mapper.readTree(jsonResults);
             JsonNode resultsNode = rootNode.path("results");
@@ -117,16 +118,12 @@ public class StorageRegistryFusekiService {
                 JsonNode xNode = iterator.next();
                 List<String> valueNode = xNode.findValuesAsText("value");
 
-//                responseResult.append(valueNode.get(0));
-                // Add sensorId to JSON array
                 sensorArray.put(valueNode.get(0));
-//                responseResult.append(",");
             }
         } catch (IOException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("sensor", sensorArray);
 
         String result = jsonResponse.toString(2);
@@ -163,13 +160,14 @@ public class StorageRegistryFusekiService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
+        qe.close();
+
         String jsonResults = baos.toString();
         jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
 
         JSONObject jsonResponse = new JSONObject(jsonResults);
-        String result = jsonResponse.toString(2);
 
-        qe.close();
+        String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
@@ -206,19 +204,21 @@ public class StorageRegistryFusekiService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
+        qe.close();
+
+        String jsonResults = baos.toString();
+        jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
+
         JSONObject jsonResponse = new JSONObject();
         JSONObject eventPropertiesNode = new JSONObject();
         JSONArray eventPropertiesArray = new JSONArray();
 
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
-
-        StringBuilder responseResult = new StringBuilder();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            JsonNode rootNode = mapper.readTree(resultsJson);
+            JsonNode rootNode = mapper.readTree(jsonResults);
             JsonNode resultsNode = rootNode.path("results");
             JsonNode bindingsNode = resultsNode.path("bindings");
+
             Iterator<JsonNode> iterator = bindingsNode.getElements();
             while (iterator.hasNext()) {
                 JsonNode propertyNode = iterator.next();
@@ -229,9 +229,6 @@ public class StorageRegistryFusekiService {
                 String propertyValue = valueNode.findValuesAsText("value").get(0);
 
                 if (propertyName.equals("eventProperty")) {
-//                    JSONObject eventPropertyNode = new JSONObject();
-//                    eventPropertyNode.put(propertyName, propertyValue);
-//                    jsonArray.put(eventPropertyNode);
                     JSONObject eventPropertyNode = parseEventProperty(propertyValue);
                     eventPropertiesNode.put("eventProperty", eventPropertyNode);
                     eventPropertiesArray.put(eventPropertiesNode);
@@ -245,11 +242,9 @@ public class StorageRegistryFusekiService {
         } catch (IOException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        qe.close();
 
-//        String result = responseResult.toString();
-//        jsonResponse.put("eventProperties", jsonArray);
         jsonResponse.put("eventProperties", eventPropertiesArray);
+
         String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
@@ -287,10 +282,14 @@ public class StorageRegistryFusekiService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+        qe.close();
 
-        String result = resultsJson;
+        String jsonResults = baos.toString();
+        jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
+
+        JSONObject jsonResponse = new JSONObject(jsonResults);
+
+        String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
