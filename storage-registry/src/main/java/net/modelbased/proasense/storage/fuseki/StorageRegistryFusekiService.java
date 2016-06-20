@@ -322,8 +322,10 @@ public class StorageRegistryFusekiService {
                 String propertyValue = valueNode.findValuesAsText("value").get(0);
 
                 if (propertyName.equals("eventProperty")) {
-                    JSONObject eventPropertyNode = new JSONObject();
-                    eventPropertyNode.put(propertyName, propertyValue);
+//                    JSONObject eventPropertyNode = new JSONObject();
+//                    eventPropertyNode.put(propertyName, propertyValue);
+//                    jsonArray.put(eventPropertyNode);
+                    JSONObject eventPropertyNode = parseEventProperty(propertyValue);
                     jsonArray.put(eventPropertyNode);
                 }
                 else if (propertyName.equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
@@ -863,6 +865,21 @@ public class StorageRegistryFusekiService {
             FUSEKI_SPARQL_ENDPOINT_URL = this.FUSEKI_SPARQL_ENDPOINT_DEFAULT;
 
         return FUSEKI_SPARQL_ENDPOINT_URL;
+    }
+
+
+    private JSONObject parseEventProperty(String valueString) {
+        String[] properties = valueString.split(",");
+        String name = properties[0];
+        String type = properties[1];
+        String partition = properties[2];
+
+        JSONObject eventPropertyNode = new JSONObject();
+        eventPropertyNode.append("name", name);
+        eventPropertyNode.append("type", type);
+        eventPropertyNode.append("partition", partition);
+
+        return eventPropertyNode;
     }
 
 }
