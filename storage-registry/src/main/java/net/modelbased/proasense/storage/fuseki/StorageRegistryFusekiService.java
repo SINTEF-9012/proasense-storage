@@ -128,9 +128,9 @@ public class StorageRegistryFusekiService {
         qe.close();
 
         // Convert to string and remove trailing ","
-        int responseLength = responseResult.length();
-        if (responseLength > 1)
-            responseResult.deleteCharAt(responseLength - 1);
+//        int responseLength = responseResult.length();
+//        if (responseLength > 1)
+//            responseResult.deleteCharAt(responseLength - 1);
 
         jsonResponse.put("sensor", jsonArray);
         String result = jsonResponse.toString(2);
@@ -167,34 +167,13 @@ public class StorageRegistryFusekiService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+        String jsonResults = baos.toString();
+        jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
 
-        StringBuilder responseResult = new StringBuilder();
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            JsonNode rootNode = mapper.readTree(resultsJson);
-            JsonNode resultsNode = rootNode.path("results");
-            JsonNode bindingsNode = resultsNode.path("bindings");
-            Iterator<JsonNode> iterator = bindingsNode.getElements();
-            while (iterator.hasNext()) {
-                JsonNode xNode = iterator.next();
-                List<String> valueNode = xNode.findValuesAsText("value");
+        JSONObject jsonResponse = new JSONObject(jsonResults);
+        String result = jsonResponse.toString(2);
 
-                responseResult.append(valueNode.get(0));
-                responseResult.append(",");
-            }
-        } catch (IOException e) {
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
-        }
         qe.close();
-
-        // Convert to string and remove trailing ","
-        int responseLength = responseResult.length();
-        if (responseLength > 1)
-            responseResult.deleteCharAt(responseLength - 1);
-
-        String result = responseResult.toString();
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
