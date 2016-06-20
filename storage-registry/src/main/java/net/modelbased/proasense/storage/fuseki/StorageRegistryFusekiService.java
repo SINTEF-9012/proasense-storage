@@ -100,16 +100,16 @@ public class StorageRegistryFusekiService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
-        JSONObject jsonResponse = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
+        qe.close();
 
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+        String jsonResults = baos.toString();
+        jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
 
-        StringBuilder responseResult = new StringBuilder();
+//        StringBuilder responseResult = new StringBuilder();
         ObjectMapper mapper = new ObjectMapper();
+        JSONArray sensorArray = new JSONArray();
         try {
-            JsonNode rootNode = mapper.readTree(resultsJson);
+            JsonNode rootNode = mapper.readTree(jsonResults);
             JsonNode resultsNode = rootNode.path("results");
             JsonNode bindingsNode = resultsNode.path("bindings");
             Iterator<JsonNode> iterator = bindingsNode.getElements();
@@ -117,22 +117,18 @@ public class StorageRegistryFusekiService {
                 JsonNode xNode = iterator.next();
                 List<String> valueNode = xNode.findValuesAsText("value");
 
-                responseResult.append(valueNode.get(0));
+//                responseResult.append(valueNode.get(0));
                 // Add sensorId to JSON array
-                jsonArray.put(valueNode.get(0));
-                responseResult.append(",");
+                sensorArray.put(valueNode.get(0));
+//                responseResult.append(",");
             }
         } catch (IOException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        qe.close();
 
-        // Convert to string and remove trailing ","
-//        int responseLength = responseResult.length();
-//        if (responseLength > 1)
-//            responseResult.deleteCharAt(responseLength - 1);
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("sensor", sensorArray);
 
-        jsonResponse.put("sensor", jsonArray);
         String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
