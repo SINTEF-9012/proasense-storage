@@ -328,7 +328,6 @@ public class StorageRegistryFusekiService {
 //                    jsonArray.put(eventPropertyNode);
                     JSONObject eventPropertyNode = parseEventProperty(propertyValue);
                     eventPropertiesNode.put("eventProperty", eventPropertyNode);
-                    eventPropertiesNode.put("eventProperty2", eventPropertyNode);
 //                    eventPropertiesArray.put(eventPropertiesNode);
                 }
                 else if (propertyName.equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
