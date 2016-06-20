@@ -301,6 +301,7 @@ public class StorageRegistryFusekiService {
         ResultSetFormatter.outputAsJSON(baos, results);
 
         JSONObject jsonResponse = new JSONObject();
+        JSONObject eventPropertiesNode = new JSONObject();
         JSONArray jsonArray = new JSONArray();
 
         String resultsJson = baos.toString();
@@ -326,8 +327,8 @@ public class StorageRegistryFusekiService {
 //                    eventPropertyNode.put(propertyName, propertyValue);
 //                    jsonArray.put(eventPropertyNode);
                     JSONObject eventPropertyNode = parseEventProperty(propertyValue);
-//                    jsonResponse.put("eventProperty", eventPropertyNode);
-                    jsonArray.put(eventPropertyNode);
+                    eventPropertiesNode.put("eventProperty", eventPropertyNode);
+//                    jsonArray.put(eventPropertyNode);
                 }
                 else if (propertyName.equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
                     // Ignore
@@ -342,7 +343,7 @@ public class StorageRegistryFusekiService {
 
 //        String result = responseResult.toString();
 //        jsonResponse.put("eventProperties", jsonArray);
-        jsonResponse.put("eventProperties", jsonArray);
+        jsonResponse.put("eventProperties", eventPropertiesNode);
         String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
