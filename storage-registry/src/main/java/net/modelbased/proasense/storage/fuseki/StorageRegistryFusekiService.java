@@ -41,9 +41,6 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 @Path("/")
@@ -135,7 +132,6 @@ public class StorageRegistryFusekiService {
         if (responseLength > 1)
             responseResult.deleteCharAt(responseLength - 1);
 
-//        String result = responseResult.toString();
         jsonResponse.put("sensor", jsonArray);
         String result = jsonResponse.toString(2);
 
@@ -164,20 +160,6 @@ public class StorageRegistryFusekiService {
                 "    ?sensorId rdf:type <http://purl.oclc.org/NET/ssnx/ssn#Sensor>.\n" +
                 "  }\n" +
                 "ORDER BY ASC (?sensorId)";
-
-        String SPARQL_SENSOR_LIST2 = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?x\n" +
-                "  WHERE {\n" +
-                "    ?subject rdfs:subClassOf+ ssn:Sensor .\n" +
-                "    ?x rdf:type ?subject.\n" +
-                "  }\n" +
-                "ORDER BY ASC (?x)";
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_LIST);
         ResultSet results = qe.execSelect();
@@ -213,57 +195,6 @@ public class StorageRegistryFusekiService {
             responseResult.deleteCharAt(responseLength - 1);
 
         String result = responseResult.toString();
-
-        // Return HTTP response 200 in case of success
-        return Response.status(200).entity(result).build();
-    }
-
-
-    @GET
-    @Path("/query/sensor/list3")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response querySensorList3(
-            @QueryParam("dataset") String dataset
-    )
-    {
-        String FUSEKI_SPARQL_ENDPOINT_URL = getFusekiSparqlEndpointUrl(dataset);
-
-        String SPARQL_SENSOR_LIST = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT *\n" +
-                "  WHERE {\n" +
-                "    ?sensorId rdf:type <http://purl.oclc.org/NET/ssnx/ssn#Sensor>.\n" +
-                "  }\n" +
-                "ORDER BY ASC (?sensorId)";
-
-        String SPARQL_SENSOR_LIST2 = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
-                "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
-                "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
-                "\n" +
-                "SELECT DISTINCT ?x\n" +
-                "  WHERE {\n" +
-                "    ?subject rdfs:subClassOf+ ssn:Sensor .\n" +
-                "    ?x rdf:type ?subject.\n" +
-                "  }\n" +
-                "ORDER BY ASC (?x)";
-
-        QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_LIST);
-        ResultSet results = qe.execSelect();
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ResultSetFormatter.outputAsJSON(baos, results);
-
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
-
-        String result = resultsJson;
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
