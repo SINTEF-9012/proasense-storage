@@ -137,7 +137,7 @@ public class StorageRegistryFusekiService {
 
 //        String result = responseResult.toString();
         jsonResponse.put("sensor", jsonArray);
-        String result = jsonResponse.toString();
+        String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
@@ -326,7 +326,8 @@ public class StorageRegistryFusekiService {
 //                    eventPropertyNode.put(propertyName, propertyValue);
 //                    jsonArray.put(eventPropertyNode);
                     JSONObject eventPropertyNode = parseEventProperty(propertyValue);
-                    jsonArray.put(eventPropertyNode);
+                    jsonResponse.append("eventProperty", eventPropertyNode);
+//                    jsonArray.put(eventPropertyNode);
                 }
                 else if (propertyName.equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
                     // Ignore
@@ -342,7 +343,7 @@ public class StorageRegistryFusekiService {
 //        String result = responseResult.toString();
 //        jsonResponse.put("eventProperties", jsonArray);
         jsonResponse.put("eventProperties", jsonArray);
-        String result = jsonResponse.toString();
+        String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
