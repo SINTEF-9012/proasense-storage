@@ -876,9 +876,9 @@ public class StorageRegistryFusekiService {
         String partition = properties[2];
 
         JSONObject eventPropertyNode = new JSONObject();
-        eventPropertyNode.append("name", name);
-        eventPropertyNode.append("type", type);
-        eventPropertyNode.append("partition", partition);
+        eventPropertyNode.put("name", name);
+        eventPropertyNode.put("type", type);
+        eventPropertyNode.put("partition", partition);
 
         return eventPropertyNode;
     }
