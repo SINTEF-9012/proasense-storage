@@ -578,10 +578,14 @@ public class StorageRegistryFusekiService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+        qe.close();
 
-        String result = resultsJson;
+        String jsonResults = baos.toString();
+        jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
+
+        JSONObject jsonResponse = new JSONObject(jsonResults);
+
+        String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
@@ -608,7 +612,7 @@ public class StorageRegistryFusekiService {
                 "  WHERE {\n" +
                 "    ?subject rdf:type pssn:Mould .\n" +
                 "  }\n" +
-                "ORDER BY ASC (?x)";
+                "ORDER BY ASC (?mouldId)";
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_MOULD_LIST);
         ResultSet results = qe.execSelect();
@@ -616,13 +620,17 @@ public class StorageRegistryFusekiService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+        qe.close();
 
-        StringBuilder responseResult = new StringBuilder();
+        String jsonResults = baos.toString();
+        jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
+
+        JSONObject jsonResponse = new JSONObject();
+        JSONArray mouldArray = new JSONArray();
+
         ObjectMapper mapper = new ObjectMapper();
         try {
-            JsonNode rootNode = mapper.readTree(resultsJson);
+            JsonNode rootNode = mapper.readTree(jsonResults);
             JsonNode resultsNode = rootNode.path("results");
             JsonNode bindingsNode = resultsNode.path("bindings");
             Iterator<JsonNode> iterator = bindingsNode.getElements();
@@ -630,20 +638,15 @@ public class StorageRegistryFusekiService {
                 JsonNode xNode = iterator.next();
                 List<String> valueNode = xNode.findValuesAsText("value");
 
-                responseResult.append(valueNode.get(0));
-                responseResult.append(",");
+                mouldArray.put(valueNode.get(0));
             }
         } catch (IOException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        qe.close();
 
-        // Convert to string and remove trailing ","
-        int responseLength = responseResult.length();
-        if (responseLength > 1)
-            responseResult.deleteCharAt(responseLength - 1);
+        jsonResponse.put("mould", mouldArray);
 
-        String result = responseResult.toString();
+        String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
@@ -670,7 +673,7 @@ public class StorageRegistryFusekiService {
                 "  WHERE {\n" +
                 "    ?subject rdf:type pssn:Mould .\n" +
                 "  }\n" +
-                "ORDER BY ASC (?x)";
+                "ORDER BY ASC (?mouldId)";
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_MOULD_LIST);
         ResultSet results = qe.execSelect();
@@ -678,10 +681,14 @@ public class StorageRegistryFusekiService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+        qe.close();
 
-        String result = resultsJson;
+        String jsonResults = baos.toString();
+        jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
+
+        JSONObject jsonResponse = new JSONObject(jsonResults);
+
+        String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
@@ -718,10 +725,14 @@ public class StorageRegistryFusekiService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+        qe.close();
 
-        String result = resultsJson;
+        String jsonResults = baos.toString();
+        jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
+
+        JSONObject jsonResponse = new JSONObject(jsonResults);
+
+        String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
