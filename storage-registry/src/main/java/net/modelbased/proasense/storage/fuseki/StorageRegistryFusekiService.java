@@ -427,15 +427,18 @@ public class StorageRegistryFusekiService {
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_MACHINE_PROPERTIES);
         ResultSet results = qe.execSelect();
-        qe.close();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ResultSetFormatter.outputAsJSON(baos, results);
 
-        String resultsJson = baos.toString();
-        resultsJson = resultsJson.replaceAll("http://www.sintef.no/pssn#", "");
+        qe.close();
 
-        String result = resultsJson.toString();
+        String jsonResults = baos.toString();
+        jsonResults = jsonResults.replaceAll("http://www.sintef.no/pssn#", "");
+
+        JSONObject jsonResponse = new JSONObject(jsonResults);
+
+        String result = jsonResponse.toString(2);
 
         // Return HTTP response 200 in case of success
         return Response.status(200).entity(result).build();
