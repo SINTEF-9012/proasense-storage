@@ -312,12 +312,12 @@ public class StorageRegistryFusekiService {
                 "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
                 "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
                 "\n" +
-                "SELECT DISTINCT ?x\n" +
+                "SELECT DISTINCT ?machineId\n" +
                 "  WHERE {\n" +
                 "    ?subject rdfs:subClassOf+ pssn:Machine .\n" +
-                "    ?x rdf:type ?subject\n" +
+                "    ?machineId rdf:type ?subject\n" +
                 "  }\n" +
-                "ORDER BY ASC (?x)";
+                "ORDER BY ASC (?machineId)";
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_MACHINE_LIST);
         ResultSet results = qe.execSelect();
@@ -374,12 +374,12 @@ public class StorageRegistryFusekiService {
                 "PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n" +
                 "PREFIX pssn: <http://www.sintef.no/pssn#>\n" +
                 "\n" +
-                "SELECT DISTINCT ?x\n" +
+                "SELECT DISTINCT ?machineId\n" +
                 "  WHERE {\n" +
                 "    ?subject rdfs:subClassOf+ pssn:Machine .\n" +
-                "    ?x rdf:type ?subject\n" +
+                "    ?machineId rdf:type ?subject\n" +
                 "  }\n" +
-                "ORDER BY ASC (?x)";
+                "ORDER BY ASC (?machineId)";
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_MACHINE_LIST);
         ResultSet results = qe.execSelect();
