@@ -84,13 +84,6 @@ public class StorageRegistrySensorDataTestClient {
         requestUrl = new StringBuilder(STORAGE_REGISTRY_SERVICE_URL);
         requestUrl.append("/query/sensor/list");
 
-        params = new LinkedList<NameValuePair>();
-        params.add(new BasicNameValuePair("dataset", "mhwirth"));
-
-        queryString = URLEncodedUtils.format(params, "utf-8");
-        requestUrl.append("?");
-        requestUrl.append(queryString);
-
         try {
             HttpGet query21 = new HttpGet(requestUrl.toString());
             query21.setHeader("Content-type", "application/json");
@@ -116,8 +109,7 @@ public class StorageRegistrySensorDataTestClient {
         requestUrl.append("/query/sensor/properties");
 
         params = new LinkedList<NameValuePair>();
-        params.add(new BasicNameValuePair("dataset", "mhwirth"));
-        params.add(new BasicNameValuePair("sensorId", "1000692"));
+        params.add(new BasicNameValuePair("sensorId", "visualInspection"));
 
         queryString = URLEncodedUtils.format(params, "utf-8");
         requestUrl.append("?");
