@@ -1,0 +1,70 @@
+version: '2'
+volumes:
+  mongodb-data:
+    driver: local
+services:
+  kafka:
+    container_name: kafka
+    image: spotify/kafka
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+  mongodb:
+    container_name: mongodb
+    image: tutum/mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    environment:
+      - AUTH=no
+  proasense-fuseki:
+    build: /media/sf_GitHub/proasense-storage/docker-images/fuseki/
+    container_name: proasense-fuseki
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMIN_PASSWORD=proasense
+#  fuseki:
+#    container_name: fuseki
+#    image: stain/jena-fuseki
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - ADMIN_PASSWORD=proasense
+  proasense-storage-writer:
+    build: /media/sf_GitHub/proasense-storage/storage-writer/
+    container_name: proasense-storage-writer
+    depends_on:
+      - mongodb
+#    environment:
+#      - MONGODB_HOST=mongodb_server
+    links:
+      - kafka
+      - mongodb
+    environment:
+      - ZOOKEEPER_CONNECT=kafka:2181
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - MONGODB_URL=mongodb://mongodb:27017
+  proasense-storage-reader:
+    build: /media/sf_GitHub/proasense-storage/storage-reader/
+    container_name: proasense-storage-reader
+    depends_on:
+      - mongodb
+    ports:
+      - "8081:8080"
+#    environment:
+#      - MONGODB_HOST=mongodb_server
+    links:
+      - mongodb:mongodb_server
+  proasense-storage-registry:
+    build: /media/sf_GitHub/proasense-storage/storage-registry/
+    container_name: proasense-storage-registry
+    depends_on:
+      - proasense-fuseki
+    ports:
+      - "8082:8080"
+#    environment:
+#      FUSEKIHOST=fuseki_server
+#    links:
+#      - fuseki:fuseki_server

@@ -112,7 +112,8 @@ public class StorageWriterMongoService {
         int NO_LOAD_TESTING_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
 
         // Kafka broker configuration properties
-        String zooKeeper = storage.serverProperties.getProperty("zookeeper.connect");
+//        String zooKeeper = storage.serverProperties.getProperty("zookeeper.connect");
+        String zooKeeper = System.getenv("ZOOKEEPER_CONNECT");
         String groupId = "StorageWriterServiceMongoServer";
 
         // SensApp registry configuration properties
@@ -141,7 +142,8 @@ public class StorageWriterMongoService {
         int NO_FEEDBACKEVENT_LISTENERS = new Integer(storage.serverProperties.getProperty("proasense.storage.event.feedback.listeners")).intValue();
 
         // MongoDB event writers configuration properties
-        String MONGODB_URL = storage.serverProperties.getProperty("proasense.storage.mongodb.url");
+//        String MONGODB_URL = storage.serverProperties.getProperty("proasense.storage.mongodb.url");
+        String MONGODB_URL = System.getenv("MONGODB_URL");
 
         boolean IS_MONGODB_SYNCDRIVER = new Boolean(storage.serverProperties.getProperty("proasense.storage.mongodb.syncdriver")).booleanValue();
 
