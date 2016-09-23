@@ -73,6 +73,9 @@ public class SimpleEventKafkaGenerator<T> implements Runnable {
                         // Publish message
                         ProducerRecord<String, byte[]> message = new ProducerRecord<String, byte[]>(this.topic, bytes);
                         producer.send(message);
+
+//                        if ((cnt + i) % 1000 == 0)
+//                            System.out.println("SimpleEvent(" + (cnt + i) + "): " + message.toString());
                     }
                 }
                 cnt = cnt + this.messages_per_second;

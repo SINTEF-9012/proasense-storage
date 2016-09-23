@@ -60,3 +60,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 /bin/
+/docker-images/fuseki/data/hella.rdf
+/docker-images/fuseki/data/mhwirth.rdf

@@ -37,6 +37,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,6 +62,8 @@ public class StorageReaderMongoService {
 
         // MongoDB event reader configuration properties
         this.MONGODB_URL = serverProperties.getProperty("proasense.storage.mongodb.url");
+//        this.MONGODB_URL = System.getenv("MONGODB_URL");
+//        serverProperties.setProperty("proasense.storage.mongodb.url", this.MONGODB_URL);
         this.MONGODB_DATABASE = serverProperties.getProperty("proasense.storage.mongodb.database");
     }
 
@@ -723,10 +726,13 @@ public class StorageReaderMongoService {
 
     private Properties loadServerProperties() {
         serverProperties = new Properties();
-        String propFilename = "server.properties";
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
+//        String propFilename = "server.properties";
+//        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
 
         try {
+            String propFilename = "/proasense/config/storage-reader/server.properties";
+            InputStream inputStream = new FileInputStream(propFilename);
+
             if (inputStream != null) {
                 serverProperties.load(inputStream);
             } else
@@ -735,6 +741,16 @@ public class StorageReaderMongoService {
         catch (IOException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
+
+        // System environment variables
+//        this.MONGODB_URL = System.getenv("MONGODB_URL");
+//        serverProperties.setProperty("proasense.storage.mongodb.url", this.MONGODB_URL);
+
+//        String zookeeper_connect = System.getenv("ZOOKEEPER_CONNECT");
+//        serverProperties.setProperty("zookeeper.connect", zookeeper_connect);
+
+//        String kafka_bootstrap_servers = System.getenv("KAFKA_BOOTSTRAP_SERVERS");
+//        serverProperties.setProperty("kafka.bootstrap.servers", kafka_bootstrap_servers);
 
         return serverProperties;
     }

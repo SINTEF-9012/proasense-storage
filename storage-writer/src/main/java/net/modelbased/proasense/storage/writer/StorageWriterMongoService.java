@@ -32,6 +32,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,10 +57,13 @@ public class StorageWriterMongoService {
 
     private Properties loadServerProperties() {
         serverProperties = new Properties();
-        String propFilename = "server.properties";
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
+//        String propFilename = "server.properties";
+//        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
 
         try {
+            String propFilename = "/proasense/config/storage-writer/server.properties";
+            InputStream inputStream = new FileInputStream(propFilename);
+
             if (inputStream != null) {
                 serverProperties.load(inputStream);
             } else
@@ -112,8 +116,8 @@ public class StorageWriterMongoService {
         int NO_LOAD_TESTING_MAX_MESSAGES = NO_LOAD_TESTING_SENSORS * NO_LOAD_TESTING_MESSAGES;
 
         // Kafka broker configuration properties
-//        String zooKeeper = storage.serverProperties.getProperty("zookeeper.connect");
-        String zooKeeper = System.getenv("ZOOKEEPER_CONNECT");
+        String zooKeeper = storage.serverProperties.getProperty("zookeeper.connect");
+//        String zooKeeper = System.getenv("ZOOKEEPER_CONNECT");
         String groupId = "StorageWriterServiceMongoServer";
 
         // SensApp registry configuration properties
@@ -142,8 +146,8 @@ public class StorageWriterMongoService {
         int NO_FEEDBACKEVENT_LISTENERS = new Integer(storage.serverProperties.getProperty("proasense.storage.event.feedback.listeners")).intValue();
 
         // MongoDB event writers configuration properties
-//        String MONGODB_URL = storage.serverProperties.getProperty("proasense.storage.mongodb.url");
-        String MONGODB_URL = System.getenv("MONGODB_URL");
+        String MONGODB_URL = storage.serverProperties.getProperty("proasense.storage.mongodb.url");
+//        String MONGODB_URL = System.getenv("MONGODB_URL");
 
         boolean IS_MONGODB_SYNCDRIVER = new Boolean(storage.serverProperties.getProperty("proasense.storage.mongodb.syncdriver")).booleanValue();
 

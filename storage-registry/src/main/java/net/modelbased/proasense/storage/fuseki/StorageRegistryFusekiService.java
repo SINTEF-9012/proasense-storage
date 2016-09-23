@@ -34,6 +34,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -193,10 +194,10 @@ public class StorageRegistryFusekiService {
                 "\n" +
                 "SELECT DISTINCT ?property ?value\n" +
                 "  WHERE {\n" +
-                "    pssn:SENSORID ?property ?value .\n" +
+                "    pssn:_SENSORID ?property ?value .\n" +
                 "}";
 
-        SPARQL_SENSOR_PROPERTIES = SPARQL_SENSOR_PROPERTIES.replaceAll("SENSORID", sensorId);
+        SPARQL_SENSOR_PROPERTIES = SPARQL_SENSOR_PROPERTIES.replaceAll("_SENSORID", sensorId);
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_PROPERTIES);
         ResultSet results = qe.execSelect();
@@ -271,10 +272,10 @@ public class StorageRegistryFusekiService {
                 "\n" +
                 "SELECT DISTINCT ?property ?value\n" +
                 "  WHERE {\n" +
-                "    pssn:SENSORID ?property ?value .\n" +
+                "    pssn:_SENSORID ?property ?value .\n" +
                 "}";
 
-        SPARQL_SENSOR_PROPERTIES = SPARQL_SENSOR_PROPERTIES.replaceAll("SENSORID", sensorId);
+        SPARQL_SENSOR_PROPERTIES = SPARQL_SENSOR_PROPERTIES.replaceAll("_SENSORID", sensorId);
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_SENSOR_PROPERTIES);
         ResultSet results = qe.execSelect();
@@ -420,10 +421,10 @@ public class StorageRegistryFusekiService {
                 "\n" +
                 "SELECT DISTINCT ?property ?value\n" +
                 "  WHERE {\n" +
-                "    pssn:IMM1 ?property ?value .\n" +
+                "    pssn:_MACHINEID ?property ?value .\n" +
                 "}";
 
-        SPARQL_MACHINE_PROPERTIES = SPARQL_MACHINE_PROPERTIES.replaceAll("IMM1", machineId);
+        SPARQL_MACHINE_PROPERTIES = SPARQL_MACHINE_PROPERTIES.replaceAll("_MACHINEID", machineId);
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_MACHINE_PROPERTIES);
         ResultSet results = qe.execSelect();
@@ -567,10 +568,10 @@ public class StorageRegistryFusekiService {
                 "\n" +
                 "SELECT DISTINCT ?property ?value\n" +
                 "  WHERE {\n" +
-                "    pssn:Astra_3300 ?property ?value .\n" +
+                "    pssn:_PRODUCTID ?property ?value .\n" +
                 "}";
 
-        SPARQL_PRODUCT_PROPERTIES = SPARQL_PRODUCT_PROPERTIES.replaceAll("Astra_3300", productId);
+        SPARQL_PRODUCT_PROPERTIES = SPARQL_PRODUCT_PROPERTIES.replaceAll("_PRODUCTID", productId);
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_PRODUCT_PROPERTIES);
         ResultSet results = qe.execSelect();
@@ -714,10 +715,10 @@ public class StorageRegistryFusekiService {
                 "\n" +
                 "SELECT DISTINCT ?property ?value\n" +
                 "  WHERE {\n" +
-                "    pssn:MouldID_KSP156.013-02U010 ?property ?value .\n" +
+                "    pssn:_MOULDID ?property ?value .\n" +
                 "}";
 
-        SPARQL_MOULD_PROPERTIES = SPARQL_MOULD_PROPERTIES.replaceAll("MouldID_KSP156.013-02U010", productId);
+        SPARQL_MOULD_PROPERTIES = SPARQL_MOULD_PROPERTIES.replaceAll("_MOULDID", productId);
 
         QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_SPARQL_ENDPOINT_URL, SPARQL_MOULD_PROPERTIES);
         ResultSet results = qe.execSelect();
@@ -763,10 +764,13 @@ public class StorageRegistryFusekiService {
 
     private Properties loadServerProperties() {
         serverProperties = new Properties();
-        String propFilename = "server.properties";
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
+//        String propFilename = "server.properties";
+//        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFilename);
 
         try {
+            String propFilename = "/proasense/config/storage-registry/server.properties";
+            InputStream inputStream = new FileInputStream(propFilename);
+
             if (inputStream != null) {
                 serverProperties.load(inputStream);
             } else
@@ -775,6 +779,19 @@ public class StorageRegistryFusekiService {
         catch (IOException e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
+
+        // System environment variables
+//        this.FUSEKI_SPARQL_URL = System.getenv("FUSEKI_URL");
+//        serverProperties.setProperty("proasense.storage.fuseki.sparql.url", this.FUSEKI_SPARQL_URL);
+
+//        String mongodb_url = System.getenv("MONGODB_URL");
+//        serverProperties.setProperty("proasense.storage.mongodb.url", mongodb_url);
+
+//        String zookeeper_connect = System.getenv("ZOOKEEPER_CONNECT");
+//        serverProperties.setProperty("zookeeper.connect", zookeeper_connect);
+
+//        String kafka_bootstrap_servers = System.getenv("KAFKA_BOOTSTRAP_SERVERS");
+//        serverProperties.setProperty("kafka.bootstrap.servers", kafka_bootstrap_servers);
 
         return serverProperties;
     }
