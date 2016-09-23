@@ -48,6 +48,8 @@ services:
     links:
       - kafka:kafka_host
       - mongodb:mongodb_host
+    volumes:
+      - "./config/storage-writer:/proasense/config/storage-writer"
     environment:
       - ZOOKEEPER_CONNECT=kafka_host:2181
       - KAFKA_BOOTSTRAP_SERVERS=kafka_host:9092
@@ -63,6 +65,8 @@ services:
     links:
       - kafka:kafka_host
       - mongodb:mongodb_host
+    volumes:
+      - "./config/storage-reader:/proasense/config/storage-reader"
     environment:
       - ZOOKEEPER_CONNECT=kafka_host:2181
       - KAFKA_BOOTSTRAP_SERVERS=kafka_host:9092
