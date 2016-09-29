@@ -21,7 +21,6 @@ services:
     environment:
       - AUTH=no
   proasense-fuseki:
-#    build: /media/sf_GitHub/proasense-storage/docker-images/fuseki/
     build: docker-images/fuseki/
     container_name: proasense-fuseki
     ports:
@@ -30,32 +29,22 @@ services:
       - fuseki-data:/fuseki
     environment:
       - ADMIN_PASSWORD=proasense
-#  fuseki:
-#    container_name: fuseki
-#    image: stain/jena-fuseki
-#    ports:
-#      - "8083:3030"
-#    volumes:
-#      - fuseki-data:/fuseki
-#    environment:
-#      - ADMIN_PASSWORD=proasense
   proasense-storage-writer:
-#    build: /media/sf_GitHub/proasense-storage/storage-writer/
     build: storage-writer/
     container_name: proasense-storage-writer
     depends_on:
+      - kafka
       - mongodb
     links:
       - kafka:kafka_host
       - mongodb:mongodb_host
     volumes:
       - "./config/storage-writer:/proasense/config/storage-writer"
-    environment:
-      - ZOOKEEPER_CONNECT=kafka_host:2181
-      - KAFKA_BOOTSTRAP_SERVERS=kafka_host:9092
-      - MONGODB_URL=mongodb://mongodb_host:27017
+#    environment:
+#      - ZOOKEEPER_CONNECT=kafka_host:2181
+#      - KAFKA_BOOTSTRAP_SERVERS=kafka_host:9092
+#      - MONGODB_URL=mongodb://mongodb_host:27017
   proasense-storage-reader:
-#    build: /media/sf_GitHub/proasense-storage/storage-reader/
     build: storage-reader/
     container_name: proasense-storage-reader
     depends_on:
@@ -67,28 +56,25 @@ services:
       - mongodb:mongodb_host
     volumes:
       - "./config/storage-reader:/proasense/config/storage-reader"
-    environment:
-      - ZOOKEEPER_CONNECT=kafka_host:2181
-      - KAFKA_BOOTSTRAP_SERVERS=kafka_host:9092
-      - MONGODB_URL=mongodb://mongodb_host:271017
+#    environment:
+#      - ZOOKEEPER_CONNECT=kafka_host:2181
+#      - KAFKA_BOOTSTRAP_SERVERS=kafka_host:9092
+#      - MONGODB_URL=mongodb://mongodb_host:271017
   proasense-storage-registry:
-#    build: /media/sf_GitHub/proasense-storage/storage-registry/
     build: storage-registry/
     container_name: proasense-storage-registry
     depends_on:
       - proasense-fuseki
-#      - fuseki
     ports:
       - "8082:8080"
     links:
- #     - fuseki:fuseki_host
-      - kafka
+      - kafka:kafka_host
       - mongodb:mongodb_host
       - proasense-fuseki:fuseki_host
     volumes:
       - "./config/storage-registry:/proasense/config/storage-registry"
-    environment:
-      - ZOOKEEPER_CONNECT=kafka:2181
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - MONGODB_URL=mongodb://mongodb_host:271017
-      - FUSEKI_URL=http://fuseki_host:8083
+#    environment:
+#      - ZOOKEEPER_CONNECT=kafka:2181
+#      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+#      - MONGODB_URL=mongodb://mongodb_host:271017
+#      - FUSEKI_URL=http://fuseki_host:8083
