@@ -32,6 +32,7 @@ import java.util.concurrent.Callable;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.gte;
+import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Filters.lte;
 
 
@@ -366,6 +367,16 @@ public class EventReaderMongoSync implements Callable {
                 double resultMinimum = resultMinimumDouble;
                 Document resultDoc = new Document("RESULT", resultMinimum);
                 foundDocuments.add(resultDoc);
+            }
+        }
+
+        if (queryType.equals(EventQueryType.KPI) && queryOperation.equals(EventQueryOperation.DEFAULT)) {
+            FindIterable<Document> it = collection.find(and(gte("timestamp", this.startTime), lte("timestamp", this.endTime), in("eventName", this.propertyKey)));
+
+            MongoCursor<Document> cursor = it.iterator();
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                foundDocuments.add(doc);
             }
         }
 

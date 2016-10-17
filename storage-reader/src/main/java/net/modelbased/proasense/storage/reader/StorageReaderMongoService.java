@@ -399,6 +399,52 @@ public class StorageReaderMongoService {
 
 
     @GET
+    @Path("/query/kpi/default")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response queryDefaultKPIEvents(
+//            @QueryParam("componentId") String componentId,
+            @QueryParam("kpiId") String kpiId,
+            @QueryParam("startTime") long startTime,
+            @QueryParam("endTime") long endTime)
+    {
+        String collectionId = "derived." + "KPI";
+
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<List<Document>> query = new EventReaderMongoSync(MONGODB_URL, MONGODB_DATABASE, EventQueryType.KPI, collectionId, startTime, endTime, kpiId, EventQueryOperation.DEFAULT, null);
+        executor.submit(query);
+
+        List<Document> queryResult = null;
+        StringBuilder responseResult = new StringBuilder("[");
+        try {
+            queryResult = query.call();
+
+            for (Document doc : queryResult) {
+                DerivedEvent event = new EventConverter<DerivedEvent>(DerivedEvent.class, doc).getEvent();
+
+                // Serialize event as JSON
+                TSerializer serializer = new TSerializer(new TJSONProtocol.Factory());
+                String jsonEvent = serializer.toString(event);
+
+                responseResult.append(jsonEvent);
+                responseResult.append(",");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        // Convert to string and remove trailing ","
+        int responseLength = responseResult.length();
+        if (responseLength > 1)
+            responseResult.deleteCharAt(responseLength - 1);
+        responseResult.append("]");
+        String result = responseResult.toString();
+
+        // Return HTTP response 200 in case of success
+        return Response.status(200).entity(result).build();
+    }
+
+
+    @GET
     @Path("/query/predicted/default")
     @Produces(MediaType.APPLICATION_JSON)
     public Response queryDefaultPredictedEvents(
